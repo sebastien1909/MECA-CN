@@ -1,0 +1,30 @@
+header{
+    background: #003F87;
+    background: linear-gradient(157deg,rgba(0, 63, 135, 1) 0%, rgba(0, 86, 179, 1) 100%);
+    padding:25px;
+}
+
+.logo_header{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width:50%;
+    height:auto;
+}
+
+.header_cont{
+    display: flex;
+    width:100%;
+}
+
+.header_right_side{
+    position:absolute;
+    left:70%;
+    width:auto;
+    display: flex;
+    gap:50px;
+}
+
+.header_btn{
+    padding : 6% 5%;
+}
