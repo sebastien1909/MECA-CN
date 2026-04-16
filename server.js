@@ -81,7 +81,7 @@ function isAdmin(req, res, next) {
 app.get("/", async function (req, res) {    
     try {
         if (req.session.role === "admin") {
-            res.render("/admin/index", { page_css: "none.css" });
+            res.render("/admin/accueil", { page_css1: "headeradmin.css" });
         } else {
             res.render("accueil", { page_css1: "headerclient.css", page_css2: "none.css" });
         }
@@ -91,6 +91,54 @@ app.get("/", async function (req, res) {
     }
 });
 
+app.get("/presentation", async function (req, res) {    
+    try {
+        if (req.session.role === "admin") {
+            res.render("/admin/presentation", { page_css1: "presentation.css", page_css2: "headeradmin.css" });
+        } else {
+            res.render("presentation", { page_css1: "headerclient.css", page_css2: "none.css" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Erreur serveur");
+    }
+});
+
+app.get("/devis", async function (req, res) {    
+    try {
+        if (req.session.role === "admin") {
+            res.render("/admin/devis", { page_css1: "devis.css", page_css2: "headeradmin.css" });
+        } else {
+            res.render("devis", { page_css1: "headerclient.css", page_css2: "none.css" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Erreur serveur");
+    }
+});
+
+app.get("/contact", async function (req, res) {    
+    try {
+        if (req.session.role === "admin") {
+            res.render("/admin/contact", { page_css1: "contact.css", page_css2: "headeradmin.css" });
+        } else {
+            res.render("contact", { page_css1: "headerclient.css", page_css2: "none.css" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Erreur serveur");
+    }
+});
+
+
+app.get("/connexion", async function (req, res) {    
+    try {
+        res.render("/connexion", { page_css1: "connexion.css", page_css2: "headeradmin.css" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Erreur serveur");
+    }
+});
 
 
 
