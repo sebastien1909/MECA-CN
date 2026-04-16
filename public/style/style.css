@@ -27,6 +27,10 @@ body{
     .tablet-hidden{
         display:none;
     }
+
+    .pc-only{
+        display:none;
+    }
 }
 
 
@@ -36,6 +40,10 @@ body{
 /* Téléphone */
 @media screen and (max-width : 600px) {
     .mobile-hidden{
+        display:none;
+    }
+
+    .pc-only{
         display:none;
     }
 }

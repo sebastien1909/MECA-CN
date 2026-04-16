@@ -109,7 +109,7 @@ app.get("/devis", async function (req, res) {
         if (req.session.role === "admin") {
             res.render("/admin/devis", { page_css1: "devis.css", page_css2: "headeradmin.css" });
         } else {
-            res.render("devis", { page_css1: "headerclient.css", page_css2: "none.css" });
+            res.render("devis", { page_css1: "headerclient.css", page_css2: "none.css", page_css3: "footer.css" });
         }
     } catch (err) {
         console.error(err);
@@ -133,11 +133,21 @@ app.get("/contact", async function (req, res) {
 
 app.get("/connexion", async function (req, res) {    
     try {
-        res.render("/connexion", { page_css1: "connexion.css", page_css2: "headeradmin.css" });
+        res.render("connexion", { page_css1: "connexion.css", page_css2: "headeradmin.css" });
     } catch (err) {
         console.error(err);
         res.status(500).send("Erreur serveur");
     }
+});
+
+
+app.get("/mentions", async function (req, res) {    
+    try {
+        res.render("mentions", { page_css1: "mentions.css", page_css2: "headeradmin.css" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Erreur serveur");
+    }   
 });
 
 
