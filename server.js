@@ -83,7 +83,7 @@ app.get("/", async function (req, res) {
         if (req.session.role === "admin") {
             res.render("/admin/accueil", { page_css1: "headeradmin.css" });
         } else {
-            res.render("accueil", { page_css1: "headerclient.css", page_css2: "none.css" });
+            res.render("accueil", { page_css1: "headerclient.css", page_css2: "accueilclient.css" });
         }
     } catch (err) {
         console.error(err);

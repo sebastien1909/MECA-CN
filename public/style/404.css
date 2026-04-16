@@ -1,0 +1,47 @@
+/* Ordinateur */
+@media screen and (min-width : 800px){
+    .cont-404{
+        background: #003F87;
+        background: linear-gradient(157deg,rgba(0, 63, 135, 1) 0%, rgba(0, 86, 179, 1) 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        gap: 20px;
+        color:white;
+    }
+
+    .erreur-404-titre{
+        font-size: 4rem;
+        font-weight: 700;
+    }
+
+    .erreur-404-texte{
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+}
+
+/* Tablette */
+@media screen and (min-width : 600px) and (max-width : 800px) {
+    
+}
+
+/* Téléphone */
+@media screen and (max-width : 600px) {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+

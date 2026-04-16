@@ -4,4 +4,38 @@ body{
     font-family: "Manrope", sans-serif;
     background-color: #f8f9fb;
     color:black;
+    overflow-x:hidden;
+}
+
+
+
+
+
+/* Ordinateur */
+@media screen and (min-width : 800px) {
+    .pc-hidden{
+        display:none;
+    }
+}
+
+
+
+
+
+/* Tablette */
+@media screen and (min-width : 600px) and (max-width : 800px) {
+    .tablet-hidden{
+        display:none;
+    }
+}
+
+
+
+
+
+/* Téléphone */
+@media screen and (max-width : 600px) {
+    .mobile-hidden{
+        display:none;
+    }
 }

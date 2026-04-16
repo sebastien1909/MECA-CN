@@ -1,44 +1,158 @@
 header{
-    background: #003F87;
-    background: linear-gradient(157deg,rgba(0, 63, 135, 1) 0%, rgba(0, 86, 179, 1) 100%);
-    padding:25px;
+        background: #003F87;
+        background: linear-gradient(157deg,rgba(0, 63, 135, 1) 0%, rgba(0, 86, 179, 1) 100%);
+        padding:25px;
+    }
+
+    .header_cont{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width:100%;
+        gap: 20px;
+    }
+
+    .header_left_side{
+        display: flex;
+        align-items: center;
+    }
+
+    .logo_header{
+        display: block;
+        width: 100%;
+        max-width: 120px;
+        height: auto;
+    }
+
+    .header_right_side{
+        display: flex;
+        gap: 20px;
+    }
+
+
+    .header_btn a{
+        color:black;
+        text-decoration:none;
+        display: inline-block;
+    }
+
+
+
+
+    .header_btn {
+        position: relative;
+        padding: 12px 24px;
+        background-color: #ffffff;
+        font-weight: 600;
+        border-radius: 50px;
+        border: 2px solid transparent; /* On réserve l'espace pour la bordure */
+        transition: all 0.3s ease;
+        cursor: pointer;
+        z-index: 1;
+        display: inline-block; /* Si tu as enlevé la balise <button> */
+    }
+
+    
+
+
+
+
+
+
+
+
+
+/* Ordinateur */
+@media screen and (min-width : 800px) {
+    /* On crée un seul contour propre plutôt que deux moitiés qui se rentrent dedans */
+    .header_btn::before {
+        content: "";
+        position: absolute;
+        top: -2px; /* On décale de l'épaisseur de la bordure */
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        border: 2px solid #c1cdf6;
+        border-radius: 50px;
+        opacity: 0;
+        transform: scale(0.95); /* Il part de plus petit pour "s'appuyer" proprement */
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        z-index: -1;
+    }
+
+    .header_btn:hover {
+        background-color: #f0f0f0;
+        color: black;
+        transform: scale(1.05);
+    }
+
+    .header_btn:hover::before {
+        opacity: 1;
+        transform: scale(1); /* Il vient épouser parfaitement la forme */
+    }
 }
 
-.header_cont{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width:100%;
-    gap: 20px;
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Tablette */
+@media screen and (min-width : 600px) and (max-width : 800px) {
+    
 }
 
-.header_left_side{
-    display: flex;
-    align-items: center;
-}
 
-.logo_header{
-    display: block;
-    width: auto;
-    max-width: 240px;
-    height: auto;
-}
 
-.header_right_side{
-    display: flex;
-    gap: 20px;
-}
 
-.header_btn{
-    padding: 12px 24px;
-    background-color:#ffffff;
-    font-weight:600;
-    border-radius: 50px;
-    border:none;
-}
 
-.header_btn a{
-    color:black;
-    text-decoration:none;
-    display: inline-block;
+
+
+
+
+
+
+
+
+
+
+/* Téléphone */
+@media screen and (max-width : 600px) {
+    .header_btn{
+        border-radius:5px;
+    }
+
+    .header_btn::before {
+        content: "";
+        position: absolute;
+        top: -2px; /* On décale de l'épaisseur de la bordure */
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        border: 2px solid #c1cdf6;
+        border-radius: 5px;
+        opacity: 0;
+        transform: scale(0.95); /* Il part de plus petit pour "s'appuyer" proprement */
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        z-index: -1;
+    }
+
+    .header_btn:hover {
+        background-color: #f0f0f0;
+        color: black;
+        transform: scale(1.05);
+    }
+
+    .header_btn:hover::before {
+        opacity: 1;
+        transform: scale(1); /* Il vient épouser parfaitement la forme */
+    }
 }
