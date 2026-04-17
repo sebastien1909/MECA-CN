@@ -54,7 +54,7 @@ function authenticate(req, res, next) {
 }
 
 function isAdmin(req, res, next) {
-    if (req.session.userRole == "admin") {
+    if (req.session.role == "admin") {
         next();
     }
     else {
@@ -118,31 +118,92 @@ app.get("/machines", async function (req, res) {
 });
 
 
-app.get("/realisations", async function (req, res) {    
+app.get("/realisations", async function (req, res) {
     try {
-        if (req.session.role === "admin") {
-            res.render("/admin/realisations", { page_css1: "realisations.css", page_css2: "headeradmin.css" });
+        // 1. Récupérer la catégorie depuis l'URL
+        const categorieChoisie = req.query.categorie;
+        
+        // 2. Récupérer toutes les catégories pour le menu de tri
+        const [categories] = await pool.query("SELECT * FROM categories");
+
+        // 3. Récupérer les produits (avec ou sans filtre)
+        let produitsResultat;
+        console.log(produitsResultat);
+        
+        if (categorieChoisie && categorieChoisie !== 'all') {
+            // Requête filtrée si on a un ID de catégorie
+            const [rows] = await pool.query("SELECT * FROM produits WHERE categorie = ?", [categorieChoisie]);
+            produitsResultat = rows;
         } else {
-            res.render("realisations", { page_css1: "headerclient.css", page_css2: "realisations.css" });
+            // Requête globale par défaut
+            const [rows] = await pool.query("SELECT * FROM produits");
+            produitsResultat = rows;
         }
+
+        // 4. Préparer les données pour EJS (gestion du premier produit et des suivants)
+        const produit1 = produitsResultat.length > 0 ? produitsResultat[0] : null;
+        const produitsSuivants = produitsResultat.slice(1);
+
+        // 5. Rendu de la page (Gestion Admin / Client)
+        if (req.session.role === "admin") {
+            res.render("admin/realisations", { 
+                page_css1: "realisationadmin.css", 
+                page_css2: "headeradmin.css", 
+                produits: produitsSuivants, 
+                produit1: produit1, 
+                categories: categories,
+                categorieChoisie: categorieChoisie || 'all'
+            });
+        } else {
+            res.render("realisations", { 
+                page_css1: "headerclient.css", 
+                page_css2: "realisationclient.css", 
+                produits: produitsSuivants, 
+                produit1: produit1, 
+                categories: categories,
+                categorieChoisie: categorieChoisie || 'all'
+            });
+        }
+
+    } catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de la récupération des données");
+    }
+});
+
+app.get("/devis", async function (req, res) {    
+    try {
+
+        const userAgent = req.headers["user-agent"] || "";
+        const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent);
+
+
+
+        if (isMobile) {
+            if (req.session.role === "admin") {
+                res.render("/admin/devis_mobile", { page_css1: "devis.css", page_css2: "headeradmin.css" });
+            } else {
+                res.render("devis_mobile", { page_css1: "headerclient.css", page_css2: "devis.css" });
+            }
+
+
+        } else {
+            if (req.session.role === "admin") {
+                res.render("/admin/devis_ordinateur", { page_css1: "devis.css", page_css2: "headeradmin.css" });
+            } else {
+                res.render("devis_ordinateur", { page_css1: "headerclient.css", page_css2: "devis.css" });
+            }
+        }
+        
     } catch (err) {
         console.error(err);
         res.status(500).send("Erreur serveur");
     }
 });
 
-app.get("/devis", async function (req, res) {    
-    try {
-        if (req.session.role === "admin") {
-            res.render("/admin/devis", { page_css1: "devis.css", page_css2: "headeradmin.css" });
-        } else {
-            res.render("devis", { page_css1: "headerclient.css", page_css2: "devis.css" });
-        }
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Erreur serveur");
-    }
-});
+
+
+
 
 app.get("/contact", async function (req, res) {    
     try {
@@ -179,6 +240,21 @@ app.get("/mentions", async function (req, res) {
 
 
 
+
+
+
+
+
+app.get("/produit", async function (req, res) {
+    const produitId = req.query.produit_id;
+    const [produit] = await pool.query("SELECT * FROM produits WHERE id = ?", [produitId]);
+    const domaine_produit = produit[0].domaine;
+    // Sélectionner 3 produits aléatoires du même domaine, en excluant le produit actuel
+    const peut_plaire_requete = "SELECT * FROM produits WHERE domaine = ? AND id <> ? ORDER BY RAND() LIMIT 3";
+    const [peut_plaire] = await pool.query(peut_plaire_requete, [domaine_produit, produitId]);
+
+    res.render("produit", { produit: produit[0], peut_plaire, page_css: "produit.css" });
+});
 
 
 

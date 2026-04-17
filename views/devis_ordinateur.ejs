@@ -1,0 +1,161 @@
+<%- include('header') %>
+
+<main class="devis-page">
+    <section class="devis-hero">
+        <div class="devis-hero-copy">
+            <p class="devis-hero-label">RÉPONSE EN MOINS DE 24H</p>
+            <h1>Vous voulez un devis ? <span>Nous nous en occupons.</span></h1>
+            <p class="devis-hero-text">Vous avez un projet d'usinage complexe ou une pièce spécifique à réaliser ? Transmettez-nous vos plans et cahiers des charges via le formulaire ci-dessous. Nos experts analysent vos besoins techniques avec précision et nous nous engageons à vous transmettre une étude personnalisée sous 24 heures.</p>
+        </div>
+    </section>
+
+    <section class="devis-form-section">
+        <div class="devis-form-card">
+            <div class="devis-form-header">
+                <h2>Renseignez vos informations</h2>
+                <p>Plus vous êtes précis, plus notre réponse est rapide et adaptée.</p>
+            </div>
+
+            <form class="devis-form" action="/devis" method="post" enctype="multipart/form-data">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nom complet *</label>
+                        <input type="text" name="nom" placeholder="Votre nom complet" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nom de l'entreprise</label>
+                        <input type="text" name="entreprise" placeholder="Nom de l'entreprise">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Pays *</label>
+                        <input type="text" name="pays" placeholder="Votre pays" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Département / État</label>
+                        <input type="text" name="region" placeholder="Département ou État">
+                    </div>
+                </div>
+
+                <div class="form-group full">
+                    <label>Adresse complète *</label>
+                    <input type="text" name="adresse" placeholder="Adresse complète" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Adresse email *</label>
+                        <input type="email" name="email" placeholder="Votre email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Téléphone</label>
+                        <input type="tel" name="telephone" placeholder="Votre téléphone">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nom du produit *</label>
+                        <input type="text" name="produit" placeholder="Nom du produit" required>
+                    </div>
+                    <div class="form-group quantity-group">
+                        <label>Quantité *</label>
+                        <input type="number" name="quantite" placeholder="Quantité" min="1" required>
+                    </div>
+                </div>
+
+                <div class="form-row upload-row">
+                    <div class="upload-box">
+                        <div class="upload-icon">⇪</div>
+                        <p>Glissez glissez vos fichiers</p>
+                        <span>ou</span>
+                        <button type="button" class="upload-button">Rechercher un fichier</button>
+                        <input type="file" name="fichiers" multiple hidden>
+                    </div>
+
+                    <div class="files-summary">
+                        <p class="files-title">Fichiers téléversés</p>
+                        <div class="file-item">
+                            <span>Plan3D_fichierproduit.kv</span>
+                            <button type="button" class="file-remove">×</button>
+                        </div>
+                        <div class="file-item">
+                            <span>cotes_fichierproduit.pdf</span>
+                            <button type="button" class="file-remove">×</button>
+                        </div>
+                        <div class="file-item">
+                            <span>Description_produit_TailleMatiere.pdf</span>
+                            <button type="button" class="file-remove">×</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group full">
+                    <label>Description produit *</label>
+                    <textarea name="description" rows="6" placeholder="Description du produit" required></textarea>
+                </div>
+
+                <div class="form-group full">
+                    <label>Délais demandés</label>
+                    <div class="calendar-card">
+                        <div class="calendar-header">
+                            <span>mars 2025</span>
+                        </div>
+                        <div class="calendar-grid">
+                            <div class="calendar-day-label">Lun</div>
+                            <div class="calendar-day-label">Mar</div>
+                            <div class="calendar-day-label">Mer</div>
+                            <div class="calendar-day-label">Jeu</div>
+                            <div class="calendar-day-label">Ven</div>
+                            <div class="calendar-day-label">Sam</div>
+                            <div class="calendar-day-label">Dim</div>
+
+                            <div class="calendar-day disabled">26</div>
+                            <div class="calendar-day disabled">27</div>
+                            <div class="calendar-day disabled">28</div>
+                            <div class="calendar-day disabled">29</div>
+                            <div class="calendar-day disabled">30</div>
+                            <div class="calendar-day">1</div>
+                            <div class="calendar-day">2</div>
+                            <div class="calendar-day">3</div>
+                            <div class="calendar-day">4</div>
+                            <div class="calendar-day">5</div>
+                            <div class="calendar-day">6</div>
+                            <div class="calendar-day">7</div>
+                            <div class="calendar-day">8</div>
+                            <div class="calendar-day active">9</div>
+                            <div class="calendar-day">10</div>
+                            <div class="calendar-day">11</div>
+                            <div class="calendar-day">12</div>
+                            <div class="calendar-day">13</div>
+                            <div class="calendar-day">14</div>
+                            <div class="calendar-day">15</div>
+                            <div class="calendar-day">16</div>
+                            <div class="calendar-day">17</div>
+                            <div class="calendar-day">18</div>
+                            <div class="calendar-day">19</div>
+                            <div class="calendar-day">20</div>
+                            <div class="calendar-day">21</div>
+                            <div class="calendar-day">22</div>
+                            <div class="calendar-day">23</div>
+                            <div class="calendar-day">24</div>
+                            <div class="calendar-day">25</div>
+                            <div class="calendar-day">26</div>
+                            <div class="calendar-day">27</div>
+                            <div class="calendar-day">28</div>
+                            <div class="calendar-day">29</div>
+                            <div class="calendar-day">30</div>
+                            <div class="calendar-day">31</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="devis-submit">Envoyez votre demande de devis</button>
+            </form>
+        </div>
+    </section>
+</main>
+
+<%- include("footer") %>
