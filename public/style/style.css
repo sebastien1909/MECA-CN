@@ -1,3 +1,7 @@
+html{
+    scroll-behavior: smooth !important;
+}
+
 body{
     margin:0;
     padding:0;
@@ -8,12 +12,22 @@ body{
 }
 
 
+.mobile-icon{
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+}
+
 
 
 
 /* Ordinateur */
-@media screen and (min-width : 800px) {
+@media screen and (min-width : 900px) {
     .pc-hidden{
+        display:none;
+    }
+
+    .phone-only{
         display:none;
     }
 }
@@ -23,7 +37,7 @@ body{
 
 
 /* Tablette */
-@media screen and (min-width : 600px) and (max-width : 800px) {
+@media screen and (min-width : 600px) and (max-width : 900px) {
     .tablet-hidden{
         display:none;
     }
@@ -31,6 +45,12 @@ body{
     .pc-only{
         display:none;
     }
+    
+    .phone-only{
+        display:none;
+    }
+
+
 }
 
 

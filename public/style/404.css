@@ -1,5 +1,5 @@
 /* Ordinateur */
-@media screen and (min-width : 800px){
+@media screen and (min-width : 900px){
     .cont-404{
         background: #003F87;
         background: linear-gradient(157deg,rgba(0, 63, 135, 1) 0%, rgba(0, 86, 179, 1) 100%);
@@ -25,7 +25,7 @@
 }
 
 /* Tablette */
-@media screen and (min-width : 600px) and (max-width : 800px) {
+@media screen and (min-width : 600px) and (max-width : 900px) {
     
 }
 

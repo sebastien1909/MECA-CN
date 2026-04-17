@@ -104,12 +104,39 @@ app.get("/presentation", async function (req, res) {
     }
 });
 
+app.get("/machines", async function (req, res) {    
+    try {
+        if (req.session.role === "admin") {
+            res.render("/admin/parcmachine", { page_css1: "parcmachine.css", page_css2: "headeradmin.css" });
+        } else {
+            res.render("parcmachine", { page_css1: "headerclient.css", page_css2: "parcmachine.css" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Erreur serveur");
+    }
+});
+
+
+app.get("/realisations", async function (req, res) {    
+    try {
+        if (req.session.role === "admin") {
+            res.render("/admin/realisations", { page_css1: "realisations.css", page_css2: "headeradmin.css" });
+        } else {
+            res.render("realisations", { page_css1: "headerclient.css", page_css2: "realisations.css" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Erreur serveur");
+    }
+});
+
 app.get("/devis", async function (req, res) {    
     try {
         if (req.session.role === "admin") {
             res.render("/admin/devis", { page_css1: "devis.css", page_css2: "headeradmin.css" });
         } else {
-            res.render("devis", { page_css1: "headerclient.css", page_css2: "none.css", page_css3: "footer.css" });
+            res.render("devis", { page_css1: "headerclient.css", page_css2: "devis.css" });
         }
     } catch (err) {
         console.error(err);
@@ -122,7 +149,7 @@ app.get("/contact", async function (req, res) {
         if (req.session.role === "admin") {
             res.render("/admin/contact", { page_css1: "contact.css", page_css2: "headeradmin.css" });
         } else {
-            res.render("contact", { page_css1: "headerclient.css", page_css2: "none.css" });
+            res.render("contact", { page_css1: "headerclient.css", page_css2: "contact.css" });
         }
     } catch (err) {
         console.error(err);
