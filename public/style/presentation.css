@@ -1,40 +1,78 @@
-/* Ordinateur */
-@media screen and (min-width : 900px){
-    .presentation-top-content{
-        display:flex;
-        flex-direction:column;
-        gap:10px;
-        width:50%;
-    }
+:root {
+    color-scheme: light;
+}
 
-    .presentation-top{
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        margin:50px 100px;
-        gap:20%
-    }
+.presentation-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    max-width: 1220px;
+    margin: 70px auto 60px;
+    padding: 0 24px;
+}
+
+.presentation-top-content {
+    max-width: 620px;
+}
+
+.presentation-top h1 {
+    font-size: clamp(3rem, 4vw, 4.8rem);
+    line-height: 0.95;
+    margin: 0 0 24px;
+    color: #071d3d;
+}
+
+.presentation-top h3 {
+    margin: 0 0 18px;
+    font-size: 0.85rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: #0f4bb7;
+}
+
+.presentation-top p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.9;
+    color: #334155;
+    max-width: 560px;
+}
+
+.presentation-top-img {
+    display: flex;
+    justify-content: center;
+}
+
+.presentation-top-img img {
+    width: 100%;
+    max-width: 520px;
+    border-radius: 32px;
+    box-shadow: 0 28px 80px rgba(15, 23, 42, 0.12);
+    object-fit: cover;
 }
 
 .histoire-container {
-    max-width: 1200px;
+    max-width: 1180px;
     margin: 0 auto 80px;
-    padding: 0 20px;
+    padding: 60px 24px;
+    background: rgba(0, 63, 135, 0.1);
+    border-radius: 28px;
 }
 
 .histoire-container h4 {
-    font-size: 1rem;
-    letter-spacing: .35em;
+    font-size: 0.95rem;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
     color: #0f4bb7;
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
 }
 
 .timeline {
     position: relative;
     margin: 0 auto;
-    padding: 20px 0;
+    padding: 40px 0;
 }
 
 .timeline::before {
@@ -43,7 +81,7 @@
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 4px;
+    width: 3px;
     height: 100%;
     background: #cbd5e1;
 }
@@ -51,7 +89,7 @@
 .timeline-event {
     position: relative;
     width: 50%;
-    padding: 20px 30px;
+    padding: 0 30px;
     box-sizing: border-box;
 }
 
@@ -67,7 +105,7 @@
 
 .timeline-marker {
     position: absolute;
-    top: 28px;
+    top: 32px;
     width: 18px;
     height: 18px;
     background: #0f4bb7;
@@ -99,14 +137,14 @@
 
 .timeline-date {
     display: inline-block;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     color: #0f4bb7;
     font-weight: 700;
 }
 
 .timeline-card h5 {
     margin: 0 0 14px;
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     color: #0f326d;
 }
 
@@ -116,61 +154,410 @@
     line-height: 1.8;
 }
 
-/* Tablette */
-@media screen and (min-width : 600px) and (max-width : 900px) {
-    .presentation-top {
-        flex-direction: column;
-        margin: 40px 40px;
+.adaptabilite-holder {
+    max-width: 1180px;
+    margin: 0 auto 80px;
+    padding: 0 24px;
+}
+
+.adaptabilite-holder h2 {
+    font-size: 2.1rem;
+    color: #071d3d;
+    margin: 0 0 18px;
+}
+
+.adaptabilite-holder p {
+    margin: 0 0 28px;
+    max-width: 820px;
+    color: #475569;
+    line-height: 1.9;
+    font-size: 1rem;
+}
+
+.deux-colonnes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 32px;
+    padding: 0;
+    margin: 0 0 30px;
+    list-style: none;
+}
+
+.deux-colonnes li {
+    background: #f8fbff;
+    padding: 20px 22px;
+    border-radius: 18px;
+    color: #334155;
+    line-height: 1.7;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.04);
+}
+
+.adaptabilite-holder p:last-of-type {
+    margin-top: 0;
+}
+
+.pourquoi {
+    max-width: 1180px;
+    margin: 0 auto 80px;
+    padding: 0 24px;
+}
+
+.pourquoi h2 {
+    font-size: 2.1rem;
+    color: #071d3d;
+    margin-bottom: 32px;
+}
+
+.info-holder {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.info-holder > div {
+    background: #f8fbff;
+    border-radius: 24px;
+    padding: 28px;
+    min-height: 230px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+}
+
+.info-holder img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+}
+
+.info-holder p {
+    margin: 0;
+    color: #475569;
+    line-height: 1.8;
+    font-size: 0.96rem;
+}
+
+.info-holder strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #0f4bb7;
+    font-size: 1rem;
+}
+
+.ecologie {
+    max-width: 1180px;
+    margin: 0 auto 80px;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+}
+
+.eco-img-holder img {
+    width: 100%;
+    border-radius: 32px;
+    box-shadow: 0 28px 80px rgba(15, 23, 42, 0.12);
+    object-fit: cover;
+}
+
+.eco-content-holder h2 {
+    font-size: 2.1rem;
+    margin: 0 0 22px;
+    color: #071d3d;
+}
+
+.eco-content-holder p {
+    margin: 0 0 16px;
+    color: #475569;
+    line-height: 1.9;
+    font-size: 1rem;
+}
+
+.eco-highlight {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 1.5rem;
+    color: #0f4bb7;
+    font-weight: 700;
+}
+
+.devis {
+    max-width: 1180px;
+    margin: 0 auto 80px;
+    padding: 0 24px;
+    text-align: center;
+}
+
+.devis h2 {
+    margin: 0 0 24px;
+    font-size: 2rem;
+    color: #071d3d;
+}
+
+.devis-btn {
+    background: #0f4bb7;
+    color: #ffffff;
+    border: none;
+    border-radius: 999px;
+    padding: 16px 34px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.devis-btn:hover {
+    background: #0b3f96;
+    transform: translateY(-1px);
+}
+
+.location {
+    max-width: 1180px;
+    margin: 0 auto 120px;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 40px;
+    align-items: start;
+}
+
+.location h2 {
+    margin: 0 0 18px;
+    font-size: 2.1rem;
+    color: #071d3d;
+}
+
+.location p {
+    margin: 0 0 30px;
+    color: #475569;
+    line-height: 1.9;
+    font-size: 1rem;
+}
+
+.location .atelier,
+.location .email,
+.location .telephone {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    align-items: flex-start;
+    background: #f8fbff;
+    border-radius: 22px;
+    padding: 20px 22px;
+    margin-bottom: 22px;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.06);
+}
+
+.location .atelier img,
+.location .email img,
+.location .telephone img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+    margin-top: 4px;
+}
+
+.location .atelier strong,
+.location .email strong,
+.location .telephone strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #0f4bb7;
+}
+
+.contact-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: none;
+    background: #0f4bb7;
+    color: #ffffff;
+    border-radius: 999px;
+    padding: 16px 28px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.contact-btn:hover {
+    background: #0b3f96;
+    transform: translateY(-1px);
+}
+
+.location .right-part img {
+    width: 100%;
+    border-radius: 28px;
+    object-fit: cover;
+    box-shadow: 0 28px 80px rgba(15, 23, 42, 0.12);
+}
+
+@media screen and (max-width: 1024px) {
+    .presentation-top,
+    .ecologie,
+    .location {
+        grid-template-columns: 1fr;
     }
+
+    .presentation-top {
+        margin: 50px auto 50px;
+    }
+}
+
+@media screen and (max-width: 860px) {
+    .presentation-top {
+        gap: 40px;
+    }
+
+    .info-holder {
+        grid-template-columns: 1fr;
+    }
+
+    .deux-colonnes {
+        grid-template-columns: 1fr;
+    }
+
     .timeline-event {
         width: 100%;
-        padding: 18px 0;
+        padding: 12px 0 12px 0;
     }
+
     .timeline-event.left,
     .timeline-event.right {
         left: 0;
         text-align: left;
     }
+
+    .timeline::before {
+        left: 20px;
+        transform: translateX(0);
+    }
+
     .timeline-event.left .timeline-marker,
     .timeline-event.right .timeline-marker {
         left: 20px;
     }
-    .timeline::before {
-        left: 20px;
-    }
+
     .timeline-card {
-        max-width: 100%;
         margin-left: 50px;
+        max-width: calc(100% - 70px);
     }
 }
 
-/* Téléphone */
-@media screen and (max-width : 600px) {
-    .presentation-top {
-        flex-direction: column;
-        margin: 30px 20px;
+@media screen and (max-width: 640px) {
+    .presentation-top,
+    .histoire-container,
+    .adaptabilite-holder,
+    .pourquoi,
+    .ecologie,
+    .devis,
+    .location {
+        padding: 0 18px;
     }
-    .presentation-top-img img {
-        width: 100%;
-        height: auto;
+
+    .histoire-container {
+        margin: 0 auto 80px;
+        padding: 40px 18px;
+        background: rgba(0, 63, 135, 0.1);
     }
+
+    .presentation-top h1 {
+        font-size: 2.8rem;
+    }
+
     .timeline {
-        padding: 0;
+        padding: 0 0 0 0;
     }
+
     .timeline::before {
         left: 18px;
+        width: 2px;
     }
+
     .timeline-event {
         width: 100%;
-        padding: 16px 0 16px 0;
+        padding: 0 0 28px 0;
     }
+
+    .timeline-event.left,
+    .timeline-event.right {
+        left: 0;
+        text-align: left;
+    }
+
     .timeline-event.left .timeline-marker,
     .timeline-event.right .timeline-marker {
         left: 18px;
     }
+
     .timeline-card {
         margin-left: 50px;
-        padding: 22px 20px;
+        margin-right: 0;
+        max-width: calc(100% - 70px);
+        padding: 20px 18px;
+        background: #ffffff;
+    }
+
+    .timeline-date {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+
+    .timeline-card h5 {
+        margin: 0 0 10px;
+        font-size: 1.1rem;
+    }
+
+    .timeline-card p {
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .presentation-top-img img,
+    .info-holder > div,
+    .location .right-part img {
+        border-radius: 24px;
+    }
+
+    .devis-btn,
+    .contact-btn {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 520px) {
+    .presentation-top {
+        margin: 40px auto 40px;
+    }
+
+    .presentation-top h1 {
+        font-size: 2.4rem;
+    }
+
+    .presentation-top p,
+    .eco-content-holder p,
+    .location p,
+    .timeline-card p {
+        font-size: 0.97rem;
+    }
+
+    .adaptabilite-holder h2,
+    .pourquoi h2,
+    .devis h2,
+    .location h2 {
+        font-size: 1.8rem;
+    }
+
+    .deux-colonnes {
+        gap: 14px;
+    }
+
+    .info-holder > div {
+        padding: 22px;
     }
 }
 
