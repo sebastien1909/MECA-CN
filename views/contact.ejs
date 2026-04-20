@@ -1,3 +1,100 @@
 <%- include('header') %>
 
+
+<section class="title-holder">
+
+    <h3 class="pc-only">
+        RÉPONSE EN MOINS DE 24H
+    </h3>
+
+    <h1>
+        Collaborons sur votre <br><span>prochain défi technique</span>
+    </h1>
+
+    <p>
+        Basés à Widehem, nous transformons vos plans les plus complexes en composants de précision. Nos experts sont à votre disposition pour toute demande technique ou commerciale.
+    </p>
+</section>
+
+
+<section class="contact-holder">
+    <div class="left-part">
+
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-icon">
+                    <img src="/img/icons/email.png" alt="Icône email">
+                </div>
+                <div>
+                    <h4>Contactez-nous par email</h4>
+                    <p>meca.cn@wanadoo.fr</p>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">
+                    <img src="/img/icons/telephone.png" alt="Icône téléphone">
+                </div>
+                <div>
+                    <h4>Contactez-nous par téléphone</h4>
+                    <p>+33 3 21 84 25 11</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-card info-card-large">
+            <div class="info-icon">
+                <img src="/img/icons/localisation.png" alt="Icône localisation">
+            </div>
+            <div>
+                <h4>Notre localisation</h4>
+                <p>Route de Camiers<br>62630, Widehem</p>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <h3>Réponse rapide</h3>
+            <p><strong>Réponse en moins de 24h du lundi au vendredi.</strong> Déposez votre cahier des charges et recevez un chiffrage technique détaillé sous 24. Nos ingénieurs analysent vos fichiers STEP, DXF, PDF, ou autre, afin de garantir une faisabilité optimale.</p>
+        </div>
+    </div>
+
+    <div class="right-part">
+        <form method="POST" action="/envoyer-contact" class="contact-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nom">Nom complet *</label>
+                    <input type="text" id="nom" name="nom" placeholder="Jean Dupont" required>
+                </div>
+                <div class="form-group">
+                    <label for="entreprise">Nom de l’entreprise *</label>
+                    <input type="text" id="entreprise" name="entreprise" placeholder="MECA-CN" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="email">Adresse email *</label>
+                    <input type="email" id="email" name="email" placeholder="contact@exemple.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="telephone">Téléphone</label>
+                    <input type="tel" id="telephone" name="telephone" placeholder="+33 6 12 34 56 78">
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="objet">Objet du mail *</label>
+                <input type="text" id="objet" name="objet" placeholder="Demande de devis / Informations" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="message">Contenu du mail *</label>
+                <textarea id="message" name="message" rows="8" placeholder="Décrivez votre besoin, précisez les quantités, dimensions, matériaux, etc." required></textarea>
+            </div>
+
+            <button type="submit" class="submit-button">Envoyer</button>
+        </form>
+    </div>
+</section>
+
+
 <%- include('footer') %>

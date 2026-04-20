@@ -37,7 +37,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    cookie: { maxAge: 60 * 60 * 1000 ,
+            secure: false,
+            httpOnly: true,
+    } 
 }));
 
 
@@ -84,9 +88,12 @@ function isAdmin(req, res, next) {
 app.get("/", async function (req, res) {    
     try {
         if (req.session.role === "admin") {
-            res.render("/admin/accueil", { page_css1: "headeradmin.css" });
+            return res.redirect("/admin/accueil"); 
         } else {
-            res.render("accueil", { page_css1: "headerclient.css", page_css2: "accueilclient.css" });
+            res.render("accueil", { 
+                page_css1: "headerclient.css", 
+                page_css2: "accueilclient.css" 
+            });
         }
     } catch (err) {
         console.error(err);
@@ -97,7 +104,7 @@ app.get("/", async function (req, res) {
 app.get("/presentation", async function (req, res) {    
     try {
         if (req.session.role === "admin") {
-            res.render("/admin/presentation", { page_css1: "presentation.css", page_css2: "headeradmin.css" });
+            res.render("admin/presentation", { page_css1: "presentation.css", page_css2: "headeradmin.css" });
         } else {
             res.render("presentation", { page_css1: "headerclient.css", page_css2: "presentation.css" });
         }
@@ -176,15 +183,13 @@ app.get("/realisations", async function (req, res) {
 
 app.get("/devis", async function (req, res) {    
     try {
-        const viewPath = req.session.role === "admin" ? "admin/devis" : "devis";
-        const css1 = req.session.role === "admin" ? "headeradmin.css" : "headerclient.css";
-
         const [dimensions] = await pool.query('SELECT MAX(d_x) as max_x, MAX(d_y) as max_y, MAX(d_z) as max_z FROM machines');
         
-        res.render(viewPath, { 
-            page_css1: css1, 
+        res.render("devis", { 
+            page_css1: "headerclient.css", 
             page_css2: "devis.css",
-            maxDimensions: dimensions[0]
+            maxDimensions: dimensions[0],
+            role: req.session.role
         });
     } catch (err) {
         console.error(err);
@@ -198,11 +203,7 @@ app.get("/devis", async function (req, res) {
 
 app.get("/contact", async function (req, res) {    
     try {
-        if (req.session.role === "admin") {
-            res.render("/admin/contact", { page_css1: "contact.css", page_css2: "headeradmin.css" });
-        } else {
-            res.render("contact", { page_css1: "headerclient.css", page_css2: "contact.css" });
-        }
+        res.render("contact", { page_css1: "headerclient.css", page_css2: "contact.css" });
     } catch (err) {
         console.error(err);
         res.status(500).send("Erreur serveur");
