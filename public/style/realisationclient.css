@@ -67,14 +67,6 @@
     main{
         padding:100px 100px 0px 100px;
     }
-    
-    h3{
-        font-family:"Inter", sans-serif;
-        font-size: 1rem;
-        letter-spacing: 18%;
-        font-weight:bold;
-        color:#003F87;
-    }
 
     .page-title-container{
         max-width:75%;

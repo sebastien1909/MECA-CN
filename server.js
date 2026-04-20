@@ -189,9 +189,9 @@ app.get("/devis", async function (req, res) {
 
         } else {
             if (req.session.role === "admin") {
-                res.render("/admin/devis_ordinateur", { page_css1: "devis.css", page_css2: "headeradmin.css" });
+                res.render("/admin/devis_ordinateur", { page_css1: "devis_ordi.css", page_css2: "headeradmin.css" });
             } else {
-                res.render("devis_ordinateur", { page_css1: "headerclient.css", page_css2: "devis.css" });
+                res.render("devis_ordinateur", { page_css1: "headerclient.css", page_css2: "devis_ordi.css" });
             }
         }
         

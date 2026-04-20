@@ -6,13 +6,16 @@
 }
 
 .devis-hero{
-    background: linear-gradient(180deg, #0f4bb7 0%, #0b6fc9 100%);
-    padding:90px 120px 80px;
+    padding:90px 120px 30px;
+    background:transparent;
 }
 
-.devis-hero-copy{
-    max-width:920px;
-    margin:0 auto;
+.devis-hero-label{
+    font-family:"Inter", sans-serif;
+    font-size: 1rem;
+    letter-spacing: 18%;
+    font-weight:bold;
+    color:#003F87;
 }
 
 .devis-hero-label{
@@ -21,23 +24,28 @@
     font-size:.85rem;
     letter-spacing:.35em;
     text-transform:uppercase;
-    color:#c7dcff;
+    color:#0f4bb7;
 }
 
 .devis-hero h1{
     margin:0;
     font-size:3.8rem;
     line-height:1.02;
-    color:#ffffff;
+    color:#101828;
 }
 
+.devis-hero h1 span{
+    display:block;
+    margin-top:14px;
+    color:#0056b3;
+}
 
 .devis-hero-text{
     margin:28px 0 0;
-    max-width:800px;
+    max-width:780px;
     font-size:1.05rem;
     line-height:1.9;
-    color:rgba(255,255,255,0.92);
+    color:#475569;
 }
 
 .devis-form-section{
@@ -163,13 +171,17 @@ textarea{
     color:#263555;
 }
 
+.upload-box span{
+    color:#64748b;
+    font-size:.95rem;
+}
 
 .upload-button{
     border:none;
     border-radius:999px;
     background:#0f4bb7;
     color:#ffffff;
-    padding:14px 30px;
+    padding:14px 34px;
     cursor:pointer;
     font-weight:700;
 }
@@ -286,71 +298,10 @@ textarea{
     background:#0b3f96;
 }
 
-span{
-    color:#0056B3;
+.devis-hero-label{
+    color:#0056b3;
+    
 }
 
-/* Ordinateur */
-@media screen and (min-width : 900px){
-}
 
-/* Tablette */
-@media screen and (min-width : 600px) and (max-width : 900px) {
-    .devis-hero{
-        padding:70px 40px 60px;
-    }
-
-    .devis-hero h1{
-        font-size:3rem;
-    }
-
-    .devis-form-section{
-        padding:50px 40px 90px;
-    }
-
-    .devis-form-card{
-        padding:32px;
-    }
-
-    .form-row,
-    .upload-row{
-        grid-template-columns: 1fr;
-    }
-
-    .quantity-group input{
-        max-width:100%;
-    }
-}
-
-/* Téléphone */
-@media screen and (max-width : 600px) {
-    .devis-hero{
-        padding:55px 24px 45px;
-    }
-
-    .devis-hero h1{
-        font-size:2.4rem;
-    }
-
-    .devis-form-section{
-        padding:40px 20px 60px;
-    }
-
-    .devis-form-card{
-        padding:26px 20px;
-    }
-
-    .form-row,
-    .upload-row{
-        grid-template-columns: 1fr;
-    }
-
-    .upload-box{
-        min-height:260px;
-    }
-
-    .calendar-grid{
-        grid-template-columns: repeat(7, minmax(0, 1fr));
-    }
-}
 

@@ -11,6 +11,13 @@ body{
     overflow-x:hidden;
 }
 
+h3{
+        font-family:"Inter", sans-serif;
+        font-size: 1rem;
+        letter-spacing: 18%;
+        font-weight:bold;
+        color:#003F87;
+    }
 
 .mobile-icon{
     width: 16px;
