@@ -241,7 +241,6 @@ app.get("/produit", async function (req, res) {
     const produitId = req.query.produit_id;
     const [produit] = await pool.query("SELECT * FROM produits WHERE id = ?", [produitId]);
     const domaine_produit = produit[0].domaine;
-    // Sélectionner 3 produits aléatoires du même domaine, en excluant le produit actuel
     const peut_plaire_requete = "SELECT * FROM produits WHERE domaine = ? AND id <> ? ORDER BY RAND() LIMIT 3";
     const [peut_plaire] = await pool.query(peut_plaire_requete, [domaine_produit, produitId]);
 
@@ -289,22 +288,21 @@ app.get("/admin/presentation", async function (req, res) {
 
 app.post("/envoyer-devis", upload.array('fichiers', 10), async (req, res) => {
     try {
-        // 1. Configuration Nodemailer
         const transporter = nodemailer.createTransport({
-            service: 'gmail', // Utilise le preset Gmail
+            service: 'gmail', 
             auth: {
                 user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS  // Utilise ton "Mot de passe d'application" Google
+                pass: process.env.EMAIL_PASS  
             }
         });
 
-        // 2. Préparation des pièces jointes
+
         const attachments = req.files.map(file => ({
             filename: file.originalname,
             path: file.path
         }));
 
-        // 3. Envoi du mail
+
         await transporter.sendMail({
             from: `"Site Web MECA-CN" <${process.env.EMAIL_USER}>`,
             to: process.env.EMAIL_DEST || 'contact@meca-cn.com',
@@ -370,7 +368,7 @@ app.post("/envoyer-devis", upload.array('fichiers', 10), async (req, res) => {
             attachments: attachments
         });
 
-        // 4. NETTOYAGE : Supprimer les fichiers du serveur une fois le mail envoyé
+
         req.files.forEach(file => {
             fs.unlink(file.path, (err) => {
                 if (err) console.error("Erreur suppression fichier temporaire:", err);
@@ -409,6 +407,55 @@ app.get('/api/max-dimensions', async (req, res) => {
 });
 
 
+
+
+app.post("/envoyer-contact", async function (req, res) {
+
+    const { nom, entreprise, email, telephone, objet, message } = req.body;
+
+    try {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
+
+        await transporter.sendMail({
+            from: `"${nom}" <${process.env.EMAIL_USER}>`,
+            to: process.env.EMAIL_DEST || 'meca.cn@wanadoo.fr',
+            replyTo: email,
+            subject: `[CONTACT SITE] ${objet}`,
+            text: `Message de ${nom} (Entreprise: ${entreprise})\nTel: ${telephone}\n\n${message}`,
+            html: `
+                <h3>Nouveau message de contact</h3>
+                <p><strong>Nom:</strong> ${nom}</p>
+                <p><strong>Entreprise:</strong> ${entreprise}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Téléphone:</strong> ${telephone}</p>
+                <p><strong>Objet:</strong> ${objet}</p>
+                <p><strong>Message:</strong></p>
+                <p>${message.replace(/\n/g, '<br>')}</p>
+            `
+        });
+
+
+        res.render("contact", { 
+            page_css1: "headerclient.css", 
+            page_css2: "contact.css", 
+            success: "Votre message a bien été envoyé !" 
+        });
+
+    } catch (err) {
+        console.error("Erreur Nodemailer :", err);
+        res.render("contact", { 
+            page_css1: "headerclient.css", 
+            page_css2: "contact.css", 
+            error: "Désolé, une erreur est survenue. Veuillez nous contacter par téléphone." 
+        });
+    }
+});
 
 
 

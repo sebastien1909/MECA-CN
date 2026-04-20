@@ -1,101 +1,48 @@
 <%- include('header') %>
 
 <main class="connexion-page">
+    <section class="connexion-hero">
+        <div class="hero-content">
+            <span class="hero-eyebrow">Vous êtes</span>
+            <h1>Administrateur ?</h1>
+            <p class="hero-text">Accédez au Back Office administratif de MECA-CN. Gestion des contenus, informations sur le trafic du site et modification des données, tout est disponible dans votre espace sécurisé.</p>
+            <div class="status-card">
+                <span class="status-dot"></span>
+                <div>
+                    <p>Status</p>
+                    <strong>Opérationnel</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="connexion-card">
-        <h1>Connexion</h1>
+        <div class="card-head">
+            <p>Connectez-vous pour accéder à votre</p>
+            <h2>BackOffice</h2>
+        </div>
+
         <% if (typeof error !== 'undefined' && error) { %>
             <div class="connexion-error"><%= error %></div>
         <% } %>
+
         <form action="/connexion" method="post" class="connexion-form">
             <div class="connexion-group">
-                <label for="id_user">Identifiant</label>
+                <label for="id_user">Identifiant *</label>
                 <input type="text" id="id_user" name="id_user" placeholder="Votre identifiant" required>
             </div>
             <div class="connexion-group">
-                <label for="password">Mot de passe</label>
+                <label for="password">Mot de passe *</label>
                 <input type="password" id="password" name="password" placeholder="********" required>
+            </div>
+            <div class="forgot-line">
+                <a href="#">Mot de passe oublié ?</a>
             </div>
             <button type="submit" class="connexion-submit">Se connecter</button>
         </form>
     </section>
 </main>
 
-<style>
-    .connexion-page {
-        min-height: calc(100vh - 120px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 40px 20px;
-        background: #f4f7fb;
-    }
-    .connexion-card {
-        width: min(420px, 100%);
-        padding: 36px 30px;
-        background: #ffffff;
-        border-radius: 24px;
-        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
-        text-align: left;
-    }
-    .connexion-card h1 {
-        margin: 0 0 24px;
-        font-size: 2rem;
-        color: #0f326d;
-    }
-    .connexion-error {
-        margin-bottom: 18px;
-        padding: 14px 18px;
-        background: #fee2e2;
-        border: 1px solid #fecaca;
-        border-radius: 16px;
-        color: #991b1b;
-    }
-    .connexion-form {
-        display: grid;
-        gap: 18px;
-    }
-    .connexion-group {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-    .connexion-group label {
-        font-weight: 700;
-        color: #334155;
-    }
-    .connexion-group input {
-        width: 100%;
-        padding: 14px 16px;
-        border-radius: 16px;
-        border: 1px solid #d7dce7;
-        background: #f8f9fb;
-        font-size: 1rem;
-        color: #172033;
-        outline: none;
-    }
-    .connexion-group input:focus {
-        border-color: #0f4bb7;
-        box-shadow: 0 0 0 4px rgba(15, 75, 183, 0.12);
-    }
-    .connexion-submit {
-        width: 100%;
-        padding: 16px 20px;
-        background: #0f4bb7;
-        color: #ffffff;
-        border: none;
-        border-radius: 999px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: background 0.3s ease;
-    }
-    .connexion-submit:hover {
-        background: #0b3f96;
-    }
-    @media (max-width: 600px) {
-        .connexion-card {
-            padding: 28px 20px;
-        }
-    }
-</style>
+<%- include('footer') %>
 
 
