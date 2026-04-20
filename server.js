@@ -7,12 +7,15 @@ import multer from "multer";
 import path from "path";
 import nodemailer from "nodemailer";
 import fs from "fs";
+import "dotenv/config";
+import sha256 from "js-sha256";
+
 
 
 // Multer
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/img/produit'); 
+        cb(null, 'public/img/produits'); 
     },
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname);
@@ -96,7 +99,7 @@ app.get("/presentation", async function (req, res) {
         if (req.session.role === "admin") {
             res.render("/admin/presentation", { page_css1: "presentation.css", page_css2: "headeradmin.css" });
         } else {
-            res.render("presentation", { page_css1: "headerclient.css", page_css2: "none.css" });
+            res.render("presentation", { page_css1: "headerclient.css", page_css2: "presentation.css" });
         }
     } catch (err) {
         console.error(err);
@@ -173,28 +176,16 @@ app.get("/realisations", async function (req, res) {
 
 app.get("/devis", async function (req, res) {    
     try {
+        const viewPath = req.session.role === "admin" ? "admin/devis" : "devis";
+        const css1 = req.session.role === "admin" ? "headeradmin.css" : "headerclient.css";
 
-        const userAgent = req.headers["user-agent"] || "";
-        const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent);
-
-
-
-        if (isMobile) {
-            if (req.session.role === "admin") {
-                res.render("/admin/devis_mobile", { page_css1: "devis.css", page_css2: "headeradmin.css" });
-            } else {
-                res.render("devis_mobile", { page_css1: "headerclient.css", page_css2: "devis.css" });
-            }
-
-
-        } else {
-            if (req.session.role === "admin") {
-                res.render("/admin/devis_ordinateur", { page_css1: "devis_ordi.css", page_css2: "headeradmin.css" });
-            } else {
-                res.render("devis_ordinateur", { page_css1: "headerclient.css", page_css2: "devis_ordi.css" });
-            }
-        }
+        const [dimensions] = await pool.query('SELECT MAX(d_x) as max_x, MAX(d_y) as max_y, MAX(d_z) as max_z FROM machines');
         
+        res.render(viewPath, { 
+            page_css1: css1, 
+            page_css2: "devis.css",
+            maxDimensions: dimensions[0]
+        });
     } catch (err) {
         console.error(err);
         res.status(500).send("Erreur serveur");
@@ -221,7 +212,7 @@ app.get("/contact", async function (req, res) {
 
 app.get("/connexion", async function (req, res) {    
     try {
-        res.render("connexion", { page_css1: "connexion.css", page_css2: "headeradmin.css" });
+        res.render("connexion", { page_css1: "connexion.css", page_css2: "headerclient.css" });
     } catch (err) {
         console.error(err);
         res.status(500).send("Erreur serveur");
@@ -257,6 +248,33 @@ app.get("/produit", async function (req, res) {
 });
 
 
+app.get("/tests", async function (req, res) {
+    try {
+        res.render("tests", { page_css1: "tests.css", page_css2: "headerclient.css" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Erreur serveur");
+    }
+});
+
+
+app.get("/admin/accueil", async function (req, res) {
+    try {
+        res.render("admin/accueil", { page_css1: "accueiladmin.css", page_css2: "headeradmin.css" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Erreur serveur");
+    }
+});
+
+app.get("/admin/presentation", async function (req, res) {
+    try {
+        res.render("admin/presentation", { page_css1: "presentation.css", page_css2: "headeradmin.css" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Erreur serveur");
+    }
+});
 
 
 
@@ -267,6 +285,160 @@ app.get("/produit", async function (req, res) {
 
 
 
+
+app.post("/envoyer-devis", upload.array('fichiers', 10), async (req, res) => {
+    try {
+        // 1. Configuration Nodemailer
+        const transporter = nodemailer.createTransport({
+            service: 'gmail', // Utilise le preset Gmail
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS  // Utilise ton "Mot de passe d'application" Google
+            }
+        });
+
+        // 2. Préparation des pièces jointes
+        const attachments = req.files.map(file => ({
+            filename: file.originalname,
+            path: file.path
+        }));
+
+        // 3. Envoi du mail
+        await transporter.sendMail({
+            from: `"Site Web MECA-CN" <${process.env.EMAIL_USER}>`,
+            to: process.env.EMAIL_DEST || 'contact@meca-cn.com',
+            replyTo: req.body.email, // Permet de répondre directement au client
+            subject: `Nouveau Devis - ${req.body.entreprise || req.body.nom}`,
+            text: `Nouvelle demande de devis\n\nClient: ${req.body.nom} (${req.body.entreprise})\nEmail: ${req.body.email}\nProduit: ${req.body.produit} (${req.body.quantite} pièces)\nMatière: ${req.body.matiere || 'Non précisé'}\nDimensions: ${req.body.dim_x} x ${req.body.dim_y} x ${req.body.dim_z} mm\nDate souhaitée: ${req.body.date_livraison}\nDescription: ${req.body.description || 'Aucune'}\nFichiers joints: ${req.files.length ? req.files.map(file => file.originalname).join(', ') : 'Aucun'}\n`,
+            html: `
+                <div style="font-family: Arial, sans-serif; color: #1f2937; background: #f4f6fb; padding: 20px;">
+                    <div style="max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0;">
+                        <div style="background: #0f4bb7; color: #ffffff; padding: 28px 30px; text-align: center;">
+                            <h1 style="margin: 0; font-size: 24px; letter-spacing: 0.5px;">Nouvelle demande de devis</h1>
+                            <p style="margin: 8px 0 0; color: rgba(255,255,255,0.85);">Une nouvelle demande a été envoyée depuis le site.</p>
+                        </div>
+                        <div style="padding: 30px;">
+                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+                                <tbody>
+                                    <tr>
+                                        <td style="padding: 12px 0; color: #64748b; width: 180px;">Client</td>
+                                        <td style="padding: 12px 0; font-weight: 700;">${req.body.nom || 'Non précisé'} ${req.body.entreprise ? '(' + req.body.entreprise + ')' : ''}</td>
+                                    </tr>
+                                    <tr style="border-top: 1px solid #e2e8f0;">
+                                        <td style="padding: 12px 0; color: #64748b;">Email</td>
+                                        <td style="padding: 12px 0; font-weight: 700;">${req.body.email || 'Non précisé'}</td>
+                                    </tr>
+                                    <tr style="border-top: 1px solid #e2e8f0;">
+                                        <td style="padding: 12px 0; color: #64748b;">Produit</td>
+                                        <td style="padding: 12px 0; font-weight: 700;">${req.body.produit || 'Non précisé'}</td>
+                                    </tr>
+                                    <tr style="border-top: 1px solid #e2e8f0;">
+                                        <td style="padding: 12px 0; color: #64748b;">Matière</td>
+                                        <td style="padding: 12px 0; font-weight: 700;">${req.body.matiere || 'Non précisé'}</td>
+                                    </tr>
+                                    <tr style="border-top: 1px solid #e2e8f0;">
+                                        <td style="padding: 12px 0; color: #64748b;">Quantité</td>
+                                        <td style="padding: 12px 0; font-weight: 700;">${req.body.quantite || '0'} pièce(s)</td>
+                                    </tr>
+                                    <tr style="border-top: 1px solid #e2e8f0;">
+                                        <td style="padding: 12px 0; color: #64748b;">Dimensions</td>
+                                        <td style="padding: 12px 0; font-weight: 700;">${req.body.dim_x || '0'} x ${req.body.dim_y || '0'} x ${req.body.dim_z || '0'} mm</td>
+                                    </tr>
+                                    <tr style="border-top: 1px solid #e2e8f0;">
+                                        <td style="padding: 12px 0; color: #64748b;">Date souhaitée</td>
+                                        <td style="padding: 12px 0; font-weight: 700;">${req.body.date_livraison || 'Non sélectionnée'}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div style="margin-bottom: 24px;">
+                                <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f4bb7;">Description</h2>
+                                <p style="margin: 0; color: #475569;">${req.body.description ? req.body.description.replace(/\n/g, '<br>') : 'Aucune description fournie.'}</p>
+                            </div>
+
+                            <div style="margin-bottom: 24px;">
+                                <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f4bb7;">Fichiers joints</h2>
+                                ${req.files.length ? `<ul style="margin: 0; padding-left: 20px; color: #475569;">${req.files.map(file => `<li style="margin-bottom: 8px;">${file.originalname} (${Math.round(file.size / 1024)} Ko)</li>`).join('')}</ul>` : '<p style="margin: 0; color: #475569;">Aucun fichier joint.</p>'}
+                            </div>
+
+                            <p style="margin: 0; color: #94a3b8; font-size: 13px;">Cette demande de devis a été générée depuis le formulaire de contact du site.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            attachments: attachments
+        });
+
+        // 4. NETTOYAGE : Supprimer les fichiers du serveur une fois le mail envoyé
+        req.files.forEach(file => {
+            fs.unlink(file.path, (err) => {
+                if (err) console.error("Erreur suppression fichier temporaire:", err);
+            });
+        });
+
+        res.render("confirmation_devis", { 
+            success: true, 
+            message: "Votre demande a été envoyée avec succès !",
+            page_css1: "headerclient.css",
+            page_css2: "devis.css"
+        });
+
+    } catch (err) {
+        console.error("Erreur Nodemailer :", err);
+        res.render("confirmation_devis", { 
+            success: false, 
+            message: "Désolé, une erreur technique est survenue.",
+            page_css1: "headerclient.css",
+            page_css2: "devis.css.css"
+        });
+    }
+});
+
+
+
+
+app.get('/api/max-dimensions', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT MAX(d_x) as max_x, MAX(d_y) as max_y, MAX(d_z) as max_z FROM machines');
+        res.json(rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erreur serveur');
+    }
+});
+
+
+
+
+
+app.post("/connexion", async function (req, res) {
+    const { id_user, password } = req.body;
+    try {
+        const [rows] = await pool.query("SELECT * FROM utilisateurs WHERE identifiant = ?", [id_user]);
+
+        if (rows.length === 0) {
+            return res.render("connexion", { page_css1: "connexion.css", page_css2: "headerclient.css", error: "Identifiant ou mot de passe incorrect" });
+        }
+
+        const user = rows[0];
+        const mdp = user.password;
+        const role = user.role;
+
+        if (mdp === sha256(password)) {
+            req.session.userID = user.id;
+            req.session.role = role;
+            if (role === "admin") {
+                return res.redirect("/admin/accueil");
+            }
+            return res.redirect("/");
+        }
+
+        return res.render("connexion", { page_css1: "connexion.css", page_css2: "headerclient.css", error: "Identifiant ou mot de passe incorrect" });
+    } catch (err) {
+        console.error("Erreur connexion :", err);
+        res.render("connexion", { page_css1: "connexion.css", page_css2: "headerclient.css", error: "Erreur serveur, réessayez plus tard" });
+    }
+});
 
 
 

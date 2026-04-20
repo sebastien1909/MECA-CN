@@ -1,0 +1,644 @@
+<%- include('header') %>
+
+<main class="devis-page">
+    <section class="devis-hero pc-only">
+        <div class="devis-hero-copy">
+            <p class="devis-hero-label">RÉPONSE EN MOINS DE 24H</p>
+            <h1>Vous voulez un devis ? <span>Nous nous en occupons.</span></h1>
+            <p class="devis-hero-text">
+                Vous avez un projet d'usinage complexe ou une pièce spécifique à réaliser ? 
+                Transmettez-nous vos plans. Nos experts analysent vos besoins techniques avec précision.
+            </p>
+        </div>
+    </section>
+
+    <div class="stepper-container mobile-only">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 16.66%;"></div>
+        </div>
+        <p class="step-label">Étape <span id="current-step-num">1</span>/6</p>
+    </div>
+
+    <section class="devis-form-section">
+        <div class="devis-form-card">
+            <form class="devis-form" id="multistep-form" action="/envoyer-devis" method="post" enctype="multipart/form-data">
+                
+                <section class="form-step active" id="step-1">
+                    <h2>Renseignez vos <span>informations</span></h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nom complet *</label>
+                            <input type="text" name="nom" placeholder="Votre nom" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nom de l'entreprise</label>
+                            <input type="text" name="entreprise" placeholder="Société">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Adresse email *</label>
+                            <input type="email" name="email" placeholder="votre@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Téléphone</label>
+                            <input type="tel" name="telephone" placeholder="06 .. .. .. ..">
+                        </div>
+                    </div>
+                    <div class="nav-btns mobile-only">
+                        <button type="button" class="btn-next" onclick="nextStep(2)">Suivant →</button>
+                    </div>
+                </section>
+
+                <section class="form-step" id="step-2">
+                    <button type="button" class="btn-back mobile-only" onclick="nextStep(1)">← Retourner en arrière</button>
+                    <h2>Détails du <span>produit</span></h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nom du produit *</label>
+                            <input type="text" name="produit" placeholder="Ex: Engrenage" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Matière souhaitée</label>
+                            <input type="text" name="matiere" placeholder="Ex: Acier, Alu...">
+                        </div>
+                    </div>
+                    <div class="nav-btns mobile-only">
+                        <button type="button" class="btn-next" onclick="nextStep(3)">Suivant →</button>
+                    </div>
+                </section>
+
+                <section class="form-step" id="step-3">
+                    <button type="button" class="btn-back mobile-only" onclick="nextStep(2)">← Retourner en arrière</button>
+                    <h2>Quantité et <span>délais</span></h2>
+                    
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <label>Quantité demandée *</label>
+                        <input type="number" name="quantite" min="1" placeholder="Nombre de pièces" required>
+                    </div>
+
+                    <div class="form-row" style="margin-bottom: 24px;">
+                        <div class="form-group">
+                            <label>Dimension X (mm) *</label>
+                            <input type="number" name="dim_x" min="1" placeholder="Longueur" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Dimension Y (mm) *</label>
+                            <input type="number" name="dim_y" min="1" placeholder="Largeur" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Dimension Z (mm) *</label>
+                            <input type="number" name="dim_z" min="1" placeholder="Hauteur" required>
+                        </div>
+                    </div>
+
+                    <label>Choisissez une date de livraison souhaitée *</label>
+                    <div class="elegant-calencar">
+                        <input type="hidden" name="date_livraison" id="date_livraison_input" required>
+                        
+                        <div id="calendar-header-box" class="clearfix">
+                            <div class="pre-button">←</div>
+                            <div class="head-info">
+                                <div class="head-day"></div>
+                                <div class="head-month"></div>
+                            </div>
+                            <div class="next-button">→</div>
+                        </div>
+                        <table id="calendar">
+                            <thead>
+                                <tr>
+                                    <th>Dim</th><th>Lun</th><th>Mar</th><th>Mer</th><th>Jeu</th><th>Ven</th><th>Sam</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="nav-btns mobile-only">
+                        <button type="button" class="btn-next" onclick="nextStep(4)">Suivant →</button>
+                    </div>
+                </section>
+
+                <section class="form-step" id="step-4">
+                    <button type="button" class="btn-back mobile-only" onclick="nextStep(3)">← Retourner en arrière</button>
+                    <h2>Plans et <span>fichiers</span></h2>
+                    <div class="upload-box">
+                        <div class="upload-icon">⇪</div>
+                        <p>Glissez-déposez vos plans</p>
+                        <span>Fichiers 3D, PDF, images...</span>
+                        <button type="button" class="upload-button">Chercher un/des fichiers</button>
+                        <input type="file" name="fichiers" multiple id="fichiers-input">
+                    </div>
+                    <p class="upload-restrictions">
+                        Les fichiers compressés (ZIP) ne sont pas acceptés. <br>Taille maximale par fichier : 10 Mo. <br>Taille totale maximale : 100 Mo.
+                    </p>
+                    <br>
+                    <div class="upload-files-preview" id="upload-files-preview">
+                        <p class="upload-files-empty">Aucun fichier sélectionné.</p>
+                    </div>
+                    <div class="nav-btns mobile-only">
+                        <button type="button" class="btn-next" onclick="nextStep(5)">Suivant →</button>
+                    </div>
+                </section>
+
+                <div class="confirm-modal-overlay" id="confirm-modal" aria-hidden="true">
+                    <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+                        <h3 id="confirm-modal-title">Confirmer la suppression</h3>
+                        <p>Êtes-vous sûr de vouloir supprimer ce fichier ?</p>
+                        <div class="confirm-modal-actions">
+                            <button type="button" class="btn-modal-cancel" id="cancel-remove">Annuler</button>
+                            <button type="button" class="btn-modal-confirm" id="confirm-remove">Supprimer</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="error-modal-overlay" id="error-modal" aria-hidden="true">
+                    <div class="error-modal" role="dialog" aria-modal="true" aria-labelledby="error-modal-title">
+                        <h3 id="error-modal-title">Dimensions incompatibles</h3>
+                        <p id="error-modal-message">Les dimensions de votre pièce dépassent les capacités de nos machines.</p>
+                        <div class="error-modal-actions">
+                            <button type="button" class="btn-modal-ok" id="close-error-modal">Compris</button>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="form-step" id="step-5">
+                    <button type="button" class="btn-back mobile-only" onclick="nextStep(4)">← Retourner en arrière</button>
+                    <h2>Description <span>complémentaire</span></h2>
+                    <div class="form-group full">
+                        <label>Avez-vous d'autres informations ?</label>
+                        <textarea name="description" rows="6" placeholder="Précisions techniques, finitions..."></textarea>
+                    </div>
+                    <div class="nav-btns mobile-only">
+                        <button type="button" class="btn-next" onclick="nextStep(6)">Voir le récapitulatif →</button>
+                    </div>
+                </section>
+
+                <section class="form-step" id="step-6">
+                    <button type="button" class="btn-back mobile-only" onclick="nextStep(5)">← Modifier mes informations</button>
+                    <h2 class="pc-hidden">Validez vos <span>données</span></h2>
+                    
+                    <div id="recap-display" class="recap-box pc-hidden">
+                        </div>
+
+                    <button type="submit" class="devis-submit">Envoyer la demande définitive</button>
+                </section>
+
+            </form>
+        </div>
+    </section>
+</main>
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // --- VARIABLES GLOBALES ---
+    var maxDimensions = null;
+
+    // Charger les dimensions max des machines
+    fetch('/api/max-dimensions')
+        .then(response => response.json())
+        .then(data => {
+            maxDimensions = data;
+            console.log('Max dimensions:', maxDimensions);
+        })
+        .catch(err => console.error('Erreur chargement dimensions:', err));
+
+    // Fonction de validation des dimensions
+    function validateDimensions() {
+        if (!maxDimensions) {
+            showErrorModal('Erreur technique', 'Erreur: Impossible de vérifier les dimensions. Veuillez réessayer.');
+            return false;
+        }
+
+        const dimX = parseFloat(document.querySelector('input[name="dim_x"]').value) || 0;
+        const dimY = parseFloat(document.querySelector('input[name="dim_y"]').value) || 0;
+        const dimZ = parseFloat(document.querySelector('input[name="dim_z"]').value) || 0;
+
+        if (dimX > maxDimensions.max_x || dimY > maxDimensions.max_y || dimZ > maxDimensions.max_z) {
+            showErrorModal('Dimensions incompatibles', `Les dimensions de votre pièce (${dimX}x${dimY}x${dimZ} mm) dépassent les capacités de nos machines (max: ${maxDimensions.max_x}x${maxDimensions.max_y}x${maxDimensions.max_z} mm). Veuillez réduire les dimensions.`);
+            return false;
+        }
+        return true;
+    }
+
+    // Validation des dimensions avant envoi
+    document.getElementById('multistep-form').addEventListener('submit', function(e) {
+        if (!validateDimensions()) {
+            e.preventDefault();
+        }
+    });
+
+    // --- VARIABLES GLOBALES CALENDRIER ---
+    var today = new Date(),
+        year = today.getFullYear(),
+        month = today.getMonth(),
+        monthTag = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"],
+        day = today.getDate(),
+        days = document.getElementById('calendar').getElementsByTagName('td'),
+        selectedDay,
+        setDate,
+        daysLen = days.length;
+
+    // --- LOGIQUE DU CALENDRIER ---
+    function Calendar(selector, options) {
+        this.options = options;
+        this.draw();
+    }
+
+    Calendar.prototype.draw = function() {
+        this.getOptions();
+        this.drawDays();
+        var that = this,
+            pre = document.getElementsByClassName('pre-button'),
+            next = document.getElementsByClassName('next-button');
+
+        pre[0].addEventListener('click', function() { that.preMonth(); });
+        next[0].addEventListener('click', function() { that.nextMonth(); });
+
+        for (var k = 0; k < daysLen; k++) {
+            days[k].addEventListener('click', function() { that.clickDay(this); });
+        }
+    };
+
+    Calendar.prototype.drawHeader = function(e) {
+        var headDay = document.getElementsByClassName('head-day'),
+            headMonth = document.getElementsByClassName('head-month');
+        e ? headDay[0].innerHTML = e : headDay[0].innerHTML = day;
+        headMonth[0].innerHTML = monthTag[month] + " - " + year;
+    };
+
+    Calendar.prototype.drawDays = function() {
+        var startDay = new Date(year, month, 1).getDay(),
+            nDays = new Date(year, month + 1, 0).getDate(),
+            n = startDay;
+
+        for (var k = 0; k < 42; k++) {
+            days[k].innerHTML = '';
+            days[k].id = '';
+            days[k].className = '';
+        }
+
+        for (var i = 1; i <= nDays; i++) {
+            days[n].innerHTML = i;
+            n = n + 1;
+        }
+
+        for (var j = 0; j < 42; j++) {
+            if (days[j].innerHTML === "") {
+                days[j].id = "disabled";
+            } else if (j === day + startDay - 1) {
+                if ((month === today.getMonth()) && (year === today.getFullYear())) {
+                    this.drawHeader(day);
+                    days[j].id = "today";
+                }
+            }
+            if (selectedDay) {
+                if ((j === selectedDay.getDate() + startDay - 1) && (month === selectedDay.getMonth()) && (year === selectedDay.getFullYear())) {
+                    days[j].className = "selected";
+                    this.drawHeader(selectedDay.getDate());
+                }
+            }
+        }
+    };
+
+    Calendar.prototype.clickDay = function(o) {
+        if (o.innerHTML === "") return;
+        
+        var clickedDate = new Date(year, month, o.innerHTML);
+        var today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset time to compare dates only
+        
+        // Vérifier si la date est dans le passé
+        if (clickedDate < today) {
+            showErrorModal('Date invalide', "La date sélectionnée ne peut pas être antérieure à aujourd'hui. Veuillez choisir une date future.");
+            return;
+        }
+        
+        var selected = document.getElementsByClassName("selected");
+        if (selected.length !== 0) {
+            selected[0].className = "";
+        }
+        o.className = "selected";
+        selectedDay = clickedDate;
+        this.drawHeader(o.innerHTML);
+
+        // Mise à jour de l'input caché pour le formulaire
+        const formattedDate = selectedDay.toLocaleDateString('fr-FR');
+        document.getElementById('date_livraison_input').value = formattedDate;
+    };
+
+    Calendar.prototype.preMonth = function() {
+        if (month < 1) { month = 11; year--; } else { month--; }
+        this.drawHeader(1);
+        this.drawDays();
+    };
+
+    Calendar.prototype.nextMonth = function() {
+        if (month >= 11) { month = 0; year++; } else { month++; }
+        this.drawHeader(1);
+        this.drawDays();
+    };
+
+    Calendar.prototype.getOptions = function() {
+        if (this.options) {
+            var sets = this.options.split('-');
+            setDate = new Date(sets[0], sets[1] - 1, sets[2]);
+            day = setDate.getDate();
+            year = setDate.getFullYear();
+            month = setDate.getMonth();
+        }
+    };
+
+    // Initialisation du calendrier
+    var calendar = new Calendar();
+
+    // --- LOGIQUE DE L'AFFICHAGE DES FICHIERS UPLOADÉS ---
+    var fileInput = document.getElementById('fichiers-input');
+    var uploadBox = document.querySelector('.upload-box');
+    var filePreview = document.getElementById('upload-files-preview');
+    var uploadButton = document.querySelector('.upload-button');
+
+    var selectedFiles = [];
+    var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 Mo
+    var MAX_TOTAL_SIZE = 100 * 1024 * 1024; // 100 Mo
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 octet';
+        var sizes = ['octets', 'Ko', 'Mo', 'Go'];
+        var i = Math.floor(Math.log(bytes) / Math.log(1024));
+        return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i];
+    }
+
+    function validateFiles(files, existingFiles) {
+        var filtered = [];
+        var errors = [];
+        var totalSize = existingFiles.reduce(function(sum, file) { return sum + file.size; }, 0);
+
+        files.forEach(function(file) {
+            var extension = file.name.split('.').pop().toLowerCase();
+
+            if (extension === 'zip') {
+                errors.push('Les fichiers ZIP ne sont pas autorisés : ' + file.name);
+                return;
+            }
+
+            if (file.size > MAX_FILE_SIZE) {
+                errors.push('Fichier trop volumineux (> 10 Mo) : ' + file.name);
+                return;
+            }
+
+            if (totalSize + file.size > MAX_TOTAL_SIZE) {
+                errors.push('La taille totale dépasse 100 Mo avec : ' + file.name);
+                return;
+            }
+
+            totalSize += file.size;
+            filtered.push(file);
+        });
+
+        return { files: filtered, errors: errors };
+    }
+
+    function displayUploadError(message) {
+        var errorHtml = '<div class="upload-files-error">' + message + '</div>';
+        var errorNode = filePreview.querySelector('.upload-files-error');
+        if (errorNode) {
+            errorNode.outerHTML = errorHtml;
+        } else {
+            filePreview.insertAdjacentHTML('beforeend', errorHtml);
+        }
+    }
+
+    function clearUploadError() {
+        var errorNode = filePreview.querySelector('.upload-files-error');
+        if (errorNode) {
+            errorNode.remove();
+        }
+    }
+
+    function updateFileInput() {
+        var dataTransfer = new DataTransfer();
+        selectedFiles.forEach(function(file) {
+            dataTransfer.items.add(file);
+        });
+        fileInput.files = dataTransfer.files;
+    }
+
+    function updateFilePreview() {
+        clearUploadError();
+
+        if (selectedFiles.length === 0) {
+            filePreview.innerHTML = '<p class="upload-files-empty">Aucun fichier sélectionné.</p>';
+            return;
+        }
+
+        var totalSize = selectedFiles.reduce(function(sum, file) { return sum + file.size; }, 0);
+        var totalLabel = '<div class="upload-files-total">Total : ' + formatBytes(totalSize) + ' / 100 Mo</div>';
+
+        filePreview.innerHTML = '<p>Fichiers sélectionnés</p><ul>' + selectedFiles.map(function(file, index) {
+            return '<li><span class="file-name">' + file.name + '</span><span class="file-size">' + formatBytes(file.size) + '</span><button type="button" class="file-remove" data-index="' + index + '">Supprimer</button></li>';
+        }).join('') + '</ul>' + totalLabel;
+    }
+
+    var pendingRemoveIndex = null;
+    var confirmModal = document.getElementById('confirm-modal');
+    var confirmRemoveButton = document.getElementById('confirm-remove');
+    var cancelRemoveButton = document.getElementById('cancel-remove');
+
+    function removeFile(indexToRemove) {
+        selectedFiles.splice(indexToRemove, 1);
+        updateFileInput();
+        updateFilePreview();
+    }
+
+    function showConfirmModal(index) {
+        pendingRemoveIndex = index;
+        confirmModal.classList.add('visible');
+        confirmModal.setAttribute('aria-hidden', 'false');
+    }
+
+    function hideConfirmModal() {
+        pendingRemoveIndex = null;
+        confirmModal.classList.remove('visible');
+        confirmModal.setAttribute('aria-hidden', 'true');
+    }
+
+    // --- MODAL ERREUR DIMENSIONS ---
+    var errorModal = document.getElementById('error-modal');
+    var closeErrorModalButton = document.getElementById('close-error-modal');
+
+    function showErrorModal(title, message) {
+        document.getElementById('error-modal-title').textContent = title;
+        document.getElementById('error-modal-message').textContent = message;
+        errorModal.classList.add('visible');
+        errorModal.setAttribute('aria-hidden', 'false');
+    }
+
+    function hideErrorModal() {
+        errorModal.classList.remove('visible');
+        errorModal.setAttribute('aria-hidden', 'true');
+    }
+
+    closeErrorModalButton.addEventListener('click', hideErrorModal);
+    errorModal.addEventListener('click', function(event) {
+        if (event.target === errorModal) {
+            hideErrorModal();
+        }
+    });
+
+    uploadButton.addEventListener('click', function() {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', function() {
+        var selectedFilesFromInput = Array.from(fileInput.files || []);
+        var validation = validateFiles(selectedFilesFromInput, selectedFiles);
+        selectedFiles = selectedFiles.concat(validation.files);
+        updateFileInput();
+        updateFilePreview();
+        if (validation.errors.length) {
+            displayUploadError(validation.errors.join('<br>'));
+        }
+    });
+
+    filePreview.addEventListener('click', function(event) {
+        var button = event.target.closest('.file-remove');
+        if (!button) return;
+        showConfirmModal(Number(button.dataset.index));
+    });
+
+    confirmRemoveButton.addEventListener('click', function() {
+        if (pendingRemoveIndex !== null) {
+            removeFile(pendingRemoveIndex);
+        }
+        hideConfirmModal();
+    });
+
+    cancelRemoveButton.addEventListener('click', function() {
+        hideConfirmModal();
+    });
+
+    confirmModal.addEventListener('click', function(event) {
+        if (event.target === confirmModal) {
+            hideConfirmModal();
+        }
+    });
+
+    uploadBox.addEventListener('dragover', function(event) {
+        event.preventDefault();
+        uploadBox.classList.add('drag-over');
+    });
+
+    uploadBox.addEventListener('dragleave', function() {
+        uploadBox.classList.remove('drag-over');
+    });
+
+    uploadBox.addEventListener('drop', function(event) {
+        event.preventDefault();
+        uploadBox.classList.remove('drag-over');
+
+        var droppedFiles = Array.from(event.dataTransfer.files || []);
+        var validation = validateFiles(droppedFiles, selectedFiles);
+        selectedFiles = selectedFiles.concat(validation.files);
+        updateFileInput();
+        updateFilePreview();
+        if (validation.errors.length) {
+            displayUploadError(validation.errors.join('<br>'));
+        }
+    });
+
+    updateFilePreview();
+
+    // --- LOGIQUE DU STEPPER (NAVIGATION MOBILE) ---
+    window.nextStep = function(step) {
+        if (window.innerWidth <= 768) {
+            // Validation des dimensions à l'étape 3 avant de passer à 4
+            if (step === 4) {
+                if (!validateDimensions()) {
+                    return;
+                }
+            }
+
+            // Masquer toutes les étapes
+            document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+            // Afficher l'étape actuelle
+            document.getElementById('step-' + step).classList.add('active');
+
+            // Mise à jour de la barre de progression
+            const progressFill = document.getElementById('progress-fill');
+            const stepNumDisplay = document.getElementById('current-step-num');
+            const progressPercent = (step / 6) * 100;
+
+            if (progressFill) progressFill.style.width = progressPercent + '%';
+            if (stepNumDisplay) stepNumDisplay.innerText = step;
+
+            window.scrollTo(0, 0);
+        }
+
+        // Si on arrive au récapitulatif (Étape 6)
+        if (step === 6) {
+            generateRecap();
+        }
+    };
+
+    // --- GÉNÉRATION DU RÉCAPITULATIF ---
+    function generateRecap() {
+        const recapBox = document.getElementById('recap-display');
+        
+        // Récupération des valeurs
+        const data = {
+            nom_complet: document.querySelector('input[name="nom"]').value || "Non précisé",
+            entreprise : document.querySelector('input[name="entreprise"]').value || "Non précisé",
+            email : document.querySelector('input[name="email"]').value || "Non précisé",
+            produit : document.querySelector('input[name="produit"]').value || "Non précisé",
+            quantite : document.querySelector('input[name="quantite"]').value || "0",
+            dim_x : document.querySelector('input[name="dim_x"]').value || "0",
+            dim_y : document.querySelector('input[name="dim_y"]').value || "0",
+            dim_z : document.querySelector('input[name="dim_z"]').value || "0",
+            date : document.getElementById('date_livraison_input').value || "Non sélectionnée",
+            description : document.querySelector('textarea[name="description"]').value || "Aucune description"
+        };
+
+        // Génération de la liste des fichiers
+        let fichiersHtml = '';
+        if (selectedFiles.length > 0) {
+            fichiersHtml = '<p><strong>Fichiers joints :</strong></p><ul>';
+            selectedFiles.forEach(function(file) {
+                fichiersHtml += '<li>' + file.name + ' (' + formatBytes(file.size) + ')</li>';
+            });
+            fichiersHtml += '</ul>';
+        } else {
+            fichiersHtml = '<p><strong>Fichiers joints :</strong> Aucun fichier</p>';
+        }
+
+        recapBox.innerHTML = `
+            <div class="recap-content">
+                <p><strong>Nom complet :</strong> ${data.nom_complet}</p>
+                <p><strong>Entreprise :</strong> ${data.entreprise}</p>
+                <p><strong>Contact :</strong> ${data.email}</p>
+                <p><strong>Produit :</strong> ${data.produit} (${data.quantite} pièces)</p>
+                <p><strong>Dimensions :</strong> ${data.dim_x} x ${data.dim_y} x ${data.dim_z} mm</p>
+                <p><strong>Date souhaitée :</strong> ${data.date}</p>
+                <p><strong>Description :</strong> ${data.description.substring(0, 100)}${data.description.length > 100 ? '...' : ''}</p>
+                ${fichiersHtml}
+            </div>
+        `;
+    }
+
+}, false);
+
+</script>
+
+
+
+<%- include("footer") %>

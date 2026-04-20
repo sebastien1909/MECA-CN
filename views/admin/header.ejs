@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MECA-CN</title>
+
+    <!-- Styles -->
+
+    
+    <link rel="stylesheet" href="/style/footer.css">
+    <% if (typeof page_css1 !== "undefined") { %>
+        <link rel="stylesheet" href="/style/<%= page_css1 %>">
+    <% } %>
+    <% if (typeof page_css2 !== "undefined") { %>
+        <link rel="stylesheet" href="/style/<%= page_css2 %>">
+    <% } %>
+    <% if (typeof page_css3 !== "undefined") { %>
+        <link rel="stylesheet" href="/style/<%= page_css3 %>">
+    <% } %>
+    <link rel="stylesheet" href="/style/style.css">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header_cont">
+            <div class="header_left_side">
+                <a href="/admin/accueil">
+                    <img class="logo_header" src="/img/logos/Full_WhiteOnBlack.svg" alt="Logo MECA-CN">
+                </a>
+            </div>
+            <div class="header_right_side">
+                <a href="/devis"><button class="header_btn">Demander un devis</button></a>
+                <a href="/contact" class="mobile-hidden"><button class="header_btn">Nous contacter</button></a>
+            </div>
+
+        </div>
+        
+    </header>

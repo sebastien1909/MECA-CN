@@ -1,0 +1,45 @@
+<%- include('header') %>
+
+<main class="confirmation-page">
+    <section class="confirmation-hero pc-only">
+        <div class="confirmation-hero-copy">
+            <h1><%= success ? 'Demande envoyée !' : 'Erreur d\'envoi' %></h1>
+            <p class="confirmation-hero-text">
+                <%= message %>
+            </p>
+            <% if (success) { %>
+                <p class="confirmation-redirect">Vous serez redirigé vers la page d'accueil dans quelques secondes...</p>
+            <% } %>
+        </div>
+    </section>
+
+    <section class="confirmation-section">
+        <div class="confirmation-card">
+            <div class="confirmation-content">
+                <% if (success) { %>
+                    <div class="success-icon">✓</div>
+                    <h2>Demande de devis envoyée avec succès</h2>
+                    <p>Nous avons bien reçu votre demande et nous vous contacterons dans les plus brefs délais.</p>
+                <% } else { %>
+                    <div class="error-icon">✗</div>
+                    <h2>Erreur lors de l'envoi</h2>
+                    <p><%= message %></p>
+                    <a href="/devis" class="btn-retry">Réessayer</a>
+                <% } %>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        <% if (success) { %>
+            // Redirection automatique vers l'accueil après 5 secondes
+            setTimeout(function() {
+                window.location.href = '/';
+            }, 5000);
+        <% } %>
+    });
+</script>
+
+
