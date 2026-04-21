@@ -3,53 +3,98 @@
 <main>
     <section class="left-part">
         <h1>
-            Vous souhaitez modifier une <span>réalisation</span> ?
+            Modifier votre <span>réalisation</span>
         </h1>
     </section>
 
     <section class="right-part">
-        <form class="form-container">
+        <form class="form-container" method="POST" enctype="multipart/form-data" action="/modifier_infos_realisation">
+            <input type="hidden" name="id_produit" value="<%= produit.id %>">
             <div class="form-left">
                 <h4> Modifiez les informations </h4>
-                <p class="gray-text">Validez une fois la modification apportée.</p>
-
+                <p class="hint">Validez une fois la modification apportée.</p>
 
                 <div class="upload-box">
-                    <div class="upload-icon">⇪</div>
-                    <p>Glissez-déposez vos plans</p>
-                    <span>Fichiers 3D, PDF, images...</span>
+                    <div class="upload-icon">
+                        <img src="/img/icons/upload.png" alt="Upload">
+                    </div>
+                    <p id="upload-text">Glissez-déposez vos plans</p>
+                    <span id="upload-status">Fichiers 3D, PDF, images...</span>
                     <button type="button" class="upload-button">Chercher un/des fichiers</button>
-                    <input type="file" name="fichiers" multiple id="fichiers-input">
+                    <input type="file" name="fichiers" multiple id="fichiers-input" style="display:none;">
                 </div>
             </div>
             <div class="form-right">
                 <div class="form-group" style="margin-bottom: 24px;">
                     <label>Nom du produit</label>
-                    <input type="text" name="nom_produit" placeholder="<%= produit.nom %>" required>
+                    <input type="text" name="nom_produit" value="<%= produit.nom %>" required>
                 </div>
                 <div class="form-group" style="margin-bottom: 24px;">
                     <label>Description</label>
-                    <input type="text" name="description" placeholder="<%= produit.description %>" required>
+                    <input type="text" name="description" value="<%= produit.description %>" required>
                 </div>
                 <div class="form-group" style="margin-bottom: 24px;">
                     <label for="categorie">Catégorie du produit</label>
-                        <select name="categorie" id="categorie">
-                            <% listeCategories.forEach(cat => { %>
-                                <option value="<%= cat.id_cat %>" 
-                                    <%= Number(cat.id_cat) == Number(produit.categorie) ? 'selected' : '' %>>
-                                    <%= cat.nom %>
-                                </option>
-                            <% }) %>
-                        </select>
+                    <select name="categorie" id="categorie">
+                        <% listeCategories.forEach(cat => { %>
+                            <option value="<%= cat.id_cat %>" <%= Number(cat.id_cat) == Number(produit.categorie) ? 'selected' : '' %>><%= cat.nom %></option>
+                        <% }) %>
+                    </select>
                 </div>
-
 
                 <a href="/suppression" class="suppress_link">
                     Supprimer une réalisation
                 </a>
+                <button type="submit" class="validate-btn">Valider</button>
             </div>
         </form>
     </section>
 </main>
+
+<script>
+    const uploadButton = document.querySelector('.upload-button');
+    const fileInput = document.getElementById('fichiers-input');
+    const uploadBox = document.querySelector('.upload-box');
+    const uploadStatus = document.getElementById('upload-status');
+    const uploadText = document.getElementById('upload-text');
+
+    // Fonction pour mettre à jour l'affichage sans pop-up
+    function updateStatus() {
+        const nbFiles = fileInput.files.length;
+        if (nbFiles > 0) {
+            uploadText.innerText = "Fichier(s) sélectionné(s) !";
+            uploadStatus.innerText = nbFiles + " fichier(s) prêt(s) à l'envoi";
+            uploadStatus.style.color = "#0f4bb7";
+            uploadStatus.style.fontWeight = "bold";
+        }
+    }
+
+    uploadButton.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    uploadBox.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadBox.style.borderColor = '#0f4bb7';
+        uploadBox.style.backgroundColor = '#f0f4ff';
+    });
+
+    uploadBox.addEventListener('dragleave', () => {
+        uploadBox.style.borderColor = '#ccc';
+        uploadBox.style.backgroundColor = 'transparent';
+    });
+
+    uploadBox.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadBox.style.borderColor = '#ccc';
+        uploadBox.style.backgroundColor = 'transparent';
+        fileInput.files = e.dataTransfer.files; 
+        updateStatus(); // Plus d'alerte, on met à jour le texte
+    });
+    
+    fileInput.addEventListener('change', () => {
+        updateStatus(); // Plus d'alerte, on met à jour le texte
+    });
+</script>
 
 <%- include("./footer") %>

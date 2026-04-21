@@ -13,20 +13,32 @@ import sha256 from "js-sha256";
 
 
 // Multer
-const storage = multer.diskStorage({
+// --- CONFIGURATION MULTER POUR LES PRODUITS ---
+const storageProduits = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'public/img/produits'); 
     },
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname);
-        const uniqueName = 'Prdt' + Date.now() + ext;
-        cb(null, uniqueName);
+        cb(null, 'Prdt' + Date.now() + ext);
     }
 });
+const uploadProduits = multer({ storage: storageProduits });
+
+// --- CONFIGURATION MULTER POUR LES MACHINES ---
+const storageMachines = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/img/machines'); 
+    },
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        cb(null, 'Mchn' + Date.now() + ext); // Préfixe différent pour s'y retrouver
+    }
+});
+const uploadMachines = multer({ storage: storageMachines });
 
 
 
-const upload = multer({ storage: storage });
 
 const app = express();
 app.set("view engine", "ejs");
@@ -301,7 +313,7 @@ app.get("/admin/realisations", async function (req, res) {
 
 
 
-app.post("/envoyer-devis", upload.array('fichiers', 10), async (req, res) => {
+app.post("/envoyer-devis", uploadProduits.array('fichiers', 10), async (req, res) => {
     try {
         const transporter = nodemailer.createTransport({
             service: 'gmail', 
@@ -466,6 +478,51 @@ app.get("/suppression", async function (req, res) {
 
 
 
+app.post("/modifier_infos_realisation", uploadProduits.array('fichiers', 1), async function (req, res) {
+    try {
+        const { id_produit, nom_produit, description, categorie } = req.body;
+        
+        let requete = "UPDATE produits SET nom = ?, description = ?, categorie = ?";
+        let values = [nom_produit, description, categorie];
+
+        // 1. Gestion de la nouvelle image
+        if (req.files && req.files.length > 0) {
+            
+            // --- LOGIQUE DE SUPPRESSION DE L'ANCIENNE IMAGE ---
+            // On cherche l'ancien nom de fichier en BDD avant d'écraser la donnée
+            const [ancienProduit] = await pool.query("SELECT image FROM produits WHERE id = ?", [id_produit]);
+            
+            if (ancienProduit.length > 0 && ancienProduit[0].image) {
+                // On extrait juste le nom du fichier (au cas où tu stockes le chemin complet)
+                const nomFichierAncien = path.basename(ancienProduit[0].image);
+                const cheminAncienneImage = path.join('public/img/produits', nomFichierAncien);
+
+                // On vérifie si le fichier existe avant de tenter de le supprimer
+                if (fs.existsSync(cheminAncienneImage)) {
+                    fs.unlink(cheminAncienneImage, (err) => {
+                        if (err) console.error("Erreur lors de la suppression de l'ancienne image :", err);
+                        else console.log("Ancienne image supprimée avec succès :", nomFichierAncien);
+                    });
+                }
+            }
+            // -------------------------------------------------
+
+            const nouveauNomFichier = "/img/produits/" + req.files[0].filename; 
+            requete += ", image = ?";
+            values.push(nouveauNomFichier);
+        }
+
+        requete += " WHERE id = ?";
+        values.push(id_produit);
+
+        await pool.query(requete, values);
+
+        res.redirect("/admin/realisations");
+    } catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de la modification");
+    }
+});
 
 
 
@@ -547,6 +604,15 @@ app.post("/connexion", async function (req, res) {
         res.render("connexion", { page_css1: "connexion.css", page_css2: "headerclient.css", error: "Erreur serveur, réessayez plus tard" });
     }
 });
+
+
+
+
+
+
+
+
+
 
 
 
