@@ -845,7 +845,7 @@
         box-shadow: 0 30px 70px rgba(20,31,75,0.08);
         transform-origin: bottom center;
         transition: transform 0.25s ease, opacity 0.25s ease;
-        opacity: 0.55;
+        opacity: 0.9;
         transform: scale(0.88);
         display: flex;
         flex-direction: column;
@@ -1251,7 +1251,7 @@
 
     .product-carousel-track{
         display:flex;
-        align-items:flex-end;
+        align-items:stretch;
         gap: 28px;
         overflow-x:auto;
         padding-bottom: 20px;
@@ -1277,19 +1277,8 @@
         overflow: hidden;
         background: #ffffff;
         box-shadow: 0 30px 70px rgba(20,31,75,0.08);
-        transform-origin: bottom center;
-        transition: transform 0.25s ease, opacity 0.25s ease;
-        opacity: 0.55;
-        transform: scale(0.88);
         display: flex;
         flex-direction: column;
-        justify-content: flex-end;
-    }
-
-    .product-card:hover,
-    .product-card:focus-within{
-        opacity: 1;
-        transform: scale(1);
     }
 
     .product-card img{

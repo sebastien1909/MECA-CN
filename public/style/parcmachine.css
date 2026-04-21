@@ -1,14 +1,145 @@
+.top-title{
+    width:55%;
+    padding:50px;
+}
+
+
+
 /* Ordinateur */
 @media screen and (min-width : 900px){
-    
-}
+    .machine-holder {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr; /* Colonne de gauche plus étroite que celle de droite */
+        gap: 30px;
+        max-width: 1200px;
+        margin: 50px auto;
+        padding: 20px;
+    }
 
-/* Tablette */
-@media screen and (min-width : 600px) and (max-width : 900px) {
-    
-}
+    /* Colonne de gauche (Contient les deux blocs blancs) */
+    .first-column {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
 
-/* Téléphone */
-@media screen and (max-width : 600px) {
+    .top-part, .bottom-part {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        position: relative;
+    }
 
+    /* La bordure bleue décorative à droite du premier bloc */
+    .top-part::after {
+        content: "";
+        position: absolute;
+        right: 1px;   
+        top: 1.2%;
+        height: 97.6%;
+        width: 4px;
+        background: #003F87;
+        border-radius: 0px 4px 4px 0px;
+    }
+
+    .top-part h2, .bottom-part h2 {
+        font-size: 1.4rem;
+        margin-bottom: 15px;
+        color: #1a1a1a;
+    }
+
+    .top-part p, .bottom-part p {
+        font-size: 0.95rem;
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    /* Listes d'infos (RPM, Postes) */
+    .info1, .info2 {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 0.9rem;
+    }
+
+    .info1 p:last-child, .info2 p:last-child {
+        font-weight: bold;
+        color: #333;
+    }
+
+    /* Colonne de droite (Le bloc principal avec l'image) */
+    .second-column {
+        max-height:580px;
+        background: white;
+        border-radius: 15px;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .second-column img {
+        max-width:350px;
+        margin-left: -5%;
+        margin-bottom: 20px;
+        object-fit: contain;
+    }
+
+    .main-info-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .main-info-top h4 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .date-holder {
+        background: #002D62;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 5px;
+        font-size: 0.85rem;
+        font-weight: bold;
+    }
+
+    .second-column p {
+        color: #444;
+        font-size: 1rem;
+        margin-bottom: 30px;
+    }
+
+    /* Les badges de stats en bas */
+    .stats-holder {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .first-stat, .second-stat, .third-stat {
+        background: #DEE7F2; /* Bleu très clair */
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .stats-holder h5 {
+        margin: 0 0 5px 0;
+        font-size: 0.75rem;
+        color: #003F87;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stats-holder span {
+        font-weight: bold;
+        font-size: 0.95rem;
+        color: #002D62;
+    }
 }

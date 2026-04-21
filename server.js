@@ -116,10 +116,13 @@ app.get("/presentation", async function (req, res) {
 
 app.get("/machines", async function (req, res) {    
     try {
+
+        const [machines] = await pool.query("SELECT * FROM machines");
+
         if (req.session.role === "admin") {
-            res.render("/admin/parcmachine", { page_css1: "parcmachine.css", page_css2: "headeradmin.css" });
+            res.render("/admin/parcmachine", { page_css1: "parcmachine.css", page_css2: "headeradmin.css", machines: machines });
         } else {
-            res.render("parcmachine", { page_css1: "headerclient.css", page_css2: "parcmachine.css" });
+            res.render("parcmachine", { page_css1: "headerclient.css", page_css2: "parcmachine.css", machines: machines });
         }
     } catch (err) {
         console.error(err);
@@ -138,7 +141,6 @@ app.get("/realisations", async function (req, res) {
 
         // 3. Récupérer les produits (avec ou sans filtre)
         let produitsResultat;
-        console.log(produitsResultat);
         
         if (categorieChoisie && categorieChoisie !== 'all') {
             // Requête filtrée si on a un ID de catégorie
@@ -152,7 +154,7 @@ app.get("/realisations", async function (req, res) {
 
         // 4. Préparer les données pour EJS (gestion du premier produit et des suivants)
         const produit1 = produitsResultat.length > 0 ? produitsResultat[0] : null;
-        const produitsSuivants = produitsResultat.slice(1);
+        const produitsSuivants = produitsResultat;
 
         // 5. Rendu de la page (Gestion Admin / Client)
         if (req.session.role === "admin") {

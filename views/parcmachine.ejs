@@ -1,6 +1,99 @@
 <%- include('header') %>
 
 
+    <section class="top-title">
+        <div class="top-left">
+            <h3>GRANDE CAPACITÉ DE PRODUCTION</h3>
+            <h2>Parc Machine <br> Haute Précision</h2>
+        </div>
 
+        <div class="top-right">
+            <p>
+                Notre atelier intègre les dernières technologies de tournage et fraisage pour répondre aux tolérances les plus exigeantes des secteurs automobile et médical.
+            </p>
+        </div>
+    </section>
+
+
+    <section class="machine-container">
+
+        <% for (const element of machines) { %>
+            <section class="machine-holder">
+                <div class="first-column">
+                    <div class="top-part">
+                        <h2>
+                            <%= element.nom_machine %>
+                        </h2>
+                        <p>
+                            <%= element.description_longue %>
+                        </p>
+
+                        <div class="info1">
+                            <p> 
+                                <%= element.statistique1_nom %>
+                            </p>
+                            <p> <%= element.statistique1_donnee %> </p>
+                        </div>
+                        <div class="info2">
+                            <p> 
+                                <%= element.statistique2_nom %>
+                            </p>
+                            <p> <%= element.statistique2_donnee %> </p>
+                        </div>
+                    </div>
+
+                    <div class="bottom-part">
+                        <h2>
+                            <%= element.avantage_titre %>
+                        </h2>
+
+                        <p>
+                            <%= element.avantage_description %>
+                        </p>
+                    </div>
+                </div>
+
+
+
+
+
+
+                <div class="second-column">
+                    <img src="<%= element.image_machine %>.png" alt="Machine Mazak">
+                    <div class="main-info-top">
+                        <h4><%= element.nom_machine %></h4>
+                        <span class="date-holder">
+                            2016
+                        </span>
+                    </div>
+                    
+                    <p> 
+                        <%= element.description_courte %>
+                    </p>
+
+                    <div class="stats-holder">
+                        <div class="first-stat">
+                            <h5>dimension X</h5>
+                            <span><%= element.d_x %></span>
+                        </div>
+
+                        <div class="second-stat">
+                            <h5>dimension Y</h5>
+                            <span><%= element.d_y %></span>
+                        </div>
+
+                        <div class="third-stat">
+                            <h5>dimension Z</h5>
+                            <span><%= element.d_z %></span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <% } %>
+
+
+    </section>
 
 <%- include('footer') %>
