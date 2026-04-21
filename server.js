@@ -104,7 +104,7 @@ app.get("/", async function (req, res) {
 app.get("/presentation", async function (req, res) {    
     try {
         if (req.session.role === "admin") {
-            res.render("admin/presentation", { page_css1: "presentation.css", page_css2: "headeradmin.css" });
+            res.redirect("admin/presentation", { page_css1: "presentation.css", page_css2: "headeradmin.css" });
         } else {
             res.render("presentation", { page_css1: "headerclient.css", page_css2: "presentation.css" });
         }
@@ -156,28 +156,16 @@ app.get("/realisations", async function (req, res) {
         const produit1 = produitsResultat.length > 0 ? produitsResultat[0] : null;
         const produitsSuivants = produitsResultat;
 
-        // 5. Rendu de la page (Gestion Admin / Client)
-        if (req.session.role === "admin") {
-            res.render("admin/realisations", { 
-                page_css1: "realisationadmin.css", 
-                page_css2: "headeradmin.css", 
-                produits: produitsSuivants, 
-                produit1: produit1, 
-                categories: categories,
-                categorieChoisie: categorieChoisie || 'all'
-            });
-        } else {
-            res.render("realisations", { 
-                page_css1: "headerclient.css", 
-                page_css2: "realisationclient.css", 
-                produits: produitsSuivants, 
-                produit1: produit1, 
-                categories: categories,
-                categorieChoisie: categorieChoisie || 'all'
-            });
-        }
-
-    } catch (err) {
+        res.render("realisations", { 
+            page_css1: "headerclient.css", 
+            page_css2: "realisationclient.css", 
+            produits: produitsSuivants, 
+            produit1: produit1, 
+            categories: categories,
+            categorieChoisie: categorieChoisie || 'all'
+        });
+    }
+    catch (err) {
         console.error("Erreur SQL ou Serveur :", err);
         res.status(500).send("Erreur lors de la récupération des données");
     }
@@ -235,21 +223,6 @@ app.get("/mentions", async function (req, res) {
 
 
 
-
-
-
-
-app.get("/produit", async function (req, res) {
-    const produitId = req.query.produit_id;
-    const [produit] = await pool.query("SELECT * FROM produits WHERE id = ?", [produitId]);
-    const domaine_produit = produit[0].domaine;
-    const peut_plaire_requete = "SELECT * FROM produits WHERE domaine = ? AND id <> ? ORDER BY RAND() LIMIT 3";
-    const [peut_plaire] = await pool.query(peut_plaire_requete, [domaine_produit, produitId]);
-
-    res.render("produit", { produit: produit[0], peut_plaire, page_css: "produit.css" });
-});
-
-
 app.get("/tests", async function (req, res) {
     try {
         res.render("tests", { page_css1: "tests.css", page_css2: "headerclient.css" });
@@ -275,6 +248,46 @@ app.get("/admin/presentation", async function (req, res) {
     } catch (err) {
         console.error(err);
         res.status(500).send("Erreur serveur");
+    }
+});
+
+app.get("/admin/realisations", async function (req, res) {
+    try {
+        // 1. Récupérer la catégorie depuis l'URL
+        const categorieChoisie = req.query.categorie;
+        
+        // 2. Récupérer toutes les catégories pour le menu de tri
+        const [categories] = await pool.query("SELECT * FROM categories");
+
+        // 3. Récupérer les produits (avec ou sans filtre)
+        let produitsResultat;
+        
+        if (categorieChoisie && categorieChoisie !== 'all') {
+            // Requête filtrée si on a un ID de catégorie
+            const [rows] = await pool.query("SELECT * FROM produits WHERE categorie = ?", [categorieChoisie]);
+            produitsResultat = rows;
+        } else {
+            // Requête globale par défaut
+            const [rows] = await pool.query("SELECT * FROM produits");
+            produitsResultat = rows;
+        }
+
+        // 4. Préparer les données pour EJS (gestion du premier produit et des suivants)
+        const produit1 = produitsResultat.length > 0 ? produitsResultat[0] : null;
+        const produitsSuivants = produitsResultat;
+
+        res.render("admin/realisations", { 
+            page_css1: "headeradmin.css", 
+            page_css2: "realisationclient.css", 
+            produits: produitsSuivants, 
+            produit1: produit1, 
+            categories: categories,
+            categorieChoisie: categorieChoisie || 'all'
+        });
+    } 
+    catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de la récupération des données");
     }
 });
 
@@ -407,6 +420,51 @@ app.get('/api/max-dimensions', async (req, res) => {
         res.status(500).send('Erreur serveur');
     }
 });
+
+
+app.get("/modif_realisations/:id", async function (req, res) {
+    try {
+        const produitId = req.params.id; 
+        const [produit] = await pool.query("SELECT * FROM produits WHERE id = ?", [produitId]);
+        const categorieId = produit[0].categorie;
+        const [categories] = await pool.query("SELECT nom FROM categories WHERE id_cat = ?", [categorieId]);
+        const listeCategories = await pool.query("SELECT * FROM categories");
+        res.render("admin/modifrealisation", { 
+            page_css1: "headeradmin.css", 
+            page_css2: "modif_realisations.css", 
+            produit: produit[0], 
+            categories: categories[0].nom, 
+            listeCategories: listeCategories[0]
+        });
+    } catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de la récupération des données");
+    }});
+
+
+app.get("/suppression", async function (req, res) {
+    try {
+        res.render("/admin/suppression", { page_css1: "headeradmin.css", page_css2: "suppression.css" });
+    } catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de la suppression de la réalisation");
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,5 +1,116 @@
 <%- include('header') %>
 
+<main>
+    <div class="page-title-container">
+        <h3>PORTFOLIO INDUSTRIEL</h3>
+        <h1>Précision et excellence technique</h1>
 
+        <p>
+            Découvrez une sélection de nos pièces mécaniques complexes, conçues pour les
+            secteurs les plus exigeants. Chaque réalisation témoigne de notre maîtrise de l'usinage
+            et de notre engagement à vous fournir la meilleure qualité sur le marché.
+        </p>
+    </div>
+</main>
+
+
+
+<section class="tri">
+    <div class="tri-item<%= (categorieChoisie === 'all' || !categorieChoisie) ? ' active' : '' %>" data-filter="all">Tous</div>
+    
+    <% for (const categorie of categories) { %>
+        <div class="tri-item<%= String(categorieChoisie) === String(categorie.id_cat) ? ' active' : '' %>" data-filter="<%= categorie.id_cat %>"><%= categorie.nom %></div>
+    <% } %>
+</section>
+
+<section class="realisations-content">
+    <% if (produit1) { %> 
+        <div class="realisations-firstrow pc-only">
+            <div class="realisation-card">
+                <img src="<%= produit1.image %>" alt="Image de réalisation">
+                <div class="realisation-description">
+                    <h2><%= produit1.nom %></h2>
+                    <p><%= produit1.description %></p>
+                </div>
+                <a href="/modif_realisations/<%= produit1.id %>">
+                    <img src="/img/icons/modifier.svg" alt="Modifier la réalisation">
+                </a>
+            </div>
+
+            <div class="first-row-infos">
+                <img src="/img/icons/machine.png" alt="Icône de machine" class="machine-icone">
+                <h4>Information</h4>
+                <p>Découvrez nos capacités de production sur cette gamme de pièces.</p>
+                <button class="voir-plus" onclick="window.location.href='/machines'">Voir notre parc machine</button>
+            </div>
+
+            
+        </div>
+    <% } else { %>
+        <div style="text-align: center; padding: 50px;">
+            <p>Aucune réalisation n'est actuellement disponible dans cette catégorie.</p>
+        </div>
+    <% } %>
+
+    <div class="realisations-grid">
+        <% for (const element of produits) { %>
+            <div class="realisation-card">
+                <img src="<%= element.image %>" alt="Image de réalisation">
+                <div class="realisation-description">
+                    <h2><%= element.nom %></h2>
+                    <p><%= element.description %></p>
+                </div>
+                <a href="/modif_realisations/<%= element.id %>">
+                    <img src="/img/icons/modifier.svg" alt="Modifier la réalisation">
+                </a>
+            </div>
+        <% } %>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const items = document.querySelectorAll('.tri-item');
+        const params = new URLSearchParams(window.location.search);
+        const selected = params.get('categorie') || 'all';
+
+        items.forEach(item => {
+            item.classList.toggle('active', item.dataset.filter === selected);
+
+            item.addEventListener('click', function() {
+                const filter = item.dataset.filter;
+                const url = new URL(window.location.href);
+                if (filter === 'all') {
+                    url.searchParams.delete('categorie');
+                } else {
+                    url.searchParams.set('categorie', filter);
+                }
+
+                window.location.href = url.toString();
+            });
+        });
+    });
+</script>
 
 <%- include('footer') %>

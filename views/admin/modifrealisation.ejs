@@ -1,0 +1,55 @@
+<%- include('./header') %>
+
+<main>
+    <section class="left-part">
+        <h1>
+            Vous souhaitez modifier une <span>réalisation</span> ?
+        </h1>
+    </section>
+
+    <section class="right-part">
+        <form class="form-container">
+            <div class="form-left">
+                <h4> Modifiez les informations </h4>
+                <p class="gray-text">Validez une fois la modification apportée.</p>
+
+
+                <div class="upload-box">
+                    <div class="upload-icon">⇪</div>
+                    <p>Glissez-déposez vos plans</p>
+                    <span>Fichiers 3D, PDF, images...</span>
+                    <button type="button" class="upload-button">Chercher un/des fichiers</button>
+                    <input type="file" name="fichiers" multiple id="fichiers-input">
+                </div>
+            </div>
+            <div class="form-right">
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label>Nom du produit</label>
+                    <input type="text" name="nom_produit" placeholder="<%= produit.nom %>" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label>Description</label>
+                    <input type="text" name="description" placeholder="<%= produit.description %>" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label for="categorie">Catégorie du produit</label>
+                        <select name="categorie" id="categorie">
+                            <% listeCategories.forEach(cat => { %>
+                                <option value="<%= cat.id_cat %>" 
+                                    <%= Number(cat.id_cat) == Number(produit.categorie) ? 'selected' : '' %>>
+                                    <%= cat.nom %>
+                                </option>
+                            <% }) %>
+                        </select>
+                </div>
+
+
+                <a href="/suppression" class="suppress_link">
+                    Supprimer une réalisation
+                </a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<%- include("./footer") %>

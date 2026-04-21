@@ -52,7 +52,11 @@
 
 
 
-
+.modif_link{
+    width:48px;
+    height:auto;
+    
+}
 
 
 
@@ -173,7 +177,7 @@
 
     .realisation-card{
         position:relative;
-        overflow:hidden;
+        overflow:visible;
         border-radius:28px;
         box-shadow:0 30px 70px rgba(20,31,75,0.12);
         min-height:520px;
@@ -396,5 +400,67 @@
         grid-template-columns: repeat(1, minmax(0, 1fr));
         gap:24px;
         margin-top:40px;
+    }
+}
+
+
+
+
+
+
+
+/* Styles spécifiques pour la page admin des réalisations */
+
+/* Positionnement de l'icône de modification en haut à droite des cards */
+.realisation-card {
+    position: relative;
+}
+
+.realisation-card a[href*="/modif"] {
+    position: absolute;
+    z-index: 1000;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    transform: translate(50%, -50%);
+    top: 16px;
+    right: 16px;
+}
+
+.realisation-card a[href*="/modif"]:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: translate(50%, -50%) scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.realisation-card a[href*="/modif"] img {
+    width: 54px;
+    height: 54px;
+    opacity: 0.8;
+}
+
+.realisation-card a[href*="/modif"]:hover img {
+    opacity: 1;
+}
+
+/* Pour la première card qui a une structure différente */
+/* (Removed redundant positioning) */
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+    .realisation-card a[href*="/modif"] {
+        width: 44px;
+        height: 44px;
+        top: 12px;
+        right: 12px;
+    }
+
+    .realisation-card a[href*="/modif"] img {
+        width: 22px;
+        height: 22px;
     }
 }
