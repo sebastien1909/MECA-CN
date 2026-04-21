@@ -15,7 +15,7 @@
     </section>
 
 
-    <section class="machine-container">
+    <section class="machine-container pc-only">
 
         <% for (const element of machines) { %>
             <section class="machine-holder">
@@ -63,7 +63,7 @@
                     <div class="main-info-top">
                         <h4><%= element.nom_machine %></h4>
                         <span class="date-holder">
-                            2016
+                            <%= element.annee_entree %>
                         </span>
                     </div>
                     
@@ -94,6 +94,51 @@
             <% } %>
 
 
+    </section>
+
+
+
+    <section class="machine-container pc-hidden">
+        <div class="mobile-filters">
+            <button class="active">Tous</button>
+            <button>Fraisage</button>
+            <button>Tournage</button>
+        </div>
+
+        <% for (const element of machines) { %>
+            <section class="machine-holder-mobile">
+                <div class="machine-card-image">
+                    <span class="badge-entree"><%= element.annee_entree %></span>
+                    <img src="<%= element.image_machine %>.png" alt="Machine Mazak">
+                </div>
+
+                <div class="machine-card-content">
+                    <div class="machine-card-header">
+                        <h2 class="machine-subtitle"><%= element.nom_machine %></h2>
+                    </div>
+
+                    <div class="machine-card-stats">
+                        <div class="mobile-stat-box">
+                            <span class="stat-label"><%= element.statistique1_nom %></span>
+                            <span class="stat-value"><%= element.statistique1_donnee %></span>
+                        </div>
+                        <div class="mobile-stat-box highlight">
+                            <span class="stat-label"><%= element.statistique2_nom %></span>
+                            <span class="stat-value"><%= element.statistique2_donnee %></span>
+                        </div>
+                    </div>
+
+                    <p class="machine-card-desc">
+                        <%= element.description_courte %>
+                    </p>
+                </div>
+            </section>
+        <% } %>
+
+        <div class="mobile-pagination">
+            <button class="btn-more">Voir plus <i class="arrow-down">↓</i></button>
+            <p class="pagination-info">Vous voyez les 4 machines les plus récentes sur un total de 12 machines au sein de notre atelier.</p>
+        </div>
     </section>
 
 <%- include('footer') %>

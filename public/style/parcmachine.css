@@ -143,3 +143,162 @@
         color: #002D62;
     }
 }
+
+
+
+
+/* --- Styles spécifiques Mobile (pc-hidden) --- */
+
+@media screen and (max-width: 899px) {
+    .pc-only { display: none !important; }
+
+    body {
+        background-color: #F4F7FA;
+        padding-bottom: 80px; /* Pour ne pas cacher le contenu derrière la nav noire */
+    }
+
+    /* Filtres */
+    .mobile-filters {
+        display: flex;
+        gap: 10px;
+        padding: 20px;
+        justify-content: center;
+    }
+
+    .mobile-filters button {
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        background: #E2E8F0;
+        color: #4A5568;
+        font-weight: 500;
+    }
+
+    .mobile-filters button.active {
+        background: #003F87;
+        color: white;
+    }
+
+    /* Carte Machine */
+    .machine-holder-mobile {
+        background: white;
+        margin: 15px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .machine-card-image {
+        position: relative;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        background: #fff;
+    }
+
+    .badge-entree {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: #2D3748;
+        color: white;
+        font-size: 10px;
+        padding: 4px 8px;
+        border-radius: 3px;
+    }
+
+    .machine-card-image img {
+        max-width: 90%;
+        height: auto;
+    }
+
+    .machine-card-content {
+        padding: 20px;
+        border-top: 1px solid #F0F0F0;
+    }
+
+    .machine-card-header h2 {
+        font-size: 1.2rem;
+        font-weight: 800;
+        margin: 0;
+        color: #1A202C;
+    }
+
+    .machine-subtitle {
+        font-size: 0.75rem;
+        color: #3182CE;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    /* Stats Grille */
+    .machine-card-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin: 15px 0;
+    }
+
+    .mobile-stat-box {
+        background: #EDF2F7;
+        padding: 10px;
+        border-radius: 6px;
+    }
+
+    .mobile-stat-box.highlight {
+        background: #EBF8FF;
+    }
+
+    .stat-label {
+        display: block;
+        font-size: 0.65rem;
+        color: #718096;
+    }
+
+    .stat-value {
+        font-size: 0.85rem;
+        font-weight: bold;
+        color: #2C5282;
+    }
+
+    /* Footer Mobile */
+    .mobile-bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #000;
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0;
+        z-index: 9999;
+    }
+
+    .nav-item {
+        color: #718096;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 0.65rem;
+    }
+
+    .nav-item.active {
+        color: white;
+    }
+
+    /* Pagination */
+    .mobile-pagination {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .btn-more {
+        background: #0056B3;
+        color: white;
+        border: none;
+        padding: 12px 40px;
+        border-radius: 8px;
+        width: 80%;
+        font-weight: bold;
+    }
+}
