@@ -505,7 +505,7 @@ app.post("/modifier_infos_realisation", uploadProduits.array('fichiers', 1), asy
                     });
                 }
             }
-            // -------------------------------------------------
+
 
             const nouveauNomFichier = "/img/produits/" + req.files[0].filename; 
             requete += ", image = ?";
