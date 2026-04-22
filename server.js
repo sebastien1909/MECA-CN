@@ -1,3 +1,11 @@
+/*
+ * server.js
+ * Serveur Express principal de l'application.
+ * - Configure les middlewares (sessions, bodyParser, static)
+ * - Configure multer pour la gestion des uploads
+ * - Déclare les routes publiques et admin
+*/
+
 import express from "express";
 import session from "express-session";
 import crypto from "crypto";
@@ -63,6 +71,12 @@ app.use((req, res, next) => {
 });
 
 //MIDDLEWARES MAISON
+
+/**
+ * Middleware `authenticate`
+ * Vérifie que l'utilisateur est authentifié (présence de "session.userID").
+ * Si authentifié -> "next()", sinon redirige vers la page de connexion.
+ */
 function authenticate(req, res, next) {
     if (req.session.hasOwnProperty("userID")) {
         next();
@@ -72,6 +86,11 @@ function authenticate(req, res, next) {
     }
 }
 
+/**
+* Middleware "isAdmin"
+Vérifie que la session correspond à un administrateur.
+Si oui -> "next()", sinon redirige vers la page d'accueil.
+ */
 function isAdmin(req, res, next) {
     if (req.session.role == "admin") {
         next();
@@ -92,11 +111,22 @@ function isAdmin(req, res, next) {
 
 //
 
+
+
+
+
+
+
 // ROUTES
 
 
 
 
+/**
+ * GET /
+ * Page d'accueil : redirige les administrateurs vers l'interface admin,
+ * sinon affiche la page publique d'accueil.
+ */
 app.get("/", async function (req, res) {    
     try {
         if (req.session.role === "admin") {
@@ -113,6 +143,10 @@ app.get("/", async function (req, res) {
     }
 });
 
+/**
+ * GET /presentation
+ * Page de présentation de l'entreprise. Rend la vue adaptée selon le rôle.
+ */
 app.get("/presentation", async function (req, res) {    
     try {
         if (req.session.role === "admin") {
@@ -126,16 +160,32 @@ app.get("/presentation", async function (req, res) {
     }
 });
 
-app.get("/machines", async function (req, res) {    
+// Route publique pour lister les machines
+/**
+ * GET /machines
+ * Route client listant toutes les machines (séparées par type).
+ */
+app.get("/machines", async function (req, res) {
     try {
-
         const [machines] = await pool.query("SELECT * FROM machines");
+        const machinestourneuses = machines.filter(machine => machine.type === "tournage");
+        const machinefraiser = machines.filter(machine => machine.type === "fraisage");
 
-        if (req.session.role === "admin") {
-            res.render("/admin/parcmachine", { page_css1: "parcmachine.css", page_css2: "headeradmin.css", machines: machines });
-        } else {
-            res.render("parcmachine", { page_css1: "headerclient.css", page_css2: "parcmachine.css", machines: machines });
-        }
+        res.render("parcmachine", { page_css1: "headerclient.css", page_css2: "parcmachine.css", machines: machines, machinestourneuses: machinestourneuses, machinefraiser: machinefraiser });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Erreur serveur");
+    }
+});
+
+// Route admin pour la gestion du parc machine (protégée)
+app.get("/admin/machines", isAdmin, async function (req, res) {
+    try {
+        const [machines] = await pool.query("SELECT * FROM machines");
+        const machinestourneuses = machines.filter(machine => machine.type === "tournage");
+        const machinefraiser = machines.filter(machine => machine.type === "fraisage");
+
+        res.render("admin/parcmachine", { page_css1: "parcmachine.css", page_css2: "headeradmin.css", machines: machines, machinestourneuses: machinestourneuses, machinefraiser: machinefraiser });
     } catch (err) {
         console.error(err);
         res.status(500).send("Erreur serveur");
@@ -143,6 +193,11 @@ app.get("/machines", async function (req, res) {
 });
 
 
+/**
+GET /realisations
+Liste les réalisations (portfolio). Supporte le filtrage par catégorie
+via le paramètre `categorie` en query string.
+ */
 app.get("/realisations", async function (req, res) {
     try {
         // 1. Récupérer la catégorie depuis l'URL
@@ -183,6 +238,10 @@ app.get("/realisations", async function (req, res) {
     }
 });
 
+/**
+GET /devis
+Page du formulaire de demande de devis. Récupère les dimensions max des machines pour éviter toutes demandes impossibles (affichage et validation côté client).
+ */
 app.get("/devis", async function (req, res) {    
     try {
         const [dimensions] = await pool.query('SELECT MAX(d_x) as max_x, MAX(d_y) as max_y, MAX(d_z) as max_z FROM machines');
@@ -203,6 +262,10 @@ app.get("/devis", async function (req, res) {
 
 
 
+/**
+ * GET /contact
+Page de contact et formulaire pour envoyer un message à l'entreprise.
+ */
 app.get("/contact", async function (req, res) {    
     try {
         res.render("contact", { page_css1: "headerclient.css", page_css2: "contact.css" });
@@ -213,6 +276,10 @@ app.get("/contact", async function (req, res) {
 });
 
 
+/**
+ * GET /connexion
+Page de connexion pour les utilisateurs (identification).
+ */
 app.get("/connexion", async function (req, res) {    
     try {
         res.render("connexion", { page_css1: "connexion.css", page_css2: "headerclient.css" });
@@ -223,6 +290,10 @@ app.get("/connexion", async function (req, res) {
 });
 
 
+/**
+ * GET /mentions
+Page des mentions légales.
+ */
 app.get("/mentions", async function (req, res) {    
     try {
         res.render("mentions", { page_css1: "mentions.css", page_css2: "headeradmin.css" });
@@ -235,6 +306,10 @@ app.get("/mentions", async function (req, res) {
 
 
 
+/**
+ * GET /tests
+Page de test/de développement (utilitaire).
+ */
 app.get("/tests", async function (req, res) {
     try {
         res.render("tests", { page_css1: "tests.css", page_css2: "headerclient.css" });
@@ -245,6 +320,10 @@ app.get("/tests", async function (req, res) {
 });
 
 
+/**
+ * GET /admin/accueil
+Tableau de bord administrateur (page d'accueil admin).
+ */
 app.get("/admin/accueil", async function (req, res) {
     try {
         res.render("admin/accueil", { page_css1: "accueiladmin.css", page_css2: "headeradmin.css" });
@@ -254,6 +333,10 @@ app.get("/admin/accueil", async function (req, res) {
     }
 });
 
+/**
+ * GET /admin/presentation
+Page admin pour modifier la page de présentation publique.
+ */
 app.get("/admin/presentation", async function (req, res) {
     try {
         res.render("admin/presentation", { page_css1: "presentation.css", page_css2: "headeradmin.css" });
@@ -263,6 +346,10 @@ app.get("/admin/presentation", async function (req, res) {
     }
 });
 
+/**
+ * GET /admin/realisations
+Version administrateur du listing des réalisations (avec options de gestion).
+ */
 app.get("/admin/realisations", async function (req, res) {
     try {
         // 1. Récupérer la catégorie depuis l'URL
@@ -303,6 +390,161 @@ app.get("/admin/realisations", async function (req, res) {
     }
 });
 
+/**
+ * GET /deconnexion
+Détruit la session et déconnecte l'utilisateur.
+ */
+app.get("/deconnexion", async function (req, res) {
+    try {
+        req.session.destroy((err) => {
+            if (err) {
+                console.error("Erreur lors de la déconnexion :", err);
+                res.status(500).send("Erreur serveur");
+            } else {
+                res.redirect("/");
+            }
+        });
+    } catch (err) {
+        console.error("Erreur serveur :", err);
+        res.status(500).send("Erreur serveur");
+    }
+}); 
+
+
+
+
+/**
+ * GET /api/max-dimensions
+Endpoint API retournant les dimensions maximales disponibles (JSON).
+ */
+app.get('/api/max-dimensions', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT MAX(d_x) as max_x, MAX(d_y) as max_y, MAX(d_z) as max_z FROM machines');
+        res.json(rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erreur serveur');
+    }
+});
+
+
+/**
+ * GET /modif_realisations/:id
+Récupère les informations d'une réalisation et rend le formulaire de modification.
+ */
+app.get("/modif_realisations/:id", async function (req, res) {
+    try {
+        const produitId = req.params.id; 
+        const [produit] = await pool.query("SELECT * FROM produits WHERE id = ?", [produitId]);
+        const categorieId = produit[0].categorie;
+        const [categories] = await pool.query("SELECT nom FROM categories WHERE id_cat = ?", [categorieId]);
+        const listeCategories = await pool.query("SELECT * FROM categories");
+        res.render("admin/modifrealisation", { 
+            page_css1: "headeradmin.css", 
+            page_css2: "modif_realisations.css", 
+            produit: produit[0], 
+            categories: categories[0].nom, 
+            listeCategories: listeCategories[0]
+        });
+    } catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de la récupération des données");
+    }});
+
+
+/**
+ * GET /suppression
+Page de confirmation de suppression (catégorie, réalisations, machines).
+ */
+app.get("/suppression", async function (req, res) {
+    try {
+        res.render("/admin/suppression", { page_css1: "headeradmin.css", page_css2: "suppression.css" });
+    } catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de la suppression de la réalisation");
+    }
+});
+
+
+/**
+ * GET /modif_machine/:id
+Récupère une machine par son identifiant et rend le formulaire d'édition admin.
+ */
+app.get("/modif_machine/:id", async function (req, res) {
+    try {
+        const machineId = req.params.id;
+        const [rows] = await pool.query("SELECT * FROM machines WHERE id_machine = ?", [machineId]);
+        if (!rows || rows.length === 0) {
+            return res.status(404).send("Machine non trouvée");
+        }
+
+        const machine = rows[0];
+
+        res.render("admin/modifmachine", {
+            page_css1: "headeradmin.css",
+            page_css2: "modifmachine.css",
+            machine: machine
+        });
+    } catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de la récupération des données");
+    }
+});
+
+// Route POST pour enregistrer les modifications d'une machine (avec gestion de l'image)
+app.post("/modifier_infos_machine", isAdmin, uploadMachines.single('image_machine'), async function (req, res) {
+    try {
+        const {
+            id_machine,
+            nom_machine,
+            description_courte,
+            description_longue,
+            statistique1_nom,
+            statistique1_donnee,
+            statistique2_nom,
+            statistique2_donnee,
+            avantage_titre,
+            avantage_description,
+            d_x,
+            d_y,
+            d_z,
+            type,
+            annee_entree
+        } = req.body;
+
+        let query = `UPDATE machines SET nom_machine = ?, description_courte = ?, description_longue = ?, statistique1_nom = ?, statistique1_donnee = ?, statistique2_nom = ?, statistique2_donnee = ?, avantage_titre = ?, avantage_description = ?, d_x = ?, d_y = ?, d_z = ?, type = ?, annee_entree = ?`;
+        const values = [nom_machine, description_courte, description_longue, statistique1_nom, statistique1_donnee, statistique2_nom, statistique2_donnee, avantage_titre, avantage_description, d_x || null, d_y || null, d_z || null, type, annee_entree || null];
+
+        // Si une nouvelle image a été envoyée, supprimer l'ancienne (si existe) et ajouter le champ
+        if (req.file) {
+            const [ancien] = await pool.query("SELECT image_machine FROM machines WHERE id_machine = ?", [id_machine]);
+            if (ancien && ancien.length > 0 && ancien[0].image_machine) {
+                const nomFichierAncien = path.basename(ancien[0].image_machine);
+                const cheminAncienneImage = path.join('public/img/machines', nomFichierAncien);
+                if (fs.existsSync(cheminAncienneImage)) {
+                    fs.unlink(cheminAncienneImage, (err) => {
+                        if (err) console.error("Erreur lors de la suppression de l'ancienne image :", err);
+                        else console.log("Ancienne image supprimée :", nomFichierAncien);
+                    });
+                }
+            }
+
+            const nouveauNom = "/img/machines/" + req.file.filename;
+            query += ", image_machine = ?";
+            values.push(nouveauNom);
+        }
+
+        query += " WHERE id_machine = ?";
+        values.push(id_machine);
+
+        await pool.query(query, values);
+
+        res.redirect('/admin/machines');
+    } catch (err) {
+        console.error('Erreur lors de la modification de la machine :', err);
+        res.status(500).send('Erreur lors de la modification de la machine');
+    }
+});
 
 
 
@@ -313,6 +555,25 @@ app.get("/admin/realisations", async function (req, res) {
 
 
 
+
+
+
+
+
+
+
+
+
+// app.post
+
+
+
+
+/**
+ * POST /envoyer-devis
+Traite le formulaire de demande de devis, envoie un email avec les pièces jointes.
+Style du mail géré par le serveur
+ */
 app.post("/envoyer-devis", uploadProduits.array('fichiers', 10), async (req, res) => {
     try {
         const transporter = nodemailer.createTransport({
@@ -421,63 +682,10 @@ app.post("/envoyer-devis", uploadProduits.array('fichiers', 10), async (req, res
 });
 
 
-
-
-app.get('/api/max-dimensions', async (req, res) => {
-    try {
-        const [rows] = await pool.query('SELECT MAX(d_x) as max_x, MAX(d_y) as max_y, MAX(d_z) as max_z FROM machines');
-        res.json(rows[0]);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Erreur serveur');
-    }
-});
-
-
-app.get("/modif_realisations/:id", async function (req, res) {
-    try {
-        const produitId = req.params.id; 
-        const [produit] = await pool.query("SELECT * FROM produits WHERE id = ?", [produitId]);
-        const categorieId = produit[0].categorie;
-        const [categories] = await pool.query("SELECT nom FROM categories WHERE id_cat = ?", [categorieId]);
-        const listeCategories = await pool.query("SELECT * FROM categories");
-        res.render("admin/modifrealisation", { 
-            page_css1: "headeradmin.css", 
-            page_css2: "modif_realisations.css", 
-            produit: produit[0], 
-            categories: categories[0].nom, 
-            listeCategories: listeCategories[0]
-        });
-    } catch (err) {
-        console.error("Erreur SQL ou Serveur :", err);
-        res.status(500).send("Erreur lors de la récupération des données");
-    }});
-
-
-app.get("/suppression", async function (req, res) {
-    try {
-        res.render("/admin/suppression", { page_css1: "headeradmin.css", page_css2: "suppression.css" });
-    } catch (err) {
-        console.error("Erreur SQL ou Serveur :", err);
-        res.status(500).send("Erreur lors de la suppression de la réalisation");
-    }
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/**
+ * POST /modifier_infos_realisation
+Traite le formulaire d'édition d'une réalisation (admin), gère l'image.
+ */
 app.post("/modifier_infos_realisation", uploadProduits.array('fichiers', 1), async function (req, res) {
     try {
         const { id_produit, nom_produit, description, categorie } = req.body;
@@ -526,6 +734,10 @@ app.post("/modifier_infos_realisation", uploadProduits.array('fichiers', 1), asy
 
 
 
+/**
+POST /envoyer-contact
+Envoie un email de contact avec les informations fournies.
+ */
 app.post("/envoyer-contact", async function (req, res) {
 
     const { nom, entreprise, email, telephone, objet, message } = req.body;
@@ -576,6 +788,11 @@ app.post("/envoyer-contact", async function (req, res) {
 
 
 
+/**
+ * POST /connexion
+Authentifie un utilisateur en comparant les identifiants au hash stocké.
+Remplit la session et redirige selon le rôle.
+ */
 app.post("/connexion", async function (req, res) {
     const { id_user, password } = req.body;
     try {

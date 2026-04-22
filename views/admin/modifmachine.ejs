@@ -1,5 +1,295 @@
-<%- include('header') %>
+<%# Admin edit single machine form with preview %>
+<%- include('./header') %>
 
+<main>
+    <section class="left-part">
+        <h1>
+            Modifier la <span>machine</span>
+        </h1>
 
+        <div class="preview-wrapper preview-desktop">
+            <div class="preview-container">
+                <div class="preview-header">
+                    <h4>Prévisualisation</h4>
+                    <p class="preview-sub">Prévisualisez la carte de votre machine ici</p>
+                </div>
 
-<%- include('footer') %>
+                <div class="preview-frame">
+                    <div class="preview-card">
+                        <div class="preview-outer">
+                            <div class="preview-left">
+                                <div class="preview-top">
+                                    <h3 id="preview-name"><%= machine.nom_machine %></h3>
+                                    <p id="preview-desc"><%= machine.description_longue ? (machine.description_longue.length > 200 ? machine.description_longue.substring(0,200) + '...' : machine.description_longue) : (machine.description_courte || '') %></p>
+
+                                    <div class="preview-info">
+                                        <div class="preview-info-row">
+                                            <span class="label" id="preview-stat1-name"><%= machine.statistique1_nom %></span>
+                                            <span class="value" id="preview-stat1-value"><%= machine.statistique1_donnee %></span>
+                                        </div>
+                                        <div class="preview-info-row">
+                                            <span class="label" id="preview-stat2-name"><%= machine.statistique2_nom %></span>
+                                            <span class="value" id="preview-stat2-value"><%= machine.statistique2_donnee %></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="preview-bottom">
+                                    <h4 id="preview-adv-title"><%= machine.avantage_titre %></h4>
+                                    <p id="preview-adv-desc"><%= machine.avantage_description %></p>
+                                </div>
+                            </div>
+
+                            <div class="preview-right">
+                                <img id="preview-image-card" src="<%= machine.image_machine ? (machine.image_machine.match(/\.[a-z]{2,4}$/i) ? machine.image_machine : machine.image_machine + '.png') : '/img/icons/upload.png' %>" alt="Preview">
+                                <div class="preview-main-info">
+                                    <h4 id="preview-card-title"><%= machine.nom_machine %></h4>
+                                    <span id="preview-year" class="date-holder"><%= machine.annee_entree %></span>
+                                </div>
+                                <p id="preview-shortdesc"><%= machine.description_courte %></p>
+
+                                <div class="preview-dims">
+                                    <div class="dim"><strong>Dimension X</strong><span id="preview-dx"><%= machine.d_x %></span></div>
+                                    <div class="dim"><strong>Dimension Y</strong><span id="preview-dy"><%= machine.d_y %></span></div>
+                                    <div class="dim"><strong>Dimension Z</strong><span id="preview-dz"><%= machine.d_z %></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-actions">
+                    <button id="reload-preview" type="button" class="recharger-btn">Recharger</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="right-part">
+        <form class="form-container" method="POST" enctype="multipart/form-data" action="/modifier_infos_machine">
+            <input type="hidden" name="id_machine" value="<%= machine.id_machine %>">
+            <div class="form-left">
+
+                <div class="upload-box">
+                    <div class="upload-icon">
+                        <img id="preview-image" src="<%= machine.image_machine || '/img/icons/upload.png' %>" alt="Image machine">
+                    </div>
+                    <p id="upload-text">Image actuelle : <%= machine.image_machine || 'Aucune image' %></p>
+                    <span id="upload-status"><%= machine.image_machine || '' %></span>
+                    <button type="button" class="upload-button">Changer l'image</button>
+                    <input type="file" name="image_machine" id="image_machine_input" style="display:none;">
+                </div>
+
+                <div class="form-group">
+                    <label>Statistique 1 - Nom</label>
+                    <input type="text" name="statistique1_nom" value="<%= machine.statistique1_nom %>">
+                </div>
+
+                <div class="form-group">
+                    <label>Statistique 1 - Donnée</label>
+                    <input type="text" name="statistique1_donnee" value="<%= machine.statistique1_donnee %>">
+                </div>
+
+                <div class="form-group">
+                    <label>Statistique 2 - Nom</label>
+                    <input type="text" name="statistique2_nom" value="<%= machine.statistique2_nom %>">
+                </div>
+
+                <div class="form-group">
+                    <label>Statistique 2 - Donnée</label>
+                    <input type="text" name="statistique2_donnee" value="<%= machine.statistique2_donnee %>">
+                </div>
+
+                <div class="form-group">
+                    <label>Avantage - Titre</label>
+                    <input type="text" name="avantage_titre" value="<%= machine.avantage_titre %>">
+                </div>
+
+                <div class="form-group">
+                    <label>Avantage - Description</label>
+                    <textarea name="avantage_description" rows="3"><%= machine.avantage_description %></textarea>
+                </div>
+            </div>
+            <div class="form-right">
+                <div class="form-group" style="margin-bottom: 14px;">
+                    <label>Nom de la machine</label>
+                    <input type="text" name="nom_machine" value="<%= machine.nom_machine %>" required>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 14px;">
+                    <label>Description courte</label>
+                    <input type="text" name="description_courte" value="<%= machine.description_courte %>">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 14px;">
+                    <label>Description longue</label>
+                    <textarea name="description_longue" rows="4"><%= machine.description_longue %></textarea>
+                </div>
+
+                
+
+                <div class="form-group">
+                    <label>Dimension X (mm)</label>
+                    <input type="number" step="0.01" name="d_x" value="<%= machine.d_x %>">
+                </div>
+
+                <div class="form-group">
+                    <label>Dimension Y (mm)</label>
+                    <input type="number" step="0.01" name="d_y" value="<%= machine.d_y %>">
+                </div>
+
+                <div class="form-group">
+                    <label>Dimension Z (mm)</label>
+                    <input type="number" step="0.01" name="d_z" value="<%= machine.d_z %>">
+                </div>
+
+                <div class="form-group">
+                    <label>Type</label>
+                    <select name="type">
+                        <option value="tournage" <%= machine.type === 'tournage' ? 'selected' : '' %>>Tournage</option>
+                        <option value="fraisage" <%= machine.type === 'fraisage' ? 'selected' : '' %>>Fraisage</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Année d'entrée</label>
+                    <input type="number" name="annee_entree" value="<%= machine.annee_entree %>">
+                </div>
+
+                <a href="/suppression" class="suppress_link">Supprimer une machine</a>
+                <button type="submit" class="validate-btn">Valider</button>
+            </div>
+        </form>
+
+        <!-- Mobile preview (shown only on small screens, placed after the form) -->
+        <div class="preview-wrapper preview-mobile">
+            <div class="preview-container">
+                <div class="preview-header">
+                    <h4>Prévisualisation</h4>
+                    <p class="preview-sub">Prévisualisez la carte de votre machine ici</p>
+                </div>
+
+                <div class="preview-frame">
+                    <div class="preview-card preview-mobile-card">
+                        <div class="mobile-image-wrapper" style="position:relative; width:100%;">
+                            <img id="preview-mobile-image" src="<%= machine.image_machine ? (machine.image_machine.match(/\.[a-z]{2,4}$/i) ? machine.image_machine : machine.image_machine + '.png') : '/img/icons/upload.png' %>" alt="Preview mobile">
+                            <div class="mobile-year-badge" id="preview-mobile-year"><%= machine.annee_entree %></div>
+                        </div>
+
+                        <h3 id="preview-mobile-name" class="mobile-title"><%= machine.nom_machine %></h3>
+
+                        <div class="mobile-stats">
+                            <div class="mobile-stat">
+                                <div class="stat-label" id="preview-mobile-stat1-name"><%= machine.statistique1_nom %></div>
+                                <div class="stat-value" id="preview-mobile-stat1-value"><%= machine.statistique1_donnee %></div>
+                            </div>
+                            <div class="mobile-stat">
+                                <div class="stat-label" id="preview-mobile-stat2-name"><%= machine.statistique2_nom %></div>
+                                <div class="stat-value" id="preview-mobile-stat2-value"><%= machine.statistique2_donnee %></div>
+                            </div>
+                        </div>
+
+                        <p id="preview-mobile-desc" class="mobile-desc"><%= machine.description_courte || machine.description_longue || '' %></p>
+                    </div>
+                </div>
+
+                <div class="preview-actions">
+                    <button id="reload-preview-mobile" type="button" class="recharger-btn">Recharger</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    (function(){
+        const uploadButton = document.querySelector('.upload-button');
+        const fileInput = document.getElementById('image_machine_input');
+        const uploadStatus = document.getElementById('upload-status');
+        const uploadText = document.getElementById('upload-text');
+        const previewImage = document.getElementById('preview-image'); // small upload preview
+        const previewCardImage = document.getElementById('preview-image-card'); // desktop preview
+        const previewMobileImage = document.getElementById('preview-mobile-image'); // mobile preview
+
+        if (uploadButton) uploadButton.addEventListener('click', () => fileInput && fileInput.click());
+
+        if (fileInput) {
+            fileInput.addEventListener('change', () => {
+                const file = fileInput.files[0];
+                if (!file) return;
+                if (uploadText) uploadText.innerText = 'Nouvelle image sélectionnée';
+                if (uploadStatus) {
+                    uploadStatus.innerText = file.name;
+                    uploadStatus.style.color = '#0f4bb7';
+                    uploadStatus.style.fontWeight = 'bold';
+                }
+                if (previewImage) previewImage.src = URL.createObjectURL(file);
+                if (previewCardImage) previewCardImage.src = URL.createObjectURL(file);
+                if (previewMobileImage) previewMobileImage.src = URL.createObjectURL(file);
+            });
+        }
+
+        function setIf(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        }
+
+        function updatePreview() {
+            const get = s => document.querySelector(s);
+            const name = (get('[name="nom_machine"]') || {}).value || 'Nom machine';
+            const descLong = (get('[name="description_longue"]') || {}).value || '';
+            const descShort = (get('[name="description_courte"]') || {}).value || '';
+            const stat1Name = (get('[name="statistique1_nom"]') || {}).value || '';
+            const stat1Val = (get('[name="statistique1_donnee"]') || {}).value || '';
+            const stat2Name = (get('[name="statistique2_nom"]') || {}).value || '';
+            const stat2Val = (get('[name="statistique2_donnee"]') || {}).value || '';
+            const advTitle = (get('[name="avantage_titre"]') || {}).value || '';
+            const advDesc = (get('[name="avantage_description"]') || {}).value || '';
+            const dx = (get('[name="d_x"]') || {}).value || '';
+            const dy = (get('[name="d_y"]') || {}).value || '';
+            const dz = (get('[name="d_z"]') || {}).value || '';
+            const year = (get('[name="annee_entree"]') || {}).value || '';
+
+            setIf('preview-name', name);
+            setIf('preview-card-title', name);
+            setIf('preview-desc', descLong || descShort);
+            setIf('preview-shortdesc', descShort);
+            setIf('preview-stat1-name', stat1Name);
+            setIf('preview-stat1-value', stat1Val);
+            setIf('preview-stat2-name', stat2Name);
+            setIf('preview-stat2-value', stat2Val);
+            setIf('preview-adv-title', advTitle);
+            setIf('preview-adv-desc', advDesc);
+            setIf('preview-dx', dx);
+            setIf('preview-dy', dy);
+            setIf('preview-dz', dz);
+            setIf('preview-year', year);
+
+            // mobile
+            setIf('preview-mobile-name', name);
+            setIf('preview-mobile-desc', descShort || descLong);
+            setIf('preview-mobile-stat1-name', stat1Name);
+            setIf('preview-mobile-stat1-value', stat1Val);
+            setIf('preview-mobile-stat2-name', stat2Name);
+            setIf('preview-mobile-stat2-value', stat2Val);
+            setIf('preview-mobile-year', year);
+
+            const file = fileInput && fileInput.files && fileInput.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                if (previewCardImage) previewCardImage.src = url;
+                if (previewMobileImage) previewMobileImage.src = url;
+            }
+        }
+
+        const desktopReload = document.getElementById('reload-preview');
+        if (desktopReload) desktopReload.addEventListener('click', updatePreview);
+        const mobileReload = document.getElementById('reload-preview-mobile');
+        if (mobileReload) mobileReload.addEventListener('click', updatePreview);
+
+        // initial
+        updatePreview();
+    })();
+</script>
+
+<%- include('./footer') %>

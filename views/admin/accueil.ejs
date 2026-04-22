@@ -1,3 +1,5 @@
+
+<%# Admin dashboard/homepage %>
 <%- include('header') %>
 
 
@@ -79,7 +81,7 @@
     <div class="pc-hidden presentation-mobile">
         <article class="home-feature large-feature">
             <div class="presentation-icon-holder">
-                <img src="img/icons/machine.png" class="phone-presentation" alt="Icone Précision">
+                <img src="/img/icons/qualite.svg" class="phone-presentation" alt="Icone Précision">
             </div>
             <h2>Précision</h2>
             <p>L’usinage au micron près sur métaux ferreux et alliages complexes : une expertise maîtrisée de A à Z.</p>
@@ -88,7 +90,7 @@
         <div class="feature-row">
             <article class="home-feature small-feature">
                 <div class="presentation-icon-holder">
-                    <img src="img/icons/bolt.png" class="phone-presentation" alt="Icone Réactivité">
+                    <img src="/img/icons/bolt.svg" class="phone-presentation" alt="Icone Réactivité">
                 </div>
                 <h2>Réactivité</h2>
                 <p>Devis sous 24h et cycles de production optimisés.</p>
@@ -96,7 +98,7 @@
 
             <article class="home-feature small-feature">
                 <div class="presentation-icon-holder">
-                    <img src="img/icons/validation.png" class="phone-presentation" alt="Icone Réactivité">
+                    <img src="/img/icons/validation.svg" class="phone-presentation" alt="Icone Réactivité">
                 </div>
                 <h2>Qualité</h2>
                 <p>Contrôle tridimensionnel et traçabilité de la qualité via un manuel destiné.</p>
@@ -178,7 +180,7 @@
             </p>
             <br>
             <br>
-            <button class="landing_btn know-more-btn" onclick="window.location.href='/machines'">Voir nos machines</button>
+            <button class="landing_btn know-more-btn" onclick="window.location.href='/admin/machines'">Voir nos machines</button>
         </div>
         <div class="machine-right-side">
             <img src="/img/machines/Mazak1.png" alt="Image de machine Mazak">
@@ -191,25 +193,25 @@
         </div>
         <div class="machine-carousel-bottom-header">
             <div class="separateur-horizontal"></div>
-            <a href="/machines" class="machine-carousel-link">Voir plus →</a>
+            <a href="/admin/machines" class="machine-carousel-link">Voir plus →</a>
         </div>
         <div class="machine-carousel-track">
             <article class="machine-carousel-card">
-                <img src="/img/placeholders/Mazak1.png" alt="Machine Mazak">
+                <img src="/img/machines/Mazak1.png" alt="Machine Mazak">
                 <div class="machine-carousel-card-content">
                     <h3>Centre d'usinage 5 axes</h3>
                     <p>Puissance et précision pour les pièces les plus complexes.</p>
                 </div>
             </article>
             <article class="machine-carousel-card">
-                <img src="/img/placeholders/Mazak1.png" alt="Machine Mazak">
+                <img src="/img/machines/Mazak1.png" alt="Machine Mazak">
                 <div class="machine-carousel-card-content">
                     <h3>Tour automatique</h3>
                     <p>Haute cadence et répétabilité optimisée pour séries longues.</p>
                 </div>
             </article>
             <article class="machine-carousel-card">
-                <img src="/img/placeholders/Mazak1.png" alt="Machine Mazak">
+                <img src="/img/machines/Mazak1.png" alt="Machine Mazak">
                 <div class="machine-carousel-card-content">
                     <h3>Centre d'usinage robotisé</h3>
                     <p>Flexibilité maximale pour prototypes et petites série.</p>
@@ -250,28 +252,28 @@
     </div>
     <div class="product-carousel-track pc-hidden">
         <article class="product-card">
-            <img src="/img/placeholders/produit1.png" alt="Produit centre d'usinage">
+            <img src="/img/produits/produit1.png" alt="Produit centre d'usinage">
             <div class="product-card-body">
                 <h3>Centre d'usinage 5 axes</h3>
                 <p>Grande précision pour pièces complexes, avec une rigidité et une répétabilité optimales.</p>
             </div>
         </article>
         <article class="product-card">
-            <img src="/img/placeholders/produit2.png" alt="Produit tour automatique">
+            <img src="/img/produits/produit4.png" alt="Produit tour automatique">
             <div class="product-card-body">
                 <h3>Tour automatique</h3>
                 <p>Production rapide et régulière pour séries longues et pièces acier haut de gamme.</p>
             </div>
         </article>
         <article class="product-card">
-            <img src="/img/placeholders/produit3.png" alt="Produit fraiseuse">
+            <img src="/img/produits/produit3.png" alt="Produit fraiseuse">
             <div class="product-card-body">
                 <h3>Fraiseuse haute cadence</h3>
                 <p>Usinage dynamique avec une finition de surface parfaite sur alliages techniques.</p>
             </div>
         </article>
         <article class="product-card">
-            <img src="/img/placeholders/produit4.png" alt="Produit centre robotisé">
+            <img src="/img/produits/produit4.png" alt="Produit centre robotisé">
             <div class="product-card-body">
                 <h3>Centre robotisé</h3>
                 <p>Automatisation fluide pour prototypes, petites séries et préparation multi-axes.</p>
@@ -288,7 +290,7 @@
                 <div class="machine-left-side">
                     <h2>Nos réalisations</h2>
                     <p>Découvrez nos projets les plus exigeants pour l'aéronautique, le médical et l'industrie. Chaque réalisation illustre notre capacité à transformer des pièces techniques en solutions fiables et durables.</p>
-                    <button class="landing_btn know-more-btn" onclick="window.location.href='/realisations'">Voir nos réalisations</button>
+                    <button class="landing_btn know-more-btn" onclick="window.location.href='/admin/realisations'">Voir nos réalisations</button>
                 </div>
                 <div class="machine-right-side">
                     <img src="/img/placeholders/usinage2.jpg" alt="Exemple de réalisation">

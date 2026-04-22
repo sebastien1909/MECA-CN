@@ -265,7 +265,7 @@
 
     .realisation-card{
         position:relative;
-        overflow:hidden;
+        overflow:visible;
         border-radius:28px;
         box-shadow:0 30px 70px rgba(20,31,75,0.12);
         min-height:520px;
@@ -358,7 +358,7 @@
 
     .realisation-card{
         position:relative;
-        overflow:hidden;
+        overflow:visible;
         border-radius:28px;
         box-shadow:0 30px 70px rgba(20,31,75,0.12);
         min-height:520px;
@@ -414,6 +414,7 @@
 /* Positionnement de l'icône de modification en haut à droite des cards */
 .realisation-card {
     position: relative;
+    overflow: visible;
 }
 
 .realisation-card a[href*="/modif"] {
@@ -452,15 +453,18 @@
 
 /* Responsive */
 @media screen and (max-width: 900px) {
+    .realisation-card{ 
+        overflow: visible; 
+    }
     .realisation-card a[href*="/modif"] {
-        width: 44px;
-        height: 44px;
+        width: 48px;
+        height: 48px;
         top: 12px;
         right: 12px;
     }
 
     .realisation-card a[href*="/modif"] img {
-        width: 22px;
-        height: 22px;
+        width: 48px;
+        height: 48px;
     }
 }

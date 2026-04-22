@@ -79,19 +79,20 @@ main {
 }
 /* center upload-box vertically inside the left column without centering other elements */
 .upload-box {
-  margin: auto 0;
+  padding:20px;
+  margin: auto 15px;
+  height:auto;
 }
 
 .upload-icon {
-    width:54px;
-    height:54px;
+    width:75px;
+    height:75px;
 }
 
 .upload-icon img {
-  width: 48px;
-  height: 48px;
+  width: 108px;
+  height: 108px;
   object-fit: contain;
-  display: block;
 }
 
 /* Overlay to soften background image for readability */

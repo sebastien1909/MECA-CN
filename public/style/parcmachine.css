@@ -3,6 +3,22 @@
     padding:50px;
 }
 
+/* Container centering and title spacing */
+.machine-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.machine-container .section-title {
+    max-width: 1200px;
+    margin: 30px auto 10px;
+    padding-left: 8px;
+    font-size: 1.25rem;
+    color: #1A202C;
+}
+
 
 
 /* Ordinateur */
@@ -86,6 +102,16 @@
         margin-left: -5%;
         margin-bottom: 20px;
         object-fit: contain;
+    }
+
+    /* Invert layout for fraisage machines: image on right becomes image on left (and vice versa) */
+    .fraisage-title ~ .machine-holder {
+        grid-template-columns: 1.2fr 1fr; /* swap column widths */
+    }
+
+    .fraisage-title ~ .machine-holder .second-column img {
+        margin-left: 0; /* reset left negative offset */
+        margin-right: -5%; /* push image slightly outside on the right side */
     }
 
     .main-info-top {
@@ -184,7 +210,7 @@
         background: white;
         margin: 15px;
         border-radius: 12px;
-        overflow: hidden;
+        overflow: visible;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
 
@@ -301,4 +327,101 @@
         width: 80%;
         font-weight: bold;
     }
+}
+
+
+/* Modifier icon (match style from realisations) */
+.machine-holder, .machine-holder-mobile {
+    position: relative;
+    overflow: visible;
+}
+
+.machine-holder a[href*="/modif_machine"],
+.machine-holder-mobile a[href*="/modif_machine"] {
+    position: absolute;
+    z-index: 1000;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    transform: translate(50%, -50%);
+    top: 16px;
+    right: 16px;
+    background: transparent;
+}
+
+.machine-holder a[href*="/modif_machine"]:hover,
+.machine-holder-mobile a[href*="/modif_machine"]:hover {
+    background: rgba(255,255,255,1);
+    transform: translate(50%, -50%) scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.machine-holder a[href*="/modif_machine"] img,
+.machine-holder-mobile a[href*="/modif_machine"] img {
+    width: 54px;
+    height: 54px;
+    opacity: 0.8;
+    display: block;
+}
+
+@media screen and (max-width: 900px) {
+    .machine-holder-mobile a[href*="/modif_machine"] {
+        width: 56px;
+        height: 56px;
+        top: 12px;
+        right: 12px;
+    }
+
+    .machine-holder-mobile a[href*="/modif_machine"] img {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+
+
+/* Container des filtres */
+.filter-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin: 40px 0;
+    flex-wrap: wrap;
+    background-color:#f2f4f6;
+    width:100%;
+    padding: 20px;
+}
+
+/* Style des boutons calqué sur ta page produit */
+.filter-btn {
+    border: none;
+    padding: 10px 24px;
+    background-color: #EDF2F7; /* Gris très clair */
+    color: #4A5568; /* Gris texte */
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Effet au survol */
+.filter-btn:hover {
+    background-color: #E2E8F0;
+}
+
+/* État actif (Bleu MECA-CN) */
+.filter-btn.active {
+    background-color: #003F87; /* Le bleu de ton logo */
+    color: white;
+}
+
+/* Masquage des groupes lors du tri */
+.hidden {
+    display: none !important;
 }

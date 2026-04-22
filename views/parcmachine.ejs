@@ -1,10 +1,11 @@
+<%# Public machines listing (parc machine) %>
 <%- include('header') %>
 
 
     <section class="top-title">
         <div class="top-left">
             <h3>GRANDE CAPACITÉ DE PRODUCTION</h3>
-            <h2>Parc Machine <br> Haute Précision</h2>
+            <h2>Parc Machine <br> <span>Haute Précision</span></h2>
         </div>
 
         <div class="top-right">
@@ -15,10 +16,104 @@
     </section>
 
 
+
+
     <section class="machine-container pc-only">
 
-        <% for (const element of machines) { %>
-            <section class="machine-holder">
+        <div class="filter-wrapper">
+            <button class="filter-btn active" data-filter="all">Tous</button>
+            <button class="filter-btn" data-filter="fraisage">Fraisage</button>
+            <button class="filter-btn" data-filter="tournage">Tournage</button>
+        </div>
+
+        <div class="filter-group tournage-group ">
+            <h4 class="section-title tournage-title">Tournage</h4>
+            <% for (const element of machinestourneuses) { %>
+                <section class="machine-holder">
+
+
+                    <div class="first-column">
+                        <div class="top-part">
+                            <h2>
+                                <%= element.nom_machine %>
+                            </h2>
+                            <p>
+                                <%= element.description_longue %>
+                            </p>
+
+                            <div class="info1">
+                                <p> 
+                                    <%= element.statistique1_nom %>
+                                </p>
+                                <p> <%= element.statistique1_donnee %> </p>
+                            </div>
+                            <div class="info2">
+                                <p> 
+                                    <%= element.statistique2_nom %>
+                                </p>
+                                <p> <%= element.statistique2_donnee %> </p>
+                            </div>
+                        </div>
+
+                        <div class="bottom-part">
+                            <h2>
+                                <%= element.avantage_titre %>
+                            </h2>
+
+                            <p>
+                                <%= element.avantage_description %>
+                            </p>
+                        </div>
+                    </div>
+
+
+
+
+
+
+                    <div class="second-column">
+                        <img src="<%= element.image_machine %>.png" alt="Machine Mazak">
+                        <div class="main-info-top">
+                            <h4><%= element.nom_machine %></h4>
+                            <span class="date-holder">
+                                <%= element.annee_entree %>
+                            </span>
+                        </div>
+                        
+                        <p> 
+                            <%= element.description_courte %>
+                        </p>
+
+                        <div class="stats-holder">
+                            <div class="first-stat">
+                                <h5>dimension X</h5>
+                                <span><%= element.d_x %></span>
+                            </div>
+
+                            <div class="second-stat">
+                                <h5>dimension Y</h5>
+                                <span><%= element.d_y %></span>
+                            </div>
+
+                            <div class="third-stat">
+                                <h5>dimension Z</h5>
+                                <span><%= element.d_z %></span>
+                            </div>
+                        </div>
+
+                    </div>
+
+        
+                </section>
+
+            <% } %>
+        </div>
+
+            <div class="filter-group fraisage-group">
+            <h4 class="section-title fraisage-title">Fraisage</h4>
+            <% for (const element of machinefraiser) { %>
+                <section class="machine-holder">
+
                 <div class="first-column">
                     <div class="top-part">
                         <h2>
@@ -93,20 +188,31 @@
 
             <% } %>
 
-
+            </div>
     </section>
 
 
 
+
+
+
+
+
+
+
+
+
+
     <section class="machine-container pc-hidden">
-        <div class="mobile-filters">
-            <button class="active">Tous</button>
-            <button>Fraisage</button>
-            <button>Tournage</button>
+        <div class="filter-wrapper">
+            <button class="filter-btn active" data-filter="all">Tous</button>
+            <button class="filter-btn" data-filter="fraisage">Fraisage</button>
+            <button class="filter-btn" data-filter="tournage">Tournage</button>
         </div>
 
         <% for (const element of machines) { %>
-            <section class="machine-holder-mobile">
+            <section class="machine-holder-mobile" data-type="<%= element.type %>">
+
                 <div class="machine-card-image">
                     <span class="badge-entree"><%= element.annee_entree %></span>
                     <img src="<%= element.image_machine %>.png" alt="Machine Mazak">
@@ -134,11 +240,48 @@
                 </div>
             </section>
         <% } %>
-
-        <div class="mobile-pagination">
-            <button class="btn-more">Voir plus <i class="arrow-down">↓</i></button>
-            <p class="pagination-info">Vous voyez les 4 machines les plus récentes sur un total de 12 machines au sein de notre atelier.</p>
-        </div>
     </section>
+
+
+
+<script>
+    document.querySelectorAll('.filter-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const filter = button.getAttribute('data-filter');
+
+            // 1. Gérer l'état actif des boutons (desktop + mobile)
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            // 2. Filtrer les sections Desktop
+            const tournageGroup = document.querySelector('.tournage-group');
+            const fraisageGroup = document.querySelector('.fraisage-group');
+
+            if (filter === 'all') {
+                tournageGroup?.classList.remove('hidden');
+                fraisageGroup?.classList.remove('hidden');
+            } else if (filter === 'tournage') {
+                tournageGroup?.classList.remove('hidden');
+                fraisageGroup?.classList.add('hidden');
+            } else if (filter === 'fraisage') {
+                tournageGroup?.classList.add('hidden');
+                fraisageGroup?.classList.remove('hidden');
+            }
+
+            // 3. Filtrer la version mobile (chaque carte a maintenant data-type)
+            const mobileCards = document.querySelectorAll('.machine-holder-mobile');
+            if (filter === 'all') {
+                mobileCards.forEach(card => card.classList.remove('hidden'));
+            } else {
+                mobileCards.forEach(card => {
+                    if (card.dataset.type === filter) card.classList.remove('hidden');
+                    else card.classList.add('hidden');
+                });
+            }
+        });
+    });
+</script>
+
+
 
 <%- include('footer') %>

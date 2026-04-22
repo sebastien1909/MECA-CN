@@ -1,3 +1,7 @@
+/*
+Configuration de la connexion à la base de données MySQL.
+ */
+
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 
