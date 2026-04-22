@@ -16,13 +16,32 @@
 
 
 
-<section class="tri">
-    <div class="tri-item<%= (categorieChoisie === 'all' || !categorieChoisie) ? ' active' : '' %>" data-filter="all">Tous</div>
-    
-    <% for (const categorie of categories) { %>
-        <div class="tri-item<%= String(categorieChoisie) === String(categorie.id_cat) ? ' active' : '' %>" data-filter="<%= categorie.id_cat %>"><%= categorie.nom %></div>
-    <% } %>
+
+<section class="tri" style="display:block;">
+    <div class="tri-row" style="display:flex; flex-wrap:nowrap; gap:24px; align-items:center; overflow-x:auto; white-space:nowrap; -webkit-overflow-scrolling:touch;">
+        <div class="tri-item<%= (categorieChoisie === 'all' || !categorieChoisie) ? ' active' : '' %>" data-filter="all">Tous</div>
+        
+        <% for (const categorie of categories) { %>
+            <div class="tri-item<%= String(categorieChoisie) === String(categorie.id_cat) ? ' active' : '' %>" data-filter="<%= categorie.id_cat %>">
+                <%= categorie.nom %>
+            </div>
+        <% } %>
+    </div>
+
+    <a href="/ajout_categorie" class="ajout-categorie-link" style="display:inline-block; margin-top:36px;">
+        Ajouter une catégorie
+    </a>
 </section>
+
+
+
+
+<div class="button-holder">
+    <button class="voir-plus" onclick="window.location.href='/admin/ajoutproduit'">
+        Ajouter un produit
+    </button>
+</div>
+
 
 <section class="realisations-content">
     <% if (produit1) { %> 

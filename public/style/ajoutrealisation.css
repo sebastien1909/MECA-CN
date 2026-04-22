@@ -1,0 +1,251 @@
+/* --- Structure de base --- */
+main {
+    position: relative;
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background: url('/img/placeholders/usinage1.png') no-repeat center center / cover;
+}
+
+main::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6); /* Un peu plus sombre pour le contraste */
+    z-index: 1;
+}
+
+.content-wrapper {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr; /* Proportion plus fidèle à la maquette */
+    gap: 60px;
+    width: 100%;
+    max-width: 1200px;
+    align-items: center;
+}
+
+/* --- Section Gauche --- */
+.left-part { color: white; }
+
+.left-part h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 50px;
+}
+
+.left-part h1 span { color: #0b63b6; }
+
+.preview-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.realisation-card-mini {
+    background: #e0e0e0; /* Gris placeholder comme sur ta maquette */
+    width: 100%;
+    max-width: 450px;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    position: relative;
+    border: 2px solid #555;
+}
+
+.realisation-card-mini img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* --- Section Droite (Le Formulaire Blanc) --- */
+.form-card {
+    background: #fff;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+}
+
+.form-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 30px;
+}
+
+.form-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Colonne upload | Colonne champs */
+    gap: 30px;
+}
+
+/* Upload Box */
+.upload-box {
+    border: 2px dashed #0b63b6;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    background: #f8faff;
+}
+
+.upload-icon {
+    width: 40%;
+    margin-bottom: 15px;
+    margin-left:auto;
+    opacity: 1;
+}
+
+.btn-browse {
+    background: #004792;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Champs de saisie */
+.form-group { margin-bottom: 20px; }
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fdfdfd;
+}
+
+.form-group textarea { height: 100px; resize: none; }
+
+/* Boutons */
+.btn-validate {
+    width: 100%;
+    background: #004792;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-validate:hover { background: #0b63b6; }
+
+.footer-form {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.link-delete {
+    color: #0b63b6;
+    text-decoration: underline;
+    font-size: 0.9rem;
+}
+
+/* --- Responsive --- */
+@media (max-width: 1024px) {
+    .content-wrapper { grid-template-columns: 1fr; gap: 40px; }
+    .left-part h1 { font-size: 2.5rem; }
+}
+
+@media (max-width: 600px) {
+    .form-body { grid-template-columns: 1fr; }
+}
+
+
+
+/* Panneau blanc derrière la prévisualisation */
+.preview-white-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    color: #333; /* On repasse en sombre pour le texte hors de la carte */
+    max-width: 500px;
+}
+
+.preview-white-card .preview-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    color: #1a1a1a;
+}
+
+/* La Carte Produit Style "MECA-CN" */
+.realisation-card-full {
+    position: relative;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 4 / 5; /* Format vertical comme sur ta PJ */
+    background: #f0f0f0;
+}
+
+.card-image-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.card-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Overlay de texte sur l'image */
+.card-content-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px 20px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 20%, transparent 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.card-content-overlay h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.2;
+}
+
+.card-content-overlay p {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    opacity: 0.9;
+    /* Limite à 3 lignes pour éviter que ça déborde */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Ajustement pour l'alignement global */
+.content-wrapper {
+    align-items: stretch; /* Pour que les deux colonnes aient la même hauteur visuelle */
+}

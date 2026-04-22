@@ -2,6 +2,12 @@
 <%- include('header') %>
 
 
+    <% if (locals.successMessage) { %>
+        <div class="alert-success">
+            <i class="check-icon">✓</i> <%= successMessage %>
+        </div>
+    <% } %>
+
     <section class="top-title">
         <div class="top-left">
             <h3>GRANDE CAPACITÉ DE PRODUCTION</h3>
@@ -15,8 +21,9 @@
         </div>
     </section>
 
-
-
+    <button class="voir-plus" onclick="window.location.href='/admin/ajoutmachine'">
+        Ajouter une machine
+    </button>
 
     <section class="machine-container pc-only">
 
@@ -76,7 +83,7 @@
 
 
                     <div class="second-column">
-                        <img src="<%= element.image_machine %>.png" alt="Machine Mazak">
+                        <img src="<%= element.image_machine %>" alt="Machine Mazak">
                         <div class="main-info-top">
                             <h4><%= element.nom_machine %></h4>
                             <span class="date-holder">
@@ -161,7 +168,7 @@
 
 
                 <div class="second-column">
-                    <img src="<%= element.image_machine %>.png" alt="Machine Mazak">
+                    <img src="<%= element.image_machine %>" alt="Machine Mazak">
                     <div class="main-info-top">
                         <h4><%= element.nom_machine %></h4>
                         <span class="date-holder">
@@ -225,7 +232,7 @@
                 </a>
                 <div class="machine-card-image">
                     <span class="badge-entree"><%= element.annee_entree %></span>
-                    <img src="<%= element.image_machine %>.png" alt="Machine Mazak">
+                    <img src="<%= element.image_machine %>" alt="Machine Mazak">
                 </div>
 
                 <div class="machine-card-content">

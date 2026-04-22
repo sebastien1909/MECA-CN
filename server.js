@@ -185,7 +185,17 @@ app.get("/admin/machines", isAdmin, async function (req, res) {
         const machinestourneuses = machines.filter(machine => machine.type === "tournage");
         const machinefraiser = machines.filter(machine => machine.type === "fraisage");
 
-        res.render("admin/parcmachine", { page_css1: "parcmachine.css", page_css2: "headeradmin.css", machines: machines, machinestourneuses: machinestourneuses, machinefraiser: machinefraiser });
+        // On récupère le message de succès s'il existe
+        const successMessage = req.query.success === 'add' ? "La machine a été ajoutée avec succès !" : null;
+
+        res.render("admin/parcmachine", { 
+            page_css1: "parcmachine.css", 
+            page_css2: "headeradmin.css", 
+            machines, 
+            machinestourneuses, 
+            machinefraiser,
+            successMessage // On envoie le message au template
+        });
     } catch (err) {
         console.error(err);
         res.status(500).send("Erreur serveur");
@@ -491,6 +501,203 @@ app.get("/modif_machine/:id", async function (req, res) {
     }
 });
 
+
+
+app.get("/admin/ajoutmachine", isAdmin, async function (req, res) {
+    try {
+        // Fournir un objet 'machine' par défaut pour éviter les erreurs côté template
+        const machine = {
+            id_machine: null,
+            nom_machine: '',
+            description_courte: '',
+            description_longue: '',
+            image_machine: '',
+            statistique1_nom: '',
+            statistique1_donnee: '',
+            statistique2_nom: '',
+            statistique2_donnee: '',
+            avantage_titre: '',
+            avantage_description: '',
+            d_x: null,
+            d_y: null,
+            d_z: null,
+            type: 'tournage',
+            annee_entree: ''
+        };
+
+        res.render("admin/ajoutmachine", { page_css1: "headeradmin.css", page_css2: "ajoutmachine.css", machine: machine });
+    } catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de l'affichage du formulaire d'ajout");
+    }
+});
+
+
+
+app.get("/admin/ajoutproduit", isAdmin, async function (req, res) {
+    try {
+        const [categories] = await pool.query("SELECT * FROM categories");
+
+        // Fournir un objet `produit` vide pour le rendu (évite checks côté template)
+        const produit = {
+            id: null,
+            nom: '',
+            description: '',
+            categorie: null,
+            image: ''
+        };
+
+        res.render(
+            "admin/ajoutrealisation",
+            { page_css1: "headeradmin.css", page_css2: "ajoutrealisation.css", produit: produit, categories: categories }
+        );
+    } catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de l'affichage du formulaire d'ajout");
+    }
+});
+
+
+
+
+app.get("/ajout_categorie", isAdmin, async function (req, res) {
+    try {
+
+        const [produit_sans_categorie] = await pool.query("SELECT * FROM produits WHERE categorie = 0");
+
+        if (produit_sans_categorie.length > 0) {
+            console.log("il y a des produits sans catégorie");
+            res.render("admin/ajoutcategorie", { page_css1: "headeradmin.css", page_css2: "ajoutcategorie.css", produits: produit_sans_categorie[0]  });
+        } else{
+            console.log("pas de produit 0");
+            res.render("admin/ajoutcategorie", { page_css1: "headeradmin.css", page_css2: "ajoutcategorie.css"});
+        }
+    } catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de l'affichage du formulaire d'ajout de catégorie");
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// app.post
+
+
+
+app.post("/ajouter_categorie", isAdmin, async function (req, res) {
+    try {
+        await pool.query(insertQuery, values);
+
+        return res.redirect('/admin/categories');
+    } catch (err) {
+        console.error('Erreur lors de l\'ajout de la catégorie :', err);
+        res.status(500).send('Erreur lors de l\'ajout de la catégorie');
+    }
+});
+
+/**
+ * POST /ajouter_produit
+ * Traite l'ajout d'une nouvelle réalisation (produit) depuis le back-office.
+ */
+app.post('/ajouter_produit', isAdmin, uploadProduits.single('image_produit'), async function (req, res) {
+    try {
+        const { nom_produit, description_produit, categorie } = req.body;
+        const image = req.file ? ('/img/produits/' + req.file.filename) : null;
+
+        const insertQuery = 'INSERT INTO produits (nom, description, categorie, image) VALUES (?, ?, ?, ?)';
+        const values = [nom_produit || null, description_produit || null, categorie || null, image];
+
+        await pool.query(insertQuery, values);
+
+        return res.redirect('/admin/realisations');
+    } catch (err) {
+        console.error('Erreur lors de l\'ajout du produit :', err);
+        res.status(500).send('Erreur lors de l\'ajout du produit');
+    }
+});
+
+
+
+/**
+ * POST /ajouter_machine
+ * Traite le formulaire d'ajout d'une nouvelle machine (admin).
+ * Gère l'upload d'image et insère la nouvelle ligne dans la table `machines`.
+ */
+app.post("/ajouter_machine", isAdmin, uploadMachines.single('image_machine'), async function (req, res) {
+    try {
+        const {
+            nom_machine,
+            description_courte,
+            description_longue,
+            statistique1_nom,
+            statistique1_donnee,
+            statistique2_nom,
+            statistique2_donnee,
+            avantage_titre,
+            avantage_description,
+            d_x,
+            d_y,
+            d_z,
+            type,
+            annee_entree
+        } = req.body;
+
+        const imageMachine = req.file ? ("/img/machines/" + req.file.filename) : null;
+
+        const insertQuery = `INSERT INTO machines (nom_machine, description_courte, description_longue, statistique1_nom, statistique1_donnee, statistique2_nom, statistique2_donnee, avantage_titre, avantage_description, d_x, d_y, d_z, type, annee_entree, image_machine) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        
+        const values = [
+            nom_machine || null,
+            description_courte || null,
+            description_longue || null,
+            statistique1_nom || null,
+            statistique1_donnee || null,
+            statistique2_nom || null,
+            statistique2_donnee || null,
+            avantage_titre || null,
+            avantage_description || null,
+            d_x || null,
+            d_y || null,
+            d_z || null,
+            type || null,
+            annee_entree || null,
+            imageMachine
+        ];
+
+        await pool.query(insertQuery, values);
+        
+        // Redirection vers la liste des machines avec un indicateur de succès
+        return res.redirect('/admin/machines?success=add');
+    } catch (err) {
+        console.error('Erreur lors de l\'ajout de la machine :', err);
+        res.status(500).send('Erreur lors de l\'ajout de la machine');
+    }
+});
+
+
 // Route POST pour enregistrer les modifications d'une machine (avec gestion de l'image)
 app.post("/modifier_infos_machine", isAdmin, uploadMachines.single('image_machine'), async function (req, res) {
     try {
@@ -545,27 +752,6 @@ app.post("/modifier_infos_machine", isAdmin, uploadMachines.single('image_machin
         res.status(500).send('Erreur lors de la modification de la machine');
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// app.post
-
 
 
 

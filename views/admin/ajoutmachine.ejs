@@ -6,7 +6,7 @@
 <main>
     <section class="left-part">
         <h1>
-            Modifier la <span>machine</span>
+            Ajouter une <span>machine</span>
         </h1>
 
         <div class="preview-wrapper preview-desktop">
@@ -21,8 +21,8 @@
                         <div class="preview-outer">
                             <div class="preview-left">
                                 <div class="preview-top">
-                                    <h3 id="preview-name"><%= machine.nom_machine %></h3>
-                                    <p id="preview-desc"><%= machine.description_longue ? (machine.description_longue.length > 200 ? machine.description_longue.substring(0,200) + '...' : machine.description_longue) : (machine.description_courte || '') %></p>
+                                    <h3 id="preview-name"><%= (machine.nom_machine.length > 0 ? machine.nom_machine : 'Nom non spécifié') %></h3>
+                                    <p id="preview-desc"><%= (machine.description_longue.length > 0 ? machine.description_longue : (machine.description_longue.length > 0 ? machine.description_courte : 'Description non spécifiée')) %></p>
 
                                     <div class="preview-info">
                                         <div class="preview-info-row">
@@ -68,8 +68,7 @@
     </section>
 
     <section class="right-part">
-        <form class="form-container" method="POST" enctype="multipart/form-data" action="/modifier_infos_machine">
-            <input type="hidden" name="id_machine" value="<%= machine.id_machine %>">
+        <form class="form-container" method="POST" enctype="multipart/form-data" action="/ajouter_machine">
             <div class="form-left">
 
                 <div class="upload-box">

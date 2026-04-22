@@ -3,6 +3,26 @@
     padding:50px;
 }
 
+.voir-plus{
+    background: #003F87;
+    background: linear-gradient(157deg,rgba(0, 63, 135, 1) 0%, rgba(0, 86, 179, 1) 100%);
+    padding:25px;
+    color:white;
+    font-weight:bold;
+    border-radius:20px;
+    border:none;
+    width:20%;
+    margin:10px 40%;
+    transition:transform 0.2s ease, background 0.5s ease-in-out, filter 0.2s ease;
+}
+
+.voir-plus:hover{
+    cursor:pointer;
+    transform: scale(1.05);
+    background: linear-gradient(157deg,rgba(0, 86, 179, 1) 0%, rgba(0, 63, 135, 1) 100%);
+    filter:brightness(1.2)
+}
+
 /* Container centering and title spacing */
 .machine-container {
     max-width: 1200px;

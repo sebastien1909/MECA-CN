@@ -1,0 +1,6 @@
+/* ajoutmachine.css
+   Import des règles de `modifmachine.css` pour réutiliser le même layout
+*/
+@import url('modifmachine.css');
+
+/* Règles spécifiques à la page d'ajout peuvent être ajoutées ici si nécessaire. */

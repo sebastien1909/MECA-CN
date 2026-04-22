@@ -1,6 +1,115 @@
-<%# Admin add new realisation form %>
-<%- include('header') %>
+<%- include('./header') %>
 
+<main>
+    <div class="content-wrapper">
+        <section class="left-part">
+            <h1>Vous souhaitez ajouter une <span>Réalisation ?</span></h1>
 
+            <div class="preview-white-card">
+                <p class="preview-title">Prévisualisation rapide</p>
+                
+                <div class="realisation-card-full">
+                    <div class="card-image-wrapper">
+                        <img id="preview-image-card" src="<%= produit.image || '/img/placeholders/usinage1.png' %>" alt="Aperçu">
+                    </div>
+                    <div class="card-content-overlay">
+                        <h3 id="preview-name"><%= produit.nom || 'Nom de la réalisation' %></h3>
+                        <p id="preview-description"><%= produit.description || 'Description de la réalisation...' %></p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-<%- include('footer') %>
+        <section class="right-part">
+            <div class="form-card">
+                <h2>Ajoutez une réalisation</h2>
+                <p class="subtitle">Veuillez renseigner toutes les informations demandées</p>
+
+                <form class="form-body" method="POST" enctype="multipart/form-data" action="/ajouter_produit">
+                    <div class="upload-box">
+                        <div class="upload-content">
+                            <img id="preview-upload-icon" src="/img/icons/upload.svg" alt="Upload" class="upload-icon">
+                            <p>Glisser un fichier <br><strong>OU</strong></p>
+                            <button type="button" class="btn-browse" id="trigger-input">Chercher un fichier</button>
+                            <input type="file" name="image_produit" id="image_produit_input" hidden accept="image/*" required>
+                        </div>
+                    </div>
+
+                    <div class="form-inputs">
+                        <div class="form-group">
+                            <label>Nom de la réalisation</label>
+                            <input type="text" name="nom_produit" placeholder="Ex: Pièce aéronautique" value="<%= produit.nom %>" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Affiliez à une catégorie</label>
+                            <select name="categorie">
+                                <% if (Array.isArray(categories)) { %>
+                                    <% categories.forEach(cat => { %>
+                                        <option value="<%= cat.id_cat %>"><%= cat.nom %></option>
+                                    <% }) %>
+                                <% } %>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Descriptif</label>
+                            <textarea name="description_produit" placeholder="Décrivez brièvement la réalisation..."><%= produit.description %></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-validate">Valider</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="footer-form">
+                    <a href="/suppression" class="link-delete">Supprimer une réalisation</a>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<script>
+    (function(){
+        const fileInput = document.getElementById('image_produit_input');
+        const triggerBtn = document.getElementById('trigger-input');
+        const previewImageCard = document.getElementById('preview-image-card');
+        const previewName = document.getElementById('preview-name');
+        const nameInput = document.querySelector('[name="nom_produit"]');
+        const descInput = document.querySelector('[name="description_produit"]');
+        const previewDesc = document.getElementById('preview-description');
+
+        // Live Description Preview
+        if (descInput) {
+            descInput.addEventListener('input', (e) => {
+                previewDesc.textContent = e.target.value || 'Description de la réalisation...';
+            });
+        } // <--- L'accolade manquante était ici !
+
+        // Trigger input file
+        if (triggerBtn) {
+            triggerBtn.addEventListener('click', () => fileInput.click());
+        }
+
+        // Live Image Preview
+        if (fileInput) {
+            fileInput.addEventListener('change', () => {
+                const file = fileInput.files[0];
+                if (file) {
+                    const url = URL.createObjectURL(file);
+                    previewImageCard.src = url;
+                }
+            });
+        }
+
+        // Live Name Preview
+        if (nameInput) {
+            nameInput.addEventListener('input', (e) => {
+                previewName.textContent = e.target.value || 'Nom de la réalisation';
+            });
+        }
+    })(); // Fermeture propre de la fonction anonyme
+</script>
+
+<%- include('./footer') %>
