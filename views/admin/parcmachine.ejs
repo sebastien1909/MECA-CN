@@ -35,6 +35,9 @@
 
         <div class="filter-group tournage-group ">
             <h4 class="section-title tournage-title">Tournage</h4>
+            <% if (typeof machinestourneuses == 'undefined' || machinestourneuses.length === 0) { %>
+                <p class="no-data">Aucune machine de tournage enregistrée.</p>
+            <% } %>
             <% for (const element of machinestourneuses) { %>
                 <section class="machine-holder">
 
@@ -122,6 +125,11 @@
 
             <div class="filter-group fraisage-group">
             <h4 class="section-title fraisage-title">Fraisage</h4>
+
+            <% if (typeof machinefraiser == 'undefined' || machinefraiser.length === 0) { %>
+                <p class="no-data">Aucune machine de fraisage enregistrée.</p>
+            <% } %>
+
             <% for (const element of machinefraiser) { %>
                 <section class="machine-holder">
 

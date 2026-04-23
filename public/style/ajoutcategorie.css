@@ -240,7 +240,6 @@ main::before {
     opacity: 0.9;
     /* Limite à 3 lignes pour éviter que ça déborde */
     display: -webkit-box;
-    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }

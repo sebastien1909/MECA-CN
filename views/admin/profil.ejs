@@ -1,0 +1,99 @@
+<%- include('header') %>
+
+
+<section class="whole-container">
+    <div class="first-part">
+        <img src="/img/icons/profile.svg" alt="photo de profil" class="profile-pic">
+        <div class="user-infos">
+            <h1>Bonjour <%= user.identifiant %></h1>
+            <% if (user.role === 'admin') { %>
+                <p>Rôle : Administrateur</p>
+            <% } else { %>
+                <p>Rôle : <%= user.role %></p>
+            <% } %>
+        </div>
+    </div>
+
+
+
+    <div class="id-formulaire-holder">
+
+
+
+
+        <div class="separateur-profil"></div>
+
+        <form method="POST" action="/modifier-id">
+            <h4>Identifiant</h4>
+            <input type="hidden" name="user_ID" value="<%= user.identifiant %>">
+            <input type="text" name="identifiant" value="<%= user.identifiant %>" required>
+            <button type="submit">Modifier</button>
+        </form>
+
+
+
+
+
+
+
+        <div class="separateur-profil"></div>
+
+        <form method="POST" action="/modifier-email">
+            <h4>Email</h4>
+            <input type="hidden" name="ancien_mail" value="<%=user.mail %>">
+            <input type="hidden" name="user_ID" value="<%= user.identifiant %>">
+            <input type="text" name="email" value="<%= user.mail %>" required>
+            <button type="submit">Modifier</button>
+        </form>
+
+
+
+
+
+
+
+
+        <div class="separateur-profil"></div>
+
+        <form method="POST" action="/modifier-telephone">
+            <h4>Téléphone</h4>
+            <input type="hidden" name="ancien_telephone" value="<%=user.telephone %>">
+            <input type="hidden" name="user_ID" value="<%= user.identifiant %>">
+            <input type="text" name="telephone" value="<%= user.telephone %>" required>
+            <button type="submit">Modifier</button>
+        </form>
+
+
+
+
+
+
+
+
+        <div class="separateur-profil"></div>
+
+        <form method="POST" action="/modifier-mot-de-passe">
+            <h4>Mot de passe</h4>
+
+            <p>
+                Pour des raisons de sécurité, votre mot de passe n'est pas affiché. Veuillez entrer un nouveau mot de passe pour le modifier.
+            </p>
+            <input type="hidden" name="user_ID" value="<%= user.identifiant %>">
+            <input type="password" name="motdepasse" value="" placeholder="Entrez votre ancien mot de passe" required>
+            <a href="/oubli-mdp">Mot de passe oublié</a>
+
+            <input type="password" name="nouveau_motdepasse" value="" placeholder="Entrez votre nouveau mot de passe" required>
+            <input type="password" name="confirm_motdepasse" value="" placeholder="Confirmez votre nouveau mot de passe" required>
+            <button type="submit">Modifier</button>
+        </form>
+
+
+
+
+
+
+    </div>
+</section>
+
+
+<%- include('footer') %>

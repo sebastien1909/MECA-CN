@@ -198,9 +198,13 @@
 }
 
 .pourquoi {
-    max-width: 1180px;
-    margin: 0 auto 200px;
-    padding: 0 24px;
+    margin: 0 0 200px 0;
+    padding: 24px 24px 72px;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    gap:50px;
+    background-color:#cbd5e1;
 }
 
 .pourquoi h2 {
@@ -210,6 +214,7 @@
 }
 
 .info-holder {
+    padding-right: 48px;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px;
@@ -451,6 +456,9 @@
         left: 20px;
     }
 
+    .timeline-event.left .timeline-card{
+        margin-left:50px
+    }
     .timeline-card {
         margin-left: 50px;
         max-width: calc(100% - 70px);
@@ -464,7 +472,7 @@
     .pourquoi,
     .ecologie,
     .devis{
-        padding: 0 18px;
+        padding: 0 18px 24px;
     }
 
     .histoire-container {

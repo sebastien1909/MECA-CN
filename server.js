@@ -584,7 +584,21 @@ app.get("/ajout_categorie", isAdmin, async function (req, res) {
 });
 
 
-
+app.get("/admin/profil", isAdmin, async function (req,res) {
+    try {
+        const userId = req.session.userID;
+        const [rows] = await pool.query("SELECT * FROM utilisateurs WHERE id = ?", [userId]);
+        if (!rows || rows.length === 0) {
+            return res.status(404).send("Utilisateur non trouvé");
+        }
+        const user = rows[0];
+        console.log(user);
+        res.render("admin/profil", { page_css1: "headeradmin.css", page_css2: "profil.css", user: user });
+    } catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de l'affichage du profil");
+    }
+})
 
 
 
@@ -609,6 +623,110 @@ app.get("/ajout_categorie", isAdmin, async function (req, res) {
 
 
 // app.post
+
+
+
+
+// Modifications infos profil (identifiant, email, téléphone, mot de passe)
+
+
+
+
+app.post("/modifier-id", isAdmin, async function (req,res){
+    try{
+        const ID = req.session.userID;
+        const userId = req.body.user_ID;
+        const nouvel_identifiant = req.body.identifiant;
+        console.log("ancien id :", userId, "\n nouvel id :", nouvel_identifiant);
+        if (nouvel_identifiant == userId){
+            res.redirect("/admin/profil");
+        }
+        await pool.query("UPDATE utilisateurs SET identifiant = ? WHERE id = ?", [nouvel_identifiant, ID]);
+        return res.status(200).send("Identifiant modifié avec succès ! <br><a href='/admin/profil'>Retourner au profil</a>");
+    }
+    catch (err){
+        console.error("Erreur SQL ou serveur : ", err);
+        res.status(500).send("Erreur lors de la modification de l'identifiant.")
+    }
+})
+
+
+app.post("/modifier-email", isAdmin, async function(req, res){
+    try{
+        const userId = req.session.userID;
+        const ancien_email = req.body.ancien_mail;
+        const nouveau_email = req.body.email;
+        if (nouveau_email == ancien_email){
+            res.redirect("/admin/profil");
+        }
+        await pool.query("UPDATE utilisateurs SET mail = ? WHERE id = ?", [nouveau_email, userId]);
+        return res.status(200).send("Email modifié avec succès ! <br><a href='/admin/profil'>Retourner au profil</a>");
+    }
+    catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de la modification de l'email");
+    }
+});
+
+
+
+app.post("/modifier-telephone", isAdmin, async function(req,res){
+    try { 
+        const userId = req.session.userID;
+        const ancien_telephone = req.body.ancien_telephone;
+        const nouveau_telephone = req.body.telephone;
+
+        if (nouveau_telephone == ancien_telephone){
+            res.redirect("/admin/profil");
+        }
+
+        await pool.query("UPDATE utilisateurs SET telephone = ? WHERE id = ?", [nouveau_telephone, userId]);
+        return res.status(200).send("Numéro de téléphone modifié avec succès ! <br><a href='/admin/profil'>Retourner au profil</a>");
+    }
+    catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de la modification du numéro de téléphone");
+    }
+});
+
+
+app.post("/modifier-mot-de-passe", isAdmin, async function (req, res) {
+    try {
+        const userId = req.session.userID;
+        const ancien_motdepasse = req.body.motdepasse;
+        const hashed = sha256(ancien_motdepasse);
+        const [rows] = await pool.query("SELECT password from utilisateurs WHERE id = ?", [userId]);
+        const nouveau_motdepasse = req.body.nouveau_motdepasse;
+        const confirm_motdepasse = req.body.confirm_motdepasse;
+
+        if (nouveau_motdepasse == ancien_motdepasse){
+            return res.status(400).send("Votre nouveau mot de passe doit être différent de l'ancien. Veuillez le modifier. <br><a href='/admin/profil'>Retourner au profil</a>");
+        }
+
+        if (hashed == rows[0].password) {
+            if (nouveau_motdepasse === confirm_motdepasse){
+                const nouveau_hashed = sha256(nouveau_motdepasse);
+
+
+                await pool.query("UPDATE utilisateurs SET password = ? WHERE id = ?", [nouveau_hashed, userId]);
+                return res.status(200).send("Mot de passe modifié avec succès ! <br><a href='/admin/profil'>Retourner au profil</a>");
+            } else{
+                return res.status(400).send("Le nouveau mot de passe et sa confirmation ne correspondent pas. Veuillez réessayer. <br><a href='/admin/profil'>Retourner au profil</a>");
+            }
+        } else {
+            return res.status(400).send("Votre ancien mot de passe ne correspond pas. Veuillez réessayer. <br><a href='/admin/profil'>Retourner au profil</a>");
+        }
+    }
+    catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de la modification du mot de passe");
+    }
+});
+
+
+
+
+
 
 
 
