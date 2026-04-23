@@ -1,0 +1,129 @@
+/* Container principal */
+.whole-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif; /* Ou la police utilisée par MECA-CN */
+}
+
+/* En-tête du profil */
+.first-part {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.profile-pic {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    object-fit: cover;
+}
+
+.user-infos h1 {
+    font-size: 2.2rem;
+    margin: 0;
+    color: #1a1a1a;
+}
+
+.user-infos p {
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Structure des formulaires */
+.id-formulaire-holder {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.separateur-profil {
+    height: 1px;
+    background-color: #ccc;
+    width: 100%;
+}
+
+/* Style des formulaires individuels */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+form h4 {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+/* Inputs (style gris clair de la maquette) */
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+    width: 100%;
+    max-width: 500px;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 8px;
+    background-color: #d9d9d9; /* Gris de la maquette */
+    font-size: 1rem;
+    color: #444;
+}
+
+/* Boutons (Bleu MECA-CN) */
+button[type="submit"] {
+    width: fit-content;
+    padding: 10px 35px;
+    background-color: #0056b3; /* À ajuster selon le bleu exact du logo */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #003d7a;
+}
+
+/* Texte spécifique pour le mot de passe */
+form p {
+    max-width: 600px;
+    font-size: 0.9rem;
+    color: #777;
+    line-height: 1.4;
+    font-style: italic;
+}
+
+form a {
+    font-size: 0.85rem;
+    color: #0056b3;
+    text-decoration: none;
+}
+
+/* --- RESPONSIVE DESIGN --- */
+
+@media (max-width: 768px) {
+    .first-part {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .user-infos h1 {
+        font-size: 1.8rem;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        max-width: 100%; /* Prend toute la largeur sur mobile */
+    }
+
+    button[type="submit"] {
+        width: 100%; /* Bouton plus facile à cliquer sur mobile */
+    }
+}

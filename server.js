@@ -706,6 +706,8 @@ app.post("/modifier-mot-de-passe", isAdmin, async function (req, res) {
         if (hashed == rows[0].password) {
             if (nouveau_motdepasse === confirm_motdepasse){
                 const nouveau_hashed = sha256(nouveau_motdepasse);
+                const nouveau_hashed2 = sha256(nouveau_hashed);
+                console.log(nouveau_hashed2);
 
 
                 await pool.query("UPDATE utilisateurs SET password = ? WHERE id = ?", [nouveau_hashed, userId]);

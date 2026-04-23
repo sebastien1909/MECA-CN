@@ -24,6 +24,8 @@ header{
         height: auto;
     }
 
+
+
     .header_right_side{
         display: flex;
         gap: 20px;
@@ -55,7 +57,10 @@ header{
     
 
 
-
+.profile-icon{
+    width:48px;
+    height:auto;
+}
 
 
 
