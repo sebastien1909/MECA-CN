@@ -1,4 +1,3 @@
-<%# Admin add category form %>
 <%- include('./header') %>
 
 <main>
@@ -12,40 +11,36 @@
                 <h2>Ajoutez une catégorie</h2>
                 <p class="subtitle">Veuillez renseigner toutes les informations demandées</p>
 
-                <form class="form-body" method="POST" action="/ajouter_categorie">
+                <form class="form-single-col" method="POST" action="/ajouter_categorie">
+                    <div class="form-group">
+                        <label>Nom de la catégorie</label>
+                        <input type="text" name="nom_categorie" placeholder="Ex: Pièce aéronautique" value="<%= (typeof categorie !== 'undefined' && categorie && categorie.nom) ? categorie.nom : '' %>" required>
+                    </div>
 
-                    <div class="form-inputs">
-                        <div class="form-group">
-                            <label>Nom de la catégorie</label>
-                            <input type="text" name="nom_categorie" placeholder="Ex: Pièce aéronautique" value="<%= (typeof categorie !== 'undefined' && categorie && categorie.nom) ? categorie.nom : '' %>" required>
-                        </div>
+                    <% if (typeof produits !== 'undefined' && produits && produits.length > 0) { %>
+                    <div class="form-group">
+                        <label>Associer un produit (optionnel)</label>
+                        <select name="produit_associe">
+                            <option value="">— Aucun —</option>
+                            <% produits.forEach(p => { %>
+                                <option value="<%= p.id %>"><%= p.nom %></option>
+                            <% }) %>
+                        </select>
+                        <p class="note">Sélectionnez un produit sans catégorie pour l'affecter à cette nouvelle catégorie.</p>
+                    </div>
+                    <% } %>
 
-                        <% if (produits.length > 0) { %>
-                        <div class="form-group">
-                            <label>Associer un produit (optionnel)</label>
-                            <select name="produit_associe">
-                                <option value="">— Aucun —</option>
-                                <% produits.forEach(p => { %>
-                                    <option value="<%= p.id %>"><%= p.nom %></option>
-                                <% }) %>
-                            </select>
-                            <p class="note">Sélectionnez un produit sans catégorie pour l'affecter à cette nouvelle catégorie.</p>
-                        </div>
-                        <% } %>
-
-                        <div class="form-actions">
-                            <button type="submit" class="btn-validate">Valider</button>
-                        </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-validate">Valider</button>
                     </div>
                 </form>
+
                 <div class="footer-form">
-                    <a href="/suppression" class="link-delete">Supprimer une catégorie</a>
+                    <a href="/admin/suppression" class="link-delete">Supprimer une catégorie</a>
                 </div>
             </div>
         </section>
     </div>
 </main>
-
-<!-- No client-side preview needed for category creation -->
 
 <%- include('./footer') %>

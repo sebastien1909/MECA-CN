@@ -1,6 +1,88 @@
-<%# Admin deletion page (remove items) %>
 <%- include('header') %>
 
+<main class="suppression-page">
+    <div class="content-wrapper-admin">
+        <a href="/admin/realisations" class="back-link">← Retour à l'accueil</a>
 
+        <section class="admin-section">
+            <h1>Vous souhaitez <span>supprimer</span> une <span>Catégorie ?</span></h1>
+            <div class="section-white-bg">
+                <% if (liste_categories.length > 0) { %>
+                    <form class="suppression-categorie-form" method="POST" action="/supprimer-categorie">
+                        <div class="select-group">
+                            <select name="categorie_id" required>
+                                <option value="">Sélectionnez une catégorie...</option>
+                                <% liste_categories.forEach(categorie => { %>
+                                    <option value="<%= categorie.id_cat %>"><%= categorie.nom %></option>
+                                <% }) %>
+                            </select>
+                            <button type="submit" class="btn-delete-main">Supprimer la catégorie</button>
+                        </div>
+                    </form>
+                <% } else { %>
+                    <p class="empty-msg">Aucune catégorie disponible.</p>
+                <% } %>
+            </div>
+        </section>
+
+        <section class="admin-section">
+            <h1>Vous souhaitez <span>supprimer</span> une <span>Réalisation ?</span></h1>
+            <div class="section-white-bg">
+                <div class="horizontal-scroll-wrapper">
+                    <% if (liste_realisations.length > 0) { %>
+                        <% liste_realisations.forEach(realisation => { %>
+                            <form class="delete-card-form" method="POST" action="/supprimer-realisation">
+                                <div class="realisation-card-full">
+                                    <div class="card-image-wrapper">
+                                        <img src="<%= realisation.image %>" alt="<%= realisation.nom %>">
+                                    </div>
+                                    <div class="card-content-overlay">
+                                        <h3><%= realisation.nom %></h3>
+                                        <p><%= realisation.description %></p>
+                                    </div>
+                                    <input type="hidden" name="realisation_id" value="<%= realisation.id %>">
+                                    <button type="submit" class="card-delete-btn" onclick="return confirm('Supprimer cette réalisation ?')">
+                                        <img src="/img/icons/poubelle.png" alt="Supprimer">
+                                    </button>
+                                </div>
+                            </form>
+                        <% }) %>
+                    <% } else { %>
+                        <p class="empty-msg">Aucune réalisation disponible.</p>
+                    <% } %>
+                </div>
+            </div>
+        </section>
+
+        <section class="admin-section">
+            <h1>Vous souhaitez <span>supprimer</span> une <span>Machine ?</span></h1>
+            <div class="section-white-bg">
+                <div class="horizontal-scroll-wrapper">
+                    <% if (typeof liste_machines !== 'undefined' && liste_machines.length > 0) { %>
+                        <% liste_machines.forEach(machine => { %>
+                            <form class="delete-card-form" method="POST" action="/supprimer-machine">
+                                <div class="realisation-card-full machine-card">
+                                    <div class="card-image-wrapper">
+                                        <img src="<%= machine.image_machine %>" alt="<%= machine.nom_machine %>">
+                                    </div>
+                                    <div class="card-content-overlay">
+                                        <h3><%= machine.nom_machine %></h3>
+                                        <p><%= machine.description_courte %></p>
+                                    </div>
+                                    <input type="hidden" name="machine_id" value="<%= machine.id_machine %>">
+                                    <button type="submit" class="card-delete-btn" onclick="return confirm('Supprimer cette machine ?')">
+                                        <img src="/img/icons/poubelle.png" alt="Supprimer">
+                                    </button>
+                                </div>
+                            </form>
+                        <% }) %>
+                    <% } else { %>
+                        <p class="empty-msg">Aucune machine disponible.</p>
+                    <% } %>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
 
 <%- include('footer') %>

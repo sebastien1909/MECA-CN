@@ -466,9 +466,12 @@ app.get("/modif_realisations/:id", async function (req, res) {
  * GET /suppression
 Page de confirmation de suppression (catégorie, réalisations, machines).
  */
-app.get("/suppression", async function (req, res) {
+app.get("/admin/suppression", async function (req, res) {
     try {
-        res.render("/admin/suppression", { page_css1: "headeradmin.css", page_css2: "suppression.css" });
+        const liste_categories = await pool.query("SELECT * FROM categories");
+        const liste_realisations = await pool.query("SELECT * FROM produits");
+        const liste_machines = await pool.query("SELECT * FROM machines");
+        res.render("admin/suppression", { page_css1: "headeradmin.css", page_css2: "suppression.css", liste_categories: liste_categories[0], liste_realisations: liste_realisations[0], liste_machines: liste_machines[0] });
     } catch (err) {
         console.error("Erreur SQL ou Serveur :", err);
         res.status(500).send("Erreur lors de la suppression de la réalisation");
@@ -567,7 +570,9 @@ app.get("/ajout_categorie", isAdmin, async function (req, res) {
 
         if (produit_sans_categorie.length > 0) {
             console.log("il y a des produits sans catégorie");
-            res.render("admin/ajoutcategorie", { page_css1: "headeradmin.css", page_css2: "ajoutcategorie.css", produits: produit_sans_categorie[0]  });
+            console.log(produit_sans_categorie[0]);
+            console.log(produit_sans_categorie.length);
+            res.render("admin/ajoutcategorie", { page_css1: "headeradmin.css", page_css2: "ajoutcategorie.css", produits: produit_sans_categorie  });
         } else{
             console.log("pas de produit 0");
             res.render("admin/ajoutcategorie", { page_css1: "headeradmin.css", page_css2: "ajoutcategorie.css"});
@@ -607,11 +612,39 @@ app.get("/ajout_categorie", isAdmin, async function (req, res) {
 
 
 
+app.post("/supprimer-categorie", isAdmin, async function (req, res) {
+    try {
+        const id_categorie = req.body.id_categorie;
+        await pool.query("DELETE FROM categories WHERE id_cat = ?", [id_categorie]);
+
+        return res.redirect('/admin/suppression');
+    } catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de la suppression de la catégorie");
+    }
+});
+
 app.post("/ajouter_categorie", isAdmin, async function (req, res) {
     try {
-        await pool.query(insertQuery, values);
+        const nom_categorie = req.body.nom_categorie;
+        const id_produit_a_lier = req.body.produit_associe;
 
-        return res.redirect('/admin/categories');
+        const insertQuery = 'INSERT INTO categories (nom) VALUES (?)';
+        const [result] = await pool.query(insertQuery, [nom_categorie]);
+
+
+        const newCategoryId = result.insertId;
+
+
+        if (id_produit_a_lier && id_produit_a_lier !== "") {
+            const updateQuery = 'UPDATE produits SET categorie = ? WHERE id = ?';
+            const updateValues = [newCategoryId, id_produit_a_lier];
+            await pool.query(updateQuery, updateValues);
+        }
+
+
+        return res.redirect('/admin/realisations');
+
     } catch (err) {
         console.error('Erreur lors de l\'ajout de la catégorie :', err);
         res.status(500).send('Erreur lors de l\'ajout de la catégorie');
@@ -1012,6 +1045,32 @@ app.post("/connexion", async function (req, res) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.post("/connexionrapide", async function (req, res) {
+    try {
+        req.session.userID = 1;
+        req.session.role = "admin";
+        return res.redirect("/admin/accueil");
+    } catch (err) {
+        console.error("Erreur connexion rapide :", err);
+        res.status(500).send("Erreur serveur");
+    }
+});
 
 
 
