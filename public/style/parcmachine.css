@@ -3,25 +3,7 @@
     padding:50px;
 }
 
-.voir-plus{
-    background: #003F87;
-    background: linear-gradient(157deg,rgba(0, 63, 135, 1) 0%, rgba(0, 86, 179, 1) 100%);
-    padding:25px;
-    color:white;
-    font-weight:bold;
-    border-radius:20px;
-    border:none;
-    width:20%;
-    margin:10px 40%;
-    transition:transform 0.2s ease, background 0.5s ease-in-out, filter 0.2s ease;
-}
 
-.voir-plus:hover{
-    cursor:pointer;
-    transform: scale(1.05);
-    background: linear-gradient(157deg,rgba(0, 86, 179, 1) 0%, rgba(0, 63, 135, 1) 100%);
-    filter:brightness(1.2)
-}
 
 /* Container centering and title spacing */
 .machine-container {
@@ -43,6 +25,27 @@
 
 /* Ordinateur */
 @media screen and (min-width : 900px){
+
+    .voir-plus{
+        background: #003F87;
+        background: linear-gradient(157deg,rgba(0, 63, 135, 1) 0%, rgba(0, 86, 179, 1) 100%);
+        padding:25px;
+        color:white;
+        font-weight:bold;
+        border-radius:20px;
+        border:none;
+        width:20%;
+        margin:10px 40%;
+        transition:transform 0.2s ease, background 0.5s ease-in-out, filter 0.2s ease;
+    }
+
+    .voir-plus:hover{
+        cursor:pointer;
+        transform: scale(1.05);
+        background: linear-gradient(157deg,rgba(0, 86, 179, 1) 0%, rgba(0, 63, 135, 1) 100%);
+        filter:brightness(1.2)
+    }
+
     .machine-holder {
         display: grid;
         grid-template-columns: 1fr 1.2fr; /* Colonne de gauche plus étroite que celle de droite */
@@ -196,7 +199,28 @@
 /* --- Styles spécifiques Mobile (pc-hidden) --- */
 
 @media screen and (max-width: 899px) {
-    .pc-only { display: none !important; }
+
+
+    .voir-plus{
+        background: #003F87;
+        background: linear-gradient(157deg,rgba(0, 63, 135, 1) 0%, rgba(0, 86, 179, 1) 100%);
+        padding:25px;
+        color:white;
+        font-weight:bold;
+        border-radius:20px;
+        border:none;
+        width:40%;
+        margin:10px 30%;
+        transition:transform 0.2s ease, background 0.5s ease-in-out, filter 0.2s ease;
+    }
+
+    .voir-plus:hover{
+        cursor:pointer;
+        transform: scale(1.05);
+        background: linear-gradient(157deg,rgba(0, 86, 179, 1) 0%, rgba(0, 63, 135, 1) 100%);
+        filter:brightness(1.2)
+    }
+
 
     body {
         background-color: #F4F7FA;
@@ -347,6 +371,18 @@
         width: 80%;
         font-weight: bold;
     }
+
+    .machine-holder-mobile a[href*="/modif_machine"] {
+        width: 56px;
+        height: 56px;
+        top: 12px;
+        right: 12px;
+    }
+
+    .machine-holder-mobile a[href*="/modif_machine"] img {
+        width: 32px;
+        height: 32px;
+    }
 }
 
 
@@ -387,22 +423,6 @@
     opacity: 0.8;
     display: block;
 }
-
-@media screen and (max-width: 900px) {
-    .machine-holder-mobile a[href*="/modif_machine"] {
-        width: 56px;
-        height: 56px;
-        top: 12px;
-        right: 12px;
-    }
-
-    .machine-holder-mobile a[href*="/modif_machine"] img {
-        width: 32px;
-        height: 32px;
-    }
-}
-
-
 
 /* Container des filtres */
 .filter-wrapper {

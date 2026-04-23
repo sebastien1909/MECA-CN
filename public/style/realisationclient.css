@@ -158,20 +158,7 @@
         justify-content:center;
     }
 
-    .voir-plus{
-        margin-top:50px;
-        padding:14px 24px;
-        border:none;
-        border-radius:999px;
-        background:#003f87;
-        color:#ffffff;
-        cursor:pointer;
-        transition: background 0.2s ease;
-    }
-
-    .voir-plus:hover{
-        background:#002d6d;
-    }
+    
 
 
 
@@ -414,6 +401,20 @@
 
 
 
+.voir-plus{
+        margin-top:50px;
+        padding:14px 24px;
+        border:none;
+        border-radius:999px;
+        background:#003f87;
+        color:#ffffff;
+        cursor:pointer;
+        transition: background 0.2s ease;
+    }
+
+    .voir-plus:hover{
+        background:#002d6d;
+    }
 
 /* Styles spécifiques pour la page admin des réalisations */
 

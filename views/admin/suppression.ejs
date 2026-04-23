@@ -8,7 +8,7 @@
             <h1>Vous souhaitez <span>supprimer</span> une <span>Catégorie ?</span></h1>
             <div class="section-white-bg">
                 <% if (liste_categories.length > 0) { %>
-                    <form class="suppression-categorie-form" method="POST" action="/supprimer-categorie">
+                    <form class="suppression-categorie-form" method="POST" action="/supprimer-categorie" data-confirm-msg="Supprimer cette catégorie ?">
                         <div class="select-group">
                             <select name="categorie_id" required>
                                 <option value="">Sélectionnez une catégorie...</option>
@@ -31,7 +31,7 @@
                 <div class="horizontal-scroll-wrapper">
                     <% if (liste_realisations.length > 0) { %>
                         <% liste_realisations.forEach(realisation => { %>
-                            <form class="delete-card-form" method="POST" action="/supprimer-realisation">
+                            <form class="delete-card-form" method="POST" action="/supprimer-realisation" data-confirm-msg="Supprimer cette réalisation ?">
                                 <div class="realisation-card-full">
                                     <div class="card-image-wrapper">
                                         <img src="<%= realisation.image %>" alt="<%= realisation.nom %>">
@@ -41,7 +41,7 @@
                                         <p><%= realisation.description %></p>
                                     </div>
                                     <input type="hidden" name="realisation_id" value="<%= realisation.id %>">
-                                    <button type="submit" class="card-delete-btn" onclick="return confirm('Supprimer cette réalisation ?')">
+                                    <button type="submit" class="card-delete-btn">
                                         <img src="/img/icons/poubelle.png" alt="Supprimer">
                                     </button>
                                 </div>
@@ -60,7 +60,7 @@
                 <div class="horizontal-scroll-wrapper">
                     <% if (typeof liste_machines !== 'undefined' && liste_machines.length > 0) { %>
                         <% liste_machines.forEach(machine => { %>
-                            <form class="delete-card-form" method="POST" action="/supprimer-machine">
+                            <form class="delete-card-form" method="POST" action="/supprimer-machine" data-confirm-msg="Supprimer cette machine ?">
                                 <div class="realisation-card-full machine-card">
                                     <div class="card-image-wrapper">
                                         <img src="<%= machine.image_machine %>" alt="<%= machine.nom_machine %>">
@@ -70,7 +70,7 @@
                                         <p><%= machine.description_courte %></p>
                                     </div>
                                     <input type="hidden" name="machine_id" value="<%= machine.id_machine %>">
-                                    <button type="submit" class="card-delete-btn" onclick="return confirm('Supprimer cette machine ?')">
+                                    <button type="submit" class="card-delete-btn">
                                         <img src="/img/icons/poubelle.png" alt="Supprimer">
                                     </button>
                                 </div>
@@ -85,4 +85,58 @@
     </div>
 </main>
 
+
+
+
+
+
+
+<script>
+
+    (function(){
+        function getMessage(form) {
+            if (form.dataset.confirmMsg) return form.dataset.confirmMsg;
+            var action = (form.getAttribute('action') || '').toLowerCase();
+            if (action.indexOf('categorie') !== -1) return 'Supprimer cette catégorie ?';
+            if (action.indexOf('realisation') !== -1) return 'Supprimer cette réalisation ?';
+            if (action.indexOf('machine') !== -1) return 'Supprimer cette machine ?';
+            return 'Êtes-vous sûr de vouloir supprimer cet élément ?';
+        }
+
+        function onFormSubmit(e) {
+            var form = e.target;
+            if (form.dataset.confirmed === 'true') {
+            delete form.dataset.confirmed;
+            return;
+            }
+            var msg = getMessage(form);
+            if (!window.confirm(msg)) {
+            e.preventDefault();
+            }
+        }
+
+        function onButtonClick(e) {
+            var btn = e.currentTarget;
+            var form = btn.closest('form');
+            if (!form) return;
+            var msg = getMessage(form);
+            if (!window.confirm(msg)) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+            }
+            form.dataset.confirmed = 'true';
+            // allow submit to proceed
+        }
+
+        document.addEventListener('DOMContentLoaded', function(){
+            var forms = document.querySelectorAll('form[data-confirm-msg], form[action*="supprimer"]');
+            forms.forEach(function(f){ f.addEventListener('submit', onFormSubmit, true); });
+
+            var buttons = document.querySelectorAll('form button[type="submit"], form input[type="submit"]');
+            buttons.forEach(function(b){ b.addEventListener('click', onButtonClick, true); });
+        });
+        })();
+
+</script>
 <%- include('footer') %>

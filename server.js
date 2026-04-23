@@ -569,12 +569,12 @@ app.get("/ajout_categorie", isAdmin, async function (req, res) {
         const [produit_sans_categorie] = await pool.query("SELECT * FROM produits WHERE categorie = 0");
 
         if (produit_sans_categorie.length > 0) {
-            console.log("il y a des produits sans catégorie");
-            console.log(produit_sans_categorie[0]);
-            console.log(produit_sans_categorie.length);
+            // console.log("il y a des produits sans catégorie");
+            // console.log(produit_sans_categorie[0]);
+            // console.log(produit_sans_categorie.length);
             res.render("admin/ajoutcategorie", { page_css1: "headeradmin.css", page_css2: "ajoutcategorie.css", produits: produit_sans_categorie  });
         } else{
-            console.log("pas de produit 0");
+            // console.log("pas de produit 0");
             res.render("admin/ajoutcategorie", { page_css1: "headeradmin.css", page_css2: "ajoutcategorie.css"});
         }
     } catch (err) {
@@ -614,13 +614,41 @@ app.get("/ajout_categorie", isAdmin, async function (req, res) {
 
 app.post("/supprimer-categorie", isAdmin, async function (req, res) {
     try {
-        const id_categorie = req.body.id_categorie;
+        const id_categorie = req.body.categorie_id;
+        // console.log("ID catégorie à supprimer :", id_categorie);
         await pool.query("DELETE FROM categories WHERE id_cat = ?", [id_categorie]);
 
         return res.redirect('/admin/suppression');
     } catch (err) {
         console.error("Erreur SQL ou Serveur :", err);
         res.status(500).send("Erreur lors de la suppression de la catégorie");
+    }
+});
+
+app.post("/supprimer-realisation", isAdmin, async function (req, res) {
+    try {
+        const id_realisation = req.body.realisation_id;
+        // console.log("ID réalisation à supprimer :", id_realisation);
+        await pool.query("DELETE FROM produits WHERE id = ?", [id_realisation]);
+
+        return res.redirect('/admin/suppression');
+    } catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de la suppression du produit");
+    }
+});
+
+
+app.post("/supprimer-machine", isAdmin, async function (req, res) {
+    try {
+        const id_machine = req.body.machine_id;
+        // console.log("ID machine à supprimer :", id_machine);
+        await pool.query("DELETE FROM machines WHERE id_machine = ?", [id_machine]);
+
+        return res.redirect('/admin/suppression');
+    } catch (err) {
+        console.error("Erreur SQL ou Serveur :", err);
+        res.status(500).send("Erreur lors de la suppression de la machine");
     }
 });
 
