@@ -158,7 +158,7 @@ app.get("/machines", async function (req, res) {
         const [machines] = await pool.query("SELECT * FROM machines");
         const machinestourneuses = machines.filter(machine => machine.type === "tournage");
         const machinefraiser = machines.filter(machine => machine.type === "fraisage");
-        console.log(machinefraiser);
+        //console.log(machinefraiser);
         res.render("parcmachine", { page_css1: "headerclient.css", page_css2: "parcmachine.css", machines: machines, machinestourneuses: machinestourneuses, machinefraiser: machinefraiser });
     } catch (err) {
         console.error(err);
@@ -198,7 +198,7 @@ via le paramètre `categorie` en query string.
 app.get("/realisations", async function (req, res) {
     try {
         const categorieChoisie = req.query.categorie;
-        console.log(categorieChoisie)
+        //console.log(categorieChoisie)
         
         let [categories] = await pool.query("SELECT * FROM categories ORDER BY id_cat DESC");
 
@@ -206,7 +206,7 @@ app.get("/realisations", async function (req, res) {
         
         if (categorieChoisie == -2){
             const [rows] = await pool.query("SELECT * FROM produits WHERE categorie NOT IN (SELECT id_cat FROM categories);")
-            console.log(rows)
+            //console.log(rows)
             produitsResultat = rows;
         }
 
@@ -243,7 +243,7 @@ Page du formulaire de demande de devis. Récupère les dimensions max des machin
 app.get("/devis", async function (req, res) {    
     try {
         const [dimensions] = await pool.query('SELECT MAX(d_x) as max_x, MAX(d_y) as max_y, MAX(d_z) as max_z FROM machines');
-        console.log(req.session.role)
+        //console.log(req.session.role)
         res.render("devis", { 
             page_css1: "headerclient.css", 
             page_css2: "devis.css",
@@ -358,7 +358,7 @@ app.get("/admin/realisations", isAdmin, async function (req, res) {
 
         if (categorieChoisie == -2){
             const [rows] = await pool.query("SELECT * FROM produits WHERE categorie NOT IN (SELECT id_cat FROM categories);")
-            console.log(rows)
+            //console.log(rows)
             produitsResultat = rows;
         }
 
@@ -582,7 +582,7 @@ app.get("/admin/profil", isAdmin, async function (req,res) {
             return res.status(404).send("Utilisateur non trouvé");
         }
         const user = rows[0];
-        console.log(user);
+        //console.log(user);
         res.render("admin/profil", { page_css1: "headeradmin.css", page_css2: "profil.css", user: user });
     } catch (err) {
         console.error("Erreur SQL ou Serveur :", err);
@@ -627,7 +627,7 @@ app.post("/modifier-id", isAdmin, async function (req,res){
         const ID = req.session.userID;
         const userId = req.body.user_ID;
         const nouvel_identifiant = req.body.identifiant;
-        console.log("ancien id :", userId, "\n nouvel id :", nouvel_identifiant);
+        //console.log("ancien id :", userId, "\n nouvel id :", nouvel_identifiant);
         if (nouvel_identifiant == userId){
             res.redirect("/admin/profil");
         }
@@ -697,7 +697,7 @@ app.post("/modifier-mot-de-passe", isAdmin, async function (req, res) {
             if (nouveau_motdepasse === confirm_motdepasse){
                 const nouveau_hashed = sha256(nouveau_motdepasse);
                 const nouveau_hashed2 = sha256(nouveau_hashed);
-                console.log(nouveau_hashed2);
+                //console.log(nouveau_hashed2);
 
 
                 await pool.query("UPDATE utilisateurs SET password = ? WHERE id = ?", [nouveau_hashed, userId]);
@@ -813,9 +813,9 @@ app.post('/ajouter_produit', isAdmin, uploadProduits.single('image_produit'), as
 
 
 /**
- * POST /ajouter_machine
- * Traite le formulaire d'ajout d'une nouvelle machine (admin).
- * Gère l'upload d'image et insère la nouvelle ligne dans la table `machines`.
+POST /ajouter_machine
+Traite le formulaire d'ajout d'une nouvelle machine (admin).
+Gère l'upload d'image et insère la nouvelle ligne dans la table `machines`.
  */
 app.post("/ajouter_machine", isAdmin, uploadMachines.single('image_machine'), async function (req, res) {
     try {
@@ -927,7 +927,7 @@ app.post("/modifier_infos_machine", isAdmin, uploadMachines.single('image_machin
 
 
 /**
- * POST /envoyer-devis
+ POST /envoyer-devis
 Traite le formulaire de demande de devis, envoie un email avec les pièces jointes.
 Style du mail géré par le serveur
  */
@@ -953,7 +953,7 @@ app.post("/envoyer-devis", uploadProduits.array('fichiers', 10), async (req, res
             to: process.env.EMAIL_DEST || 'contact@meca-cn.com',
             replyTo: req.body.email, // Permet de répondre directement au client
             subject: `Nouveau Devis - ${req.body.entreprise || req.body.nom}`,
-            text: `Nouvelle demande de devis\n\nClient: ${req.body.nom} (${req.body.entreprise})\nEmail: ${req.body.email}\nProduit: ${req.body.produit} (${req.body.quantite} pièces)\nMatière: ${req.body.matiere || 'Non précisé'}\nDimensions: ${req.body.dim_x} x ${req.body.dim_y} x ${req.body.dim_z} mm\nDate souhaitée: ${req.body.date_livraison}\nDescription: ${req.body.description || 'Aucune'}\nFichiers joints: ${req.files.length ? req.files.map(file => file.originalname).join(', ') : 'Aucun'}\n`,
+            text: `Nouvelle demande de devis\n\nClient: ${req.body.nom} (${req.body.entreprise})\nEmail: ${req.body.email}\nProduit: ${req.body.produit} (${req.body.quantite} pièces)\nMatière: ${req.body.matiere || 'Non précisé'}\nDimensions: ${req.body.dim_x} x ${req.body.dim_y} x ${req.body.dim_z} mm\nDélais souhaités : ${req.body.date_livraison}\nDescription: ${req.body.description || 'Aucune'}\nFichiers joints: ${req.files.length ? req.files.map(file => file.originalname).join(', ') : 'Aucun'}\n`,
             html: `
                 <div style="font-family: Arial, sans-serif; color: #1f2937; background: #f4f6fb; padding: 20px;">
                     <div style="max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0;">
@@ -989,7 +989,7 @@ app.post("/envoyer-devis", uploadProduits.array('fichiers', 10), async (req, res
                                         <td style="padding: 12px 0; font-weight: 700;">${req.body.dim_x || '0'} x ${req.body.dim_y || '0'} x ${req.body.dim_z || '0'} mm</td>
                                     </tr>
                                     <tr style="border-top: 1px solid #e2e8f0;">
-                                        <td style="padding: 12px 0; color: #64748b;">Date souhaitée</td>
+                                        <td style="padding: 12px 0; color: #64748b;">Délais souhaités</td>
                                         <td style="padding: 12px 0; font-weight: 700;">${req.body.date_livraison || 'Non sélectionnée'}</td>
                                     </tr>
                                 </tbody>

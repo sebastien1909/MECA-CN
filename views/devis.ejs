@@ -175,7 +175,7 @@
                     <h2>Description <span>complémentaire</span></h2>
                     <div class="form-group full">
                         <label>Avez-vous d'autres informations ?</label>
-                        <textarea name="description" rows="6" placeholder="Précisions techniques, finitions..."></textarea>
+                        <textarea name="description" rows="6" placeholder="Précisions techniques, finitions..." maxlength="8192"></textarea>
                     </div>
                     <div class="nav-btns mobile-only">
                         <button type="button" class="btn-next" onclick="nextStep(6)">Voir le récapitulatif →</button>
@@ -629,7 +629,7 @@
                 <p><strong>Contact :</strong> ${data.email}</p>
                 <p><strong>Produit :</strong> ${data.produit} (${data.quantite} pièces)</p>
                 <p><strong>Dimensions :</strong> ${data.dim_x} x ${data.dim_y} x ${data.dim_z} mm</p>
-                <p><strong>Date souhaitée :</strong> ${data.date}</p>
+                <p><strong>Délais souhaités :</strong> ${data.date}</p>
                 <p><strong>Description :</strong> ${data.description.substring(0, 100)}${data.description.length > 100 ? '...' : ''}</p>
                 ${fichiersHtml}
             </div>
