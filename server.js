@@ -40,7 +40,7 @@ const storageMachines = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname);
-        cb(null, 'Mchn' + Date.now() + ext); // Préfixe différent pour s'y retrouver
+        cb(null, 'Mchn' + Date.now() + ext);
     }
 });
 const uploadMachines = multer({ storage: storageMachines });
@@ -73,9 +73,9 @@ app.use((req, res, next) => {
 //MIDDLEWARES MAISON
 
 /**
- * Middleware `authenticate`
- * Vérifie que l'utilisateur est authentifié (présence de "session.userID").
- * Si authentifié -> "next()", sinon redirige vers la page de connexion.
+Middleware `authenticate`
+Vérifie que l'utilisateur est authentifié (présence de "session.userID").
+Si authentifié -> "next()", sinon redirige vers la page de connexion.
  */
 function authenticate(req, res, next) {
     if (req.session.hasOwnProperty("userID")) {
@@ -87,7 +87,7 @@ function authenticate(req, res, next) {
 }
 
 /**
-* Middleware "isAdmin"
+Middleware "isAdmin"
 Vérifie que la session correspond à un administrateur.
 Si oui -> "next()", sinon redirige vers la page d'accueil.
  */
@@ -96,21 +96,9 @@ function isAdmin(req, res, next) {
         next();
     }
     else {
-        res.status(403).redirect("/");
+        res.status(403).redirect("/connexion");
     }
-}
-
-
-
-//protéger une page (rajout d'authenticate et par ex isAdmin)
-// app.get("/", authenticate, isAdmin, async function(req,res){
-//     //récupération bdd (code à réutiliser pour les autres routes)
-//     let data = await pool.query("SELECT * FROM produit");
-//     res.render("index", {variable : data});
-// });
-
-//
-
+};
 
 
 
@@ -123,10 +111,10 @@ function isAdmin(req, res, next) {
 
 
 /**
- * GET /
- * Page d'accueil : redirige les administrateurs vers l'interface admin,
- * sinon affiche la page publique d'accueil.
- */
+GET /
+Page d'accueil : redirige les administrateurs vers l'interface admin,
+sinon affiche la page publique d'accueil.
+*/
 app.get("/", async function (req, res) {    
     try {
         if (req.session.role === "admin") {
@@ -144,8 +132,8 @@ app.get("/", async function (req, res) {
 });
 
 /**
- * GET /presentation
- * Page de présentation de l'entreprise. Rend la vue adaptée selon le rôle.
+GET /presentation
+Page de présentation de l'entreprise. Rend la vue adaptée selon le rôle.
  */
 app.get("/presentation", async function (req, res) {    
     try {
@@ -162,8 +150,8 @@ app.get("/presentation", async function (req, res) {
 
 // Route publique pour lister les machines
 /**
- * GET /machines
- * Route client listant toutes les machines (séparées par type).
+GET /machines
+Route client listant toutes les machines (séparées par type).
  */
 app.get("/machines", async function (req, res) {
     try {
@@ -185,7 +173,6 @@ app.get("/admin/machines", isAdmin, async function (req, res) {
         const machinestourneuses = machines.filter(machine => machine.type === "tournage");
         const machinefraiser = machines.filter(machine => machine.type === "fraisage");
 
-        // On récupère le message de succès s'il existe
         const successMessage = req.query.success === 'add' ? "La machine a été ajoutée avec succès !" : null;
 
         res.render("admin/parcmachine", { 
@@ -210,15 +197,11 @@ via le paramètre `categorie` en query string.
  */
 app.get("/realisations", async function (req, res) {
     try {
-        // 1. Récupérer la catégorie depuis l'URL
         const categorieChoisie = req.query.categorie;
         console.log(categorieChoisie)
         
-        // 2. Récupérer toutes les catégories pour le menu de tri
         let [categories] = await pool.query("SELECT * FROM categories ORDER BY id_cat DESC");
-        //console.log(categories);
 
-        // 3. Récupérer les produits (avec ou sans filtre)
         let produitsResultat;
         
         if (categorieChoisie == -2){
@@ -228,16 +211,13 @@ app.get("/realisations", async function (req, res) {
         }
 
         else if (categorieChoisie && categorieChoisie !== 'all') {
-            // Requête filtrée si on a un ID de catégorie
             const [rows] = await pool.query("SELECT * FROM produits WHERE categorie = ?", [categorieChoisie]);
             produitsResultat = rows;
         } else {
-            // Requête globale par défaut
             const [rows] = await pool.query("SELECT * FROM produits");
             produitsResultat = rows;
         }
 
-        // 4. Préparer les données pour EJS (gestion du premier produit et des suivants)
         const produit1 = produitsResultat.length > 0 ? produitsResultat[0] : null;
         const produitsSuivants = produitsResultat;
 
@@ -342,7 +322,7 @@ app.get("/tests", async function (req, res) {
  * GET /admin/accueil
 Tableau de bord administrateur (page d'accueil admin).
  */
-app.get("/admin/accueil", async function (req, res) {
+app.get("/admin/accueil", isAdmin, async function (req, res) {
     try {
         res.render("admin/accueil", { page_css1: "accueiladmin.css", page_css2: "headeradmin.css" });
     } catch (err) {
@@ -355,7 +335,7 @@ app.get("/admin/accueil", async function (req, res) {
  * GET /admin/presentation
 Page admin pour modifier la page de présentation publique.
  */
-app.get("/admin/presentation", async function (req, res) {
+app.get("/admin/presentation",isAdmin, async function (req, res) {
     try {
         res.render("admin/presentation", { page_css1: "presentation.css", page_css2: "headeradmin.css" });
     } catch (err) {
@@ -368,15 +348,12 @@ app.get("/admin/presentation", async function (req, res) {
  * GET /admin/realisations
 Version administrateur du listing des réalisations (avec options de gestion).
  */
-app.get("/admin/realisations", async function (req, res) {
+app.get("/admin/realisations", isAdmin, async function (req, res) {
     try {
-        // 1. Récupérer la catégorie depuis l'URL
         const categorieChoisie = req.query.categorie;
         
-        // 2. Récupérer toutes les catégories pour le menu de tri
         const [categories] = await pool.query("SELECT * FROM categories ORDER BY id_cat DESC");
 
-        // 3. Récupérer les produits (avec ou sans filtre)
         let produitsResultat;
 
         if (categorieChoisie == -2){
@@ -390,7 +367,6 @@ app.get("/admin/realisations", async function (req, res) {
             const [rows] = await pool.query("SELECT * FROM produits WHERE categorie = ?", [categorieChoisie]);
             produitsResultat = rows;
         } else {
-            // Requête globale par défaut
             const [rows] = await pool.query("SELECT * FROM produits");
             produitsResultat = rows;
         }
@@ -456,7 +432,7 @@ app.get('/api/max-dimensions', async (req, res) => {
  * GET /modif_realisations/:id
 Récupère les informations d'une réalisation et rend le formulaire de modification.
  */
-app.get("/modif_realisations/:id", async function (req, res) {
+app.get("/modif_realisations/:id", isAdmin, async function (req, res) {
     try {
         const produitId = req.params.id; 
         const [produit] = await pool.query("SELECT * FROM produits WHERE id = ?", [produitId]);
@@ -480,7 +456,7 @@ app.get("/modif_realisations/:id", async function (req, res) {
  * GET /suppression
 Page de confirmation de suppression (catégorie, réalisations, machines).
  */
-app.get("/admin/suppression", async function (req, res) {
+app.get("/admin/suppression", isAdmin, async function (req, res) {
     try {
         const liste_categories = await pool.query("SELECT * FROM categories");
         const liste_realisations = await pool.query("SELECT * FROM produits");
@@ -497,7 +473,7 @@ app.get("/admin/suppression", async function (req, res) {
  * GET /modif_machine/:id
 Récupère une machine par son identifiant et rend le formulaire d'édition admin.
  */
-app.get("/modif_machine/:id", async function (req, res) {
+app.get("/modif_machine/:id", isAdmin, async function (req, res) {
     try {
         const machineId = req.params.id;
         const [rows] = await pool.query("SELECT * FROM machines WHERE id_machine = ?", [machineId]);
