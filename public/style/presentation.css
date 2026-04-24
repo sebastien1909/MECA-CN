@@ -156,9 +156,11 @@
 
 .adaptabilite-holder {
     max-width: 1180px;
-    margin: 100px auto 100px;
+    margin: 150px auto 150px;
     padding: 0 24px;
-
+    display:flex;
+    flex-direction:column;
+    gap:50px;
 }
 
 .adaptabilite-holder h2 {
