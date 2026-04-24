@@ -391,7 +391,7 @@
     padding: 16px 28px;
     font-weight: 700;
     cursor: pointer;
-    font-size:1.35rem;
+    font-size:1.2rem;
     transition: background 0.2s ease, transform 0.2s ease;
 }
 
@@ -412,6 +412,7 @@
     flex-direction:column;
     justify-content:center;
     align-items:center;
+    margin:auto 0px;
 }
 
 
