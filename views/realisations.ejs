@@ -1,6 +1,8 @@
-<%# Public portfolio / réalisations listing %>
+<%# Listing des réalisations %>
 <%- include('header') %>
 
+
+<!-- Titre de le page -->
 <main>
     <div class="page-title-container">
         <h3>PORTFOLIO INDUSTRIEL</h3>
@@ -15,7 +17,7 @@
 </main>
 
 
-
+<!-- Section de tri -->
 <section class="tri">
     <div class="tri-item<%= (categorieChoisie === 'all' || !categorieChoisie) ? ' active' : '' %>" data-filter="all">Tous</div>
     
@@ -24,8 +26,15 @@
     <% } %>
 </section>
 
+
+
+
+<!-- Conteneur des réalisations -->
+
 <section class="realisations-content">
     <% if (produit1) { %> 
+
+        <!-- Première card uniquement pour les ordinateurs-->
         <div class="realisations-firstrow pc-only">
             <div class="realisation-card">
                 <img src="<%= produit1.image %>" alt="Image de réalisation">
@@ -48,6 +57,8 @@
         </div>
     <% } %>
 
+
+    <!-- Cards -->
     <div class="realisations-grid">
         <% for (const element of produits) { %>
             <div class="realisation-card">

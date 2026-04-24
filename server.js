@@ -592,7 +592,7 @@ app.get("/ajout_categorie", isAdmin, async function (req, res) {
             res.render("admin/ajoutcategorie", { page_css1: "headeradmin.css", page_css2: "ajoutcategorie.css"});
         }
     } catch (err) {
-        console.error("Erreur SQL ou Serveur :", err);
+        console.error("Erreur serveur ou SQL :", err)
         res.status(500).send("Erreur lors de l'affichage du formulaire d'ajout de catégorie");
     }
 });
