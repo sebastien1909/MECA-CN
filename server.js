@@ -170,7 +170,7 @@ app.get("/machines", async function (req, res) {
         const [machines] = await pool.query("SELECT * FROM machines");
         const machinestourneuses = machines.filter(machine => machine.type === "tournage");
         const machinefraiser = machines.filter(machine => machine.type === "fraisage");
-
+        console.log(machinefraiser);
         res.render("parcmachine", { page_css1: "headerclient.css", page_css2: "parcmachine.css", machines: machines, machinestourneuses: machinestourneuses, machinefraiser: machinefraiser });
     } catch (err) {
         console.error(err);
@@ -194,7 +194,7 @@ app.get("/admin/machines", isAdmin, async function (req, res) {
             machines, 
             machinestourneuses, 
             machinefraiser,
-            successMessage // On envoie le message au template
+            successMessage
         });
     } catch (err) {
         console.error(err);
@@ -212,14 +212,22 @@ app.get("/realisations", async function (req, res) {
     try {
         // 1. Récupérer la catégorie depuis l'URL
         const categorieChoisie = req.query.categorie;
+        console.log(categorieChoisie)
         
         // 2. Récupérer toutes les catégories pour le menu de tri
-        const [categories] = await pool.query("SELECT * FROM categories");
+        let [categories] = await pool.query("SELECT * FROM categories ORDER BY id_cat DESC");
+        //console.log(categories);
 
         // 3. Récupérer les produits (avec ou sans filtre)
         let produitsResultat;
         
-        if (categorieChoisie && categorieChoisie !== 'all') {
+        if (categorieChoisie == -2){
+            const [rows] = await pool.query("SELECT * FROM produits WHERE categorie NOT IN (SELECT id_cat FROM categories);")
+            console.log(rows)
+            produitsResultat = rows;
+        }
+
+        else if (categorieChoisie && categorieChoisie !== 'all') {
             // Requête filtrée si on a un ID de catégorie
             const [rows] = await pool.query("SELECT * FROM produits WHERE categorie = ?", [categorieChoisie]);
             produitsResultat = rows;
@@ -366,13 +374,19 @@ app.get("/admin/realisations", async function (req, res) {
         const categorieChoisie = req.query.categorie;
         
         // 2. Récupérer toutes les catégories pour le menu de tri
-        const [categories] = await pool.query("SELECT * FROM categories");
+        const [categories] = await pool.query("SELECT * FROM categories ORDER BY id_cat DESC");
 
         // 3. Récupérer les produits (avec ou sans filtre)
         let produitsResultat;
+
+        if (categorieChoisie == -2){
+            const [rows] = await pool.query("SELECT * FROM produits WHERE categorie NOT IN (SELECT id_cat FROM categories);")
+            console.log(rows)
+            produitsResultat = rows;
+        }
+
         
         if (categorieChoisie && categorieChoisie !== 'all') {
-            // Requête filtrée si on a un ID de catégorie
             const [rows] = await pool.query("SELECT * FROM produits WHERE categorie = ?", [categorieChoisie]);
             produitsResultat = rows;
         } else {
@@ -566,7 +580,7 @@ app.get("/admin/ajoutproduit", isAdmin, async function (req, res) {
 app.get("/ajout_categorie", isAdmin, async function (req, res) {
     try {
 
-        const [produit_sans_categorie] = await pool.query("SELECT * FROM produits WHERE categorie = 0");
+        const [produit_sans_categorie] = await pool.query("SELECT * FROM produits WHERE categorie NOT IN (SELECT id_cat FROM categories)");
 
         if (produit_sans_categorie.length > 0) {
             // console.log("il y a des produits sans catégorie");

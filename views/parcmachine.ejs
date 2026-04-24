@@ -111,80 +111,84 @@
 
             <div class="filter-group fraisage-group">
             <h4 class="section-title fraisage-title">Fraisage</h4>
-            <% for (const element of machinefraiser) { %>
-                <section class="machine-holder">
+            <% if (typeof machinefraiser == 'undefined' || machinefraiser.length === 0) { %>
+                <p class="no-data">Aucune machine de tournage enregistrée.</p>
+            <% } %>
 
-                <div class="first-column">
-                    <div class="top-part">
-                        <h2>
-                            <%= element.nom_machine %>
-                        </h2>
-                        <p>
-                            <%= element.description_longue %>
+                <% for (const element of machinefraiser) { %>
+                    <section class="machine-holder">
+
+                    <div class="first-column">
+                        <div class="top-part">
+                            <h2>
+                                <%= element.nom_machine %>
+                            </h2>
+                            <p>
+                                <%= element.description_longue %>
+                            </p>
+
+                            <div class="info1">
+                                <p> 
+                                    <%= element.statistique1_nom %>
+                                </p>
+                                <p> <%= element.statistique1_donnee %> </p>
+                            </div>
+                            <div class="info2">
+                                <p> 
+                                    <%= element.statistique2_nom %>
+                                </p>
+                                <p> <%= element.statistique2_donnee %> </p>
+                            </div>
+                        </div>
+
+                        <div class="bottom-part">
+                            <h2>
+                                <%= element.avantage_titre %>
+                            </h2>
+
+                            <p>
+                                <%= element.avantage_description %>
+                            </p>
+                        </div>
+                    </div>
+
+
+
+
+
+
+                    <div class="second-column">
+                        <img src="<%= element.image_machine %>" alt="Machine Mazak">
+                        <div class="main-info-top">
+                            <h4><%= element.nom_machine %></h4>
+                            <span class="date-holder">
+                                <%= element.annee_entree %>
+                            </span>
+                        </div>
+                        
+                        <p> 
+                            <%= element.description_courte %>
                         </p>
 
-                        <div class="info1">
-                            <p> 
-                                <%= element.statistique1_nom %>
-                            </p>
-                            <p> <%= element.statistique1_donnee %> </p>
+                        <div class="stats-holder">
+                            <div class="first-stat">
+                                <h5>dimension X</h5>
+                                <span><%= element.d_x %></span>
+                            </div>
+
+                            <div class="second-stat">
+                                <h5>dimension Y</h5>
+                                <span><%= element.d_y %></span>
+                            </div>
+
+                            <div class="third-stat">
+                                <h5>dimension Z</h5>
+                                <span><%= element.d_z %></span>
+                            </div>
                         </div>
-                        <div class="info2">
-                            <p> 
-                                <%= element.statistique2_nom %>
-                            </p>
-                            <p> <%= element.statistique2_donnee %> </p>
-                        </div>
+
                     </div>
-
-                    <div class="bottom-part">
-                        <h2>
-                            <%= element.avantage_titre %>
-                        </h2>
-
-                        <p>
-                            <%= element.avantage_description %>
-                        </p>
-                    </div>
-                </div>
-
-
-
-
-
-
-                <div class="second-column">
-                    <img src="<%= element.image_machine %>" alt="Machine Mazak">
-                    <div class="main-info-top">
-                        <h4><%= element.nom_machine %></h4>
-                        <span class="date-holder">
-                            <%= element.annee_entree %>
-                        </span>
-                    </div>
-                    
-                    <p> 
-                        <%= element.description_courte %>
-                    </p>
-
-                    <div class="stats-holder">
-                        <div class="first-stat">
-                            <h5>dimension X</h5>
-                            <span><%= element.d_x %></span>
-                        </div>
-
-                        <div class="second-stat">
-                            <h5>dimension Y</h5>
-                            <span><%= element.d_y %></span>
-                        </div>
-
-                        <div class="third-stat">
-                            <h5>dimension Z</h5>
-                            <span><%= element.d_z %></span>
-                        </div>
-                    </div>
-
-                </div>
-            </section>
+                </section>
 
             <% } %>
 
@@ -209,10 +213,9 @@
             <button class="filter-btn" data-filter="fraisage">Fraisage</button>
             <button class="filter-btn" data-filter="tournage">Tournage</button>
         </div>
-
-        <% for (const element of machines) { %>
+            <% for (element of machines){ %>
             <section class="machine-holder-mobile" data-type="<%= element.type %>">
-
+                
                 <div class="machine-card-image">
                     <span class="badge-entree"><%= element.annee_entree %></span>
                     <img src="<%= element.image_machine %>" alt="Machine Mazak">

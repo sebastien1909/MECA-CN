@@ -204,7 +204,7 @@
     display:flex;
     flex-direction:column;
     gap:50px;
-    background-color:#cbd5e1;
+    background-color:rgba(0, 63, 135, 0.1);
 }
 
 .pourquoi h2 {
