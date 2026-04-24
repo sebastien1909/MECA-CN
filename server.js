@@ -263,7 +263,7 @@ Page du formulaire de demande de devis. Récupère les dimensions max des machin
 app.get("/devis", async function (req, res) {    
     try {
         const [dimensions] = await pool.query('SELECT MAX(d_x) as max_x, MAX(d_y) as max_y, MAX(d_z) as max_z FROM machines');
-        
+        console.log(req.session.role)
         res.render("devis", { 
             page_css1: "headerclient.css", 
             page_css2: "devis.css",
@@ -395,7 +395,7 @@ app.get("/admin/realisations", async function (req, res) {
             produitsResultat = rows;
         }
 
-        // 4. Préparer les données pour EJS (gestion du premier produit et des suivants)
+
         const produit1 = produitsResultat.length > 0 ? produitsResultat[0] : null;
         const produitsSuivants = produitsResultat;
 
@@ -439,7 +439,7 @@ app.get("/deconnexion", async function (req, res) {
 
 /**
  * GET /api/max-dimensions
-Endpoint API retournant les dimensions maximales disponibles (JSON).
+Endpoint API retournant les dimensions maximales disponibles (en JSON).
  */
 app.get('/api/max-dimensions', async (req, res) => {
     try {
@@ -471,7 +471,7 @@ app.get("/modif_realisations/:id", async function (req, res) {
             listeCategories: listeCategories[0]
         });
     } catch (err) {
-        console.error("Erreur SQL ou Serveur :", err);
+        console.error("Erreur SQL ou serveur :", err);
         res.status(500).send("Erreur lors de la récupération des données");
     }});
 
