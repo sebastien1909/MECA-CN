@@ -1,6 +1,7 @@
 body{
     margin:0;
     padding:0;
+    overflow-x:hidden;
 }
 
 .cont-404 {
@@ -51,7 +52,7 @@ body{
 
 .erreur-404-texte {
     font-size: 1rem;
-    max-width: 500px;
+    max-width: 600px;
     line-height: 1.6;
     margin-bottom: 30px;
     opacity: 0.9;
