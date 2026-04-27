@@ -1005,12 +1005,12 @@ app.post("/envoyer-devis", uploadProduits.array('fichiers', 10), async (req, res
                                 ${req.files.length ? `<ul style="margin: 0; padding-left: 20px; color: #475569;">${req.files.map(file => `<li style="margin-bottom: 8px;">${file.originalname} (${Math.round(file.size / 1024)} Ko)</li>`).join('')}</ul>` : '<p style="margin: 0; color: #475569;">Aucun fichier joint.</p>'}
                             </div>
 
-                            <p style="margin: 0; color: #94a3b8; font-size: 13px;">Cette demande de devis a été générée depuis le formulaire de contact du site.</p>
+                            <p style="margin : 0; color: #94a3b8; font-size: 13px;">Cette demande de devis a été générée depuis le formulaire de contact du site.</p>
                         </div>
                     </div>
                 </div>
             `,
-            attachments: attachments
+            attachments : attachments
         });
 
 

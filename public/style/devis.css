@@ -770,3 +770,27 @@ tbody td:hover, .selected { color: #fff; background-color: #0f4bb7; }
         font-size: 1.8rem;
     }
 }
+
+
+
+.input-unit-group {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.input-unit-group input {
+    border: none !important;
+    flex: 1;
+}
+
+.unit-selector {
+    background: #f4f4f4;
+    border: none;
+    border-left: 1px solid #ccc;
+    padding: 0 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+}

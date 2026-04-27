@@ -80,17 +80,40 @@
 
                     <div class="form-row" style="margin-bottom: 24px;">
                         <div class="form-group">
-                            <label>Dimension X (mm) *</label>
-                            <input type="number" name="dim_x" min="1" placeholder="Longueur" required>
-                        </div>
+                            <label>Dimension X *</label>
+                            <div class="input-unit-group">
+                                <input type="number" name="display_dim_x" min="0.01" step="0.01" placeholder="Long." required>
+                                <select class="unit-selector" id="unit_x">
+                                    <option value="mm">mm</option>
+                                    <option value="cm">cm</option>
+                                    <option value="dm">dm</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="dim_x"> </div>
+
                         <div class="form-group">
-                            <label>Dimension Y (mm) *</label>
-                            <input type="number" name="dim_y" min="1" placeholder="Largeur" required>
-                        </div>
+                            <label>Dimension Y *</label>
+                            <div class="input-unit-group">
+                                <input type="number" name="display_dim_y" min="0.01" step="0.01" placeholder="Larg." required>
+                                <select class="unit-selector" id="unit_y">
+                                    <option value="mm">mm</option>
+                                    <option value="cm">cm</option>
+                                    <option value="dm">dm</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="dim_y"> </div>
+
                         <div class="form-group">
-                            <label>Dimension Z (mm) *</label>
-                            <input type="number" name="dim_z" min="1" placeholder="Hauteur" required>
-                        </div>
+                            <label>Dimension Z *</label>
+                            <div class="input-unit-group">
+                                <input type="number" name="display_dim_z" min="0.01" step="0.01" placeholder="Haut." required>
+                                <select class="unit-selector" id="unit_z">
+                                    <option value="mm">mm</option>
+                                    <option value="cm">cm</option>
+                                    <option value="dm">dm</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="dim_z"> </div>
                     </div>
 
                     <label>Choisissez une date de livraison souhaitée *</label>
@@ -214,30 +237,63 @@
         })
         .catch(err => console.error('Erreur chargement dimensions:', err));
 
+
+
+
+
+
+    // --- LOGIQUE DE CONVERSION D'UNITÉS ---
+    function convertToMm(value, unit) {
+        const val = parseFloat(value) || 0;
+        switch (unit) {
+            case 'cm': return val * 10;
+            case 'dm': return val * 100;
+            default: return val; // déjà en mm
+        }
+    }
+
+    function updateHiddenDimensions() {
+        const dims = ['x', 'y', 'z'];
+        dims.forEach(d => {
+            const displayVal = document.querySelector(`input[name="display_dim_${d}"]`).value;
+            const unit = document.getElementById(`unit_${d}`).value;
+            const mmVal = convertToMm(displayVal, unit);
+            // On met à jour l'input caché qui sera envoyé au serveur
+            document.querySelector(`input[name="dim_${d}"]`).value = mmVal;
+        });
+    }
+
     // Fonction de validation des dimensions
     function validateDimensions() {
         if (!maxDimensions) {
-            showErrorModal('Erreur technique', 'Erreur: Impossible de vérifier les dimensions. Veuillez réessayer.');
+            showErrorModal('Erreur technique', 'Impossible de vérifier les dimensions.');
             return false;
         }
 
+        // On convertit d'abord les valeurs saisies en mm
+        updateHiddenDimensions();
+
+        // On récupère les valeurs converties dans les champs cachés
         const dimX = parseFloat(document.querySelector('input[name="dim_x"]').value) || 0;
         const dimY = parseFloat(document.querySelector('input[name="dim_y"]').value) || 0;
         const dimZ = parseFloat(document.querySelector('input[name="dim_z"]').value) || 0;
 
         if (dimX > maxDimensions.max_x || dimY > maxDimensions.max_y || dimZ > maxDimensions.max_z) {
-            showErrorModal('Dimensions incompatibles', `Les dimensions de votre pièce (${dimX}x${dimY}x${dimZ} mm) dépassent les capacités de nos machines (max: ${maxDimensions.max_x}x${maxDimensions.max_y}x${maxDimensions.max_z} mm). Veuillez réduire les dimensions.`);
+            showErrorModal('Dimensions incompatibles', 
+                `Les dimensions (${dimX}x${dimY}x${dimZ} mm) dépassent les capacités (max: ${maxDimensions.max_x}x${maxDimensions.max_y}x${maxDimensions.max_z} mm).`);
             return false;
         }
         return true;
     }
 
-    // Validation des dimensions avant envoi
-    document.getElementById('multistep-form').addEventListener('submit', function(e) {
-        if (!validateDimensions()) {
-            e.preventDefault();
-        }
-    });
+        // Validation des dimensions avant envoi
+        document.getElementById('multistep-form').addEventListener('submit', function(e) {
+
+            updateHiddenDimensions();
+            if (!validateDimensions()) {
+                e.preventDefault();
+            }
+        });
 
     // --- VARIABLES GLOBALES CALENDRIER ---
     var today = new Date(),
@@ -596,6 +652,8 @@
     function generateRecap() {
         const recapBox = document.getElementById('recap-display');
         
+        updateHiddenDimensions();
+
         // Récupération des valeurs
         const data = {
             nom_complet: document.querySelector('input[name="nom"]').value || "Non précisé",
