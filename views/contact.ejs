@@ -71,6 +71,23 @@
     </div>
 
     <div class="right-part">
+
+
+
+        <div class="right-part">
+            <% if (locals.success) { %>
+                <div class="alert alert-success">
+                    <%= success %>
+                </div>
+            <% } %>
+
+            <% if (locals.error) { %>
+                <div class="alert alert-error">
+                    <%= error %>
+                </div>
+            <% } %>
+
+
         <form method="POST" action="/envoyer-contact" class="contact-form">
             <div class="form-row">
                 <div class="form-group">

@@ -233,17 +233,24 @@ main::before {
     margin-bottom: 10px;
     line-height: 1.2;
     color:white;
+    letter-spacing: 10%;
 }
 
 .card-content-overlay p {
     font-size: 0.95rem;
     line-height: 1.4;
     opacity: 0.9;
-    /* Limite à 3 lignes pour éviter que ça déborde */
+    
+    /* Retour à la ligne forcé */
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    
+    /* Ajoute ces deux lignes ci-dessous */
+    white-space: normal; /* Force le comportement de texte standard */
+    word-break: break-word; /* Coupe les mots s'ils sont trop longs (ex: une longue URL) */
 }
 
 /* Ajustement pour l'alignement global */

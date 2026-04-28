@@ -266,7 +266,7 @@ Page de contact et formulaire pour envoyer un message à l'entreprise.
  */
 app.get("/contact", async function (req, res) {    
     try {
-        res.render("contact", { page_css1: "headerclient.css", page_css2: "contact.css" });
+        res.render("contact", { page_css1: "headerclient.css", page_css2: "contact.css", success : null, error : null });
     } catch (err) {
         console.error(err);
         res.status(500).send("Erreur serveur");
@@ -1098,6 +1098,8 @@ Envoie un email de contact avec les informations fournies.
 app.post("/envoyer-contact", async function (req, res) {
 
     const { nom, entreprise, email, telephone, objet, message } = req.body;
+
+    console.log(message);
 
     try {
         const transporter = nodemailer.createTransport({

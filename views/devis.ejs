@@ -1,5 +1,5 @@
 <%# Request (devis) form %>
-<%- include('header') %>
+<%- include("header") %>
 
 <main class="devis-page">
     <section class="devis-hero pc-only">
@@ -7,7 +7,7 @@
             <p class="devis-hero-label">RÉPONSE EN MOINS DE 24H</p>
             <h1>Vous voulez un devis ? <span>Nous nous en occupons.</span></h1>
             <p class="devis-hero-text">
-                Vous avez un projet d'usinage complexe ou une pièce spécifique à réaliser ? 
+                Vous avez un projet d"usinage complexe ou une pièce spécifique à réaliser ? 
                 Transmettez-nous vos plans. Nos experts analysent vos besoins techniques avec précision.
             </p>
         </div>
@@ -224,18 +224,18 @@
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener("DOMContentLoaded", function() {
     // --- VARIABLES GLOBALES ---
     var maxDimensions = null;
 
     // Charger les dimensions max des machines
-    fetch('/api/max-dimensions')
+    fetch("/api/max-dimensions")
         .then(response => response.json())
         .then(data => {
             maxDimensions = data;
-            console.log('Max dimensions:', maxDimensions);
+            console.log("Max dimensions:", maxDimensions);
         })
-        .catch(err => console.error('Erreur chargement dimensions:', err));
+        .catch(err => console.error("Erreur chargement dimensions:", err));
 
 
 
@@ -246,14 +246,14 @@
     function convertToMm(value, unit) {
         const val = parseFloat(value) || 0;
         switch (unit) {
-            case 'cm': return val * 10;
-            case 'dm': return val * 100;
+            case "cm": return val * 10;
+            case "dm": return val * 100;
             default: return val; 
         }
     }
 
     function updateHiddenDimensions() {
-        const dims = ['x', 'y', 'z'];
+        const dims = ["x", "y", "z"];
         dims.forEach(d => {
             const displayVal = document.querySelector(`input[name="display_dim_${d}"]`).value;
             const unit = document.getElementById(`unit_${d}`).value;
@@ -266,7 +266,7 @@
     // Fonction de validation des dimensions
     function validateDimensions() {
         if (!maxDimensions) {
-            showErrorModal('Erreur technique', 'Impossible de vérifier les dimensions.');
+            showErrorModal("Erreur technique", "Impossible de vérifier les dimensions.");
             return false;
         }
 
@@ -274,12 +274,12 @@
         updateHiddenDimensions();
 
         // On récupère les valeurs converties dans les champs cachés
-        const dimX = parseFloat(document.querySelector('input[name="dim_x"]').value) || 0;
-        const dimY = parseFloat(document.querySelector('input[name="dim_y"]').value) || 0;
-        const dimZ = parseFloat(document.querySelector('input[name="dim_z"]').value) || 0;
+        const dimX = parseFloat(document.querySelector("input[name='dim_x']").value) || 0;
+        const dimY = parseFloat(document.querySelector("input[name='dim_y']").value) || 0;
+        const dimZ = parseFloat(document.querySelector("input[name='dim_z']").value) || 0;
 
         if (dimX > maxDimensions.max_x || dimY > maxDimensions.max_y || dimZ > maxDimensions.max_z) {
-            showErrorModal('Dimensions incompatibles', 
+            showErrorModal("Dimensions incompatibles", 
                 `Les dimensions (${dimX}x${dimY}x${dimZ} mm) dépassent les capacités (max: ${maxDimensions.max_x}x${maxDimensions.max_y}x${maxDimensions.max_z} mm).`);
             return false;
         }
@@ -287,7 +287,7 @@
     }
 
         // Validation des dimensions avant envoi
-        document.getElementById('multistep-form').addEventListener('submit', function(e) {
+        document.getElementById("multistep-form").addEventListener("submit", function(e) {
 
             updateHiddenDimensions();
             if (!validateDimensions()) {
@@ -301,7 +301,7 @@
         month = today.getMonth(),
         monthTag = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"],
         day = today.getDate(),
-        days = document.getElementById('calendar').getElementsByTagName('td'),
+        days = document.getElementById("calendar").getElementsByTagName("td"),
         selectedDay,
         setDate,
         daysLen = days.length;
@@ -316,20 +316,20 @@
         this.getOptions();
         this.drawDays();
         var that = this,
-            pre = document.getElementsByClassName('pre-button'),
-            next = document.getElementsByClassName('next-button');
+            pre = document.getElementsByClassName("pre-button"),
+            next = document.getElementsByClassName("next-button");
 
-        pre[0].addEventListener('click', function() { that.preMonth(); });
-        next[0].addEventListener('click', function() { that.nextMonth(); });
+        pre[0].addEventListener("click", function() { that.preMonth(); });
+        next[0].addEventListener("click", function() { that.nextMonth(); });
 
         for (var k = 0; k < daysLen; k++) {
-            days[k].addEventListener('click', function() { that.clickDay(this); });
+            days[k].addEventListener("click", function() { that.clickDay(this); });
         }
     };
 
     Calendar.prototype.drawHeader = function(e) {
-        var headDay = document.getElementsByClassName('head-day'),
-            headMonth = document.getElementsByClassName('head-month');
+        var headDay = document.getElementsByClassName("head-day"),
+            headMonth = document.getElementsByClassName("head-month");
         e ? headDay[0].innerHTML = e : headDay[0].innerHTML = day;
         headMonth[0].innerHTML = monthTag[month] + " - " + year;
     };
@@ -340,9 +340,9 @@
             n = startDay;
 
         for (var k = 0; k < 42; k++) {
-            days[k].innerHTML = '';
-            days[k].id = '';
-            days[k].className = '';
+            days[k].innerHTML = "";
+            days[k].id = "";
+            days[k].className = "";
         }
 
         for (var i = 1; i <= nDays; i++) {
@@ -377,7 +377,7 @@
         
         // Vérifier si la date est dans le passé
         if (clickedDate < today) {
-            showErrorModal('Date invalide', "La date sélectionnée ne peut pas être antérieure à aujourd'hui. Veuillez choisir une date future.");
+            showErrorModal("Date invalide", "La date sélectionnée ne peut pas être antérieure à aujourd'hui. Veuillez choisir une date future.");
             return;
         }
         
@@ -390,8 +390,8 @@
         this.drawHeader(o.innerHTML);
 
         // Mise à jour de l'input caché pour le formulaire
-        const formattedDate = selectedDay.toLocaleDateString('fr-FR');
-        document.getElementById('date_livraison_input').value = formattedDate;
+        const formattedDate = selectedDay.toLocaleDateString("fr-FR");
+        document.getElementById("date_livraison_input").value = formattedDate;
     };
 
     Calendar.prototype.preMonth = function() {
@@ -408,7 +408,7 @@
 
     Calendar.prototype.getOptions = function() {
         if (this.options) {
-            var sets = this.options.split('-');
+            var sets = this.options.split("-");
             setDate = new Date(sets[0], sets[1] - 1, sets[2]);
             day = setDate.getDate();
             year = setDate.getFullYear();
@@ -420,20 +420,20 @@
     var calendar = new Calendar();
 
     // --- LOGIQUE DE L'AFFICHAGE DES FICHIERS UPLOADÉS ---
-    var fileInput = document.getElementById('fichiers-input');
-    var uploadBox = document.querySelector('.upload-box');
-    var filePreview = document.getElementById('upload-files-preview');
-    var uploadButton = document.querySelector('.upload-button');
+    var fileInput = document.getElementById("fichiers-input");
+    var uploadBox = document.querySelector(".upload-box");
+    var filePreview = document.getElementById("upload-files-preview");
+    var uploadButton = document.querySelector(".upload-button");
 
     var selectedFiles = [];
     var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 Mo
     var MAX_TOTAL_SIZE = 100 * 1024 * 1024; // 100 Mo
 
     function formatBytes(bytes) {
-        if (bytes === 0) return '0 octet';
-        var sizes = ['octets', 'Ko', 'Mo', 'Go'];
+        if (bytes === 0) return "0 octet";
+        var sizes = ["octets", "Ko", "Mo", "Go"];
         var i = Math.floor(Math.log(bytes) / Math.log(1024));
-        return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i];
+        return Math.round(bytes / Math.pow(1024, i)) + " " + sizes[i];
     }
 
     function validateFiles(files, existingFiles) {
@@ -442,20 +442,20 @@
         var totalSize = existingFiles.reduce(function(sum, file) { return sum + file.size; }, 0);
 
         files.forEach(function(file) {
-            var extension = file.name.split('.').pop().toLowerCase();
+            var extension = file.name.split(".").pop().toLowerCase();
 
-            if (extension === 'zip') {
-                errors.push('Les fichiers ZIP ne sont pas autorisés : ' + file.name);
+            if (extension === "zip") {
+                errors.push("Les fichiers ZIP ne sont pas autorisés : " + file.name);
                 return;
             }
 
             if (file.size > MAX_FILE_SIZE) {
-                errors.push('Fichier trop volumineux (> 10 Mo) : ' + file.name);
+                errors.push("Fichier trop volumineux (> 10 Mo) : " + file.name);
                 return;
             }
 
             if (totalSize + file.size > MAX_TOTAL_SIZE) {
-                errors.push('La taille totale dépasse 100 Mo avec : ' + file.name);
+                errors.push("La taille totale dépasse 100 Mo avec : " + file.name);
                 return;
             }
 
@@ -467,17 +467,17 @@
     }
 
     function displayUploadError(message) {
-        var errorHtml = '<div class="upload-files-error">' + message + '</div>';
-        var errorNode = filePreview.querySelector('.upload-files-error');
+        var errorHtml = "<div class='upload-files-error'>" + message + "</div>";
+        var errorNode = filePreview.querySelector(".upload-files-error");
         if (errorNode) {
             errorNode.outerHTML = errorHtml;
         } else {
-            filePreview.insertAdjacentHTML('beforeend', errorHtml);
+            filePreview.insertAdjacentHTML("beforeend", errorHtml);
         }
     }
 
     function clearUploadError() {
-        var errorNode = filePreview.querySelector('.upload-files-error');
+        var errorNode = filePreview.querySelector(".upload-files-error");
         if (errorNode) {
             errorNode.remove();
         }
@@ -500,7 +500,7 @@
         }
 
         var totalSize = selectedFiles.reduce(function(sum, file) { return sum + file.size; }, 0);
-        var totalLabel = '<div class="upload-files-total">Total : ' + formatBytes(totalSize) + ' / 100 Mo</div>';
+        var totalLabel = '<div class="upload-files-total">Total : ' + formatBytes(totalSize) + " / 100 Mo</div>";
 
         filePreview.innerHTML = '<p>Fichiers sélectionnés</p><ul>' + selectedFiles.map(function(file, index) {
             return '<li><span class="file-name">' + file.name + '</span><span class="file-size">' + formatBytes(file.size) + '</span><button type="button" class="file-remove" data-index="' + index + '">Supprimer</button></li>';

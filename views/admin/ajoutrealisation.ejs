@@ -1,4 +1,4 @@
-<%- include('./header') %>
+<%- include("./header") %>
 
 <main>
     <div class="content-wrapper">
@@ -13,8 +13,8 @@
                         <img id="preview-image-card" src="<%= produit.image || '/img/placeholders/usinage1.png' %>" alt="Aperçu">
                     </div>
                     <div class="card-content-overlay">
-                        <h3 id="preview-name"><%= produit.nom || 'Nom de la réalisation' %></h3>
-                        <p id="preview-description"><%= produit.description || 'Description de la réalisation...' %></p>
+                        <h3 id="preview-name"><%= produit.nom || "Nom de la réalisation" %></h3>
+                        <p id="preview-description"><%= produit.description || "Description de la réalisation..." %></p>
                     </div>
                 </div>
             </div>
@@ -72,29 +72,29 @@
 
 <script>
     (function(){
-        const fileInput = document.getElementById('image_produit_input');
-        const triggerBtn = document.getElementById('trigger-input');
-        const previewImageCard = document.getElementById('preview-image-card');
-        const previewName = document.getElementById('preview-name');
-        const nameInput = document.querySelector('[name="nom_produit"]');
-        const descInput = document.querySelector('[name="description_produit"]');
-        const previewDesc = document.getElementById('preview-description');
+        const fileInput = document.getElementById("image_produit_input");
+        const triggerBtn = document.getElementById("trigger-input");
+        const previewImageCard = document.getElementById("preview-image-card");
+        const previewName = document.getElementById("preview-name");
+        const nameInput = document.querySelector("[name='nom_produit']");
+        const descInput = document.querySelector("[name='description_produit']");
+        const previewDesc = document.getElementById("preview-description");
 
         // Live Description Preview
         if (descInput) {
-            descInput.addEventListener('input', (e) => {
-                previewDesc.textContent = e.target.value || 'Description de la réalisation...';
+            descInput.addEventListener("input", (e) => {
+                previewDesc.textContent = e.target.value || "Description de la réalisation...";
             });
         } // <--- L'accolade manquante était ici !
 
         // Trigger input file
         if (triggerBtn) {
-            triggerBtn.addEventListener('click', () => fileInput.click());
+            triggerBtn.addEventListener("click", () => fileInput.click());
         }
 
         // Live Image Preview
         if (fileInput) {
-            fileInput.addEventListener('change', () => {
+            fileInput.addEventListener("change", () => {
                 const file = fileInput.files[0];
                 if (file) {
                     const url = URL.createObjectURL(file);
@@ -105,11 +105,11 @@
 
         // Live Name Preview
         if (nameInput) {
-            nameInput.addEventListener('input', (e) => {
-                previewName.textContent = e.target.value || 'Nom de la réalisation';
+            nameInput.addEventListener("input", (e) => {
+                previewName.textContent = e.target.value || "Nom de la réalisation";
             });
         }
     })(); // Fermeture propre de la fonction anonyme
 </script>
 
-<%- include('./footer') %>
+<%- include("./footer") %>
