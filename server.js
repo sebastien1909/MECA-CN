@@ -314,8 +314,8 @@ Page du formulaire de demande de devis. Récupère les dimensions max des machin
  */
 app.get("/devis", async function (req, res) {    
     try {
+        // On récupère les dimensions max des machines
         const [dimensions] = await pool.query('SELECT MAX(d_x) as max_x, MAX(d_y) as max_y, MAX(d_z) as max_z FROM machines');
-        //console.log(req.session.role)
         res.render("devis", { 
             page_css1: "headerclient.css", 
             page_css2: "devis.css",
@@ -416,35 +416,47 @@ app.get("/admin/presentation",isAdmin, async function (req, res) {
     }
 });
 
+
+
+
 /**
  * GET /admin/realisations
 Version administrateur du listing des réalisations (avec options de gestion).
  */
 app.get("/admin/realisations", isAdmin, async function (req, res) {
     try {
+        // Récupération de la catégorie demandé par l'utilisateur ("all", "-2", "1", "2")
         const categorieChoisie = req.query.categorie;
         
+        // Récupération de toutes les catégories
         const [categories] = await pool.query("SELECT * FROM categories ORDER BY id_cat DESC");
 
+        // Initialisation de la variable qui va contenir les produits demandés
         let produitsResultat;
 
+        // si la catégorie demandée est "autres"
         if (categorieChoisie == -2){
+            //récupération des produits et ajout dans la variable produitsResultat
             const [rows] = await pool.query("SELECT * FROM produits WHERE categorie NOT IN (SELECT id_cat FROM categories);")
-            //console.log(rows)
             produitsResultat = rows;
         }
 
         
+        // S'il y a une catégorie et qu'elle n'équivaut pas à "tous"
         if (categorieChoisie && categorieChoisie !== 'all') {
             const [rows] = await pool.query("SELECT * FROM produits WHERE categorie = ?", [categorieChoisie]);
             produitsResultat = rows;
-        } else {
+        } 
+        
+        // "Tous"
+        else {
             const [rows] = await pool.query("SELECT * FROM produits");
             produitsResultat = rows;
         }
 
-
+        // Définition du premier produit (utile pour les utilisateurs sur ordinateur)
         const produit1 = produitsResultat.length > 0 ? produitsResultat[0] : null;
+        // Définition de tout les produits
         const produitsSuivants = produitsResultat;
 
         res.render("admin/realisations", { 
@@ -462,12 +474,15 @@ app.get("/admin/realisations", isAdmin, async function (req, res) {
     }
 });
 
+
+
 /**
  * GET /deconnexion
 Détruit la session et déconnecte l'utilisateur.
  */
 app.get("/deconnexion", async function (req, res) {
     try {
+        // Déconnexion ==> S'il y a une erreur, renvoyer un message serveur pour avertir l'utilisateur, sinon, rediriger l'utilisateur vers la page d'accueil
         req.session.destroy((err) => {
             if (err) {
                 console.error("Erreur lors de la déconnexion :", err);
@@ -487,7 +502,7 @@ app.get("/deconnexion", async function (req, res) {
 
 /**
  * GET /api/max-dimensions
-Endpoint API retournant les dimensions maximales disponibles (en JSON).
+Récupération des dimensions maximales des machines (capacité maximale) et renvoie de ces dernières sous format JSON
  */
 app.get('/api/max-dimensions', async (req, res) => {
     try {
@@ -684,33 +699,45 @@ app.get("/admin/profil", isAdmin, async function (req,res) {
 
 
 
+
+
+
+
+
 // app.post
 
 
 
-
 // Modifications infos profil (identifiant, email, téléphone, mot de passe)
-
-
-
-
-app.post("/modifier-id", isAdmin, async function (req,res){
-    try{
+/*
+Vérifie que l'utilisateur est admin (middleware isAdmin)
+    - Récupère l'ID de l'utilisateur connect via la session
+    - Récupère les données envoyées par le formulaire (ancien ID + nouvel identifiant)
+    - Si aucun changement, redirige vers le profil
+    - Sinon, met à jour l'identifiant en base de données
+*/
+app.post("/modifier-id", isAdmin, async function (req, res) {
+    try {
         const ID = req.session.userID;
-        const userId = req.body.user_ID;
         const nouvel_identifiant = req.body.identifiant;
-        //console.log("ancien id :", userId, "\n nouvel id :", nouvel_identifiant);
-        if (nouvel_identifiant == userId){
-            res.redirect("/admin/profil");
+
+        // Récupérer l'ancien identifiant depuis la BDD serait encore plus propre
+        if (!nouvel_identifiant) {
+            return res.redirect("/admin/profil");
         }
-        await pool.query("UPDATE utilisateurs SET identifiant = ? WHERE id = ?", [nouvel_identifiant, ID]);
-        return res.status(200).send("Identifiant modifié avec succès ! <br><a href='/admin/profil'>Retourner au profil</a>");
-    }
-    catch (err){
+
+        await pool.query(
+            "UPDATE utilisateurs SET identifiant = ? WHERE id = ?",
+            [nouvel_identifiant, ID]
+        );
+
+        return res.redirect("/admin/profil");
+
+    } catch (err) {
         console.error("Erreur SQL ou serveur : ", err);
-        res.status(500).send("Erreur lors de la modification de l'identifiant.")
+        res.status(500).send("Erreur lors de la modification de l'identifiant.");
     }
-})
+});
 
 
 app.post("/modifier-email", isAdmin, async function(req, res){
