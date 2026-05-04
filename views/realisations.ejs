@@ -1,8 +1,10 @@
-<%# Listing des réalisations %>
+<%# Listing des réalisation %>
+
+
 <%- include('header') %>
 
 
-<!-- Titre de le page -->
+
 <main>
     <div class="page-title-container">
         <h3>PORTFOLIO INDUSTRIEL</h3>
@@ -17,10 +19,16 @@
 </main>
 
 
-<!-- Section de tri -->
+<!-- Section de tri 
+    - Récupération de chaque catégorie dans la bdd dans l'ordre décroissant (afin d'avoir le "autres" à la fin)
+    - Affichage de ces derniers sous forme de "scroll horizontal"
+-->
 <section class="tri">
     <div class="tri-item<%= (categorieChoisie === 'all' || !categorieChoisie) ? ' active' : '' %>" data-filter="all">Tous</div>
-    
+    <!-- 
+    Pour chaques catégories de "categories"
+    "categories" est une liste [] exhaustive des catégories disponibles de produits
+    -->
     <% for (const categorie of categories) { %>
         <div class="tri-item<%= String(categorieChoisie) === String(categorie.id_cat) ? ' active' : '' %>" data-filter="<%= categorie.id_cat %>"><%= categorie.nom %></div>
     <% } %>
@@ -29,12 +37,13 @@
 
 
 
-<!-- Conteneur des réalisations -->
+
 
 <section class="realisations-content">
+    <!-- S'il y a un premier produit (et donc plus de produits) -->
     <% if (produit1) { %> 
 
-        <!-- Première card uniquement pour les ordinateurs-->
+        <!-- Première card uniquement pour les ordinateurs -->
         <div class="realisations-firstrow pc-only">
             <div class="realisation-card">
                 <img src="<%= produit1.image %>" alt="Image de réalisation">
@@ -43,7 +52,8 @@
                     <p><%= produit1.description %></p>
                 </div>
             </div>
-
+            
+            <!-- Section d'accès à la page machines -->
             <div class="first-row-infos">
                 <img src="/img/icons/machine.png" alt="Icône de machine" class="machine-icone">
                 <h4>Information</h4>
@@ -51,6 +61,8 @@
                 <button class="voir-plus" onclick="window.location.href='/machines'">Voir notre parc machine</button>
             </div>
         </div>
+
+    <!-- S'il n'y a pas de réalisation dans la bdd-->
     <% } else { %>
         <div style="text-align: center; padding: 50px;">
             <p>Aucune réalisation n'est actuellement disponible dans cette catégorie.</p>
@@ -58,7 +70,9 @@
     <% } %>
 
 
-    <!-- Cards -->
+    <!-- Cards pour tout les produits 
+    (s'il n'y a pas de produits, le message l'indiquant est affichée via le "if" précédent) 
+    -->
     <div class="realisations-grid">
         <% for (const element of produits) { %>
             <div class="realisation-card">
@@ -94,14 +108,23 @@
 
 
 <script>
+
+    /*
+        Gestion du système de tri via les paramètres d’URL.
+        - Récupère le filtre actif depuis l’URL (?categorie=...)
+        - Met à jour l’état visuel des boutons
+        - Met à jour l’URL lors d’un clic pour appliquer le tri côté serveur
+    */
     document.addEventListener('DOMContentLoaded', function() {
         const items = document.querySelectorAll('.tri-item');
         const params = new URLSearchParams(window.location.search);
         const selected = params.get('categorie') || 'all';
 
+        // Active le bouton correspondant au filtre actuel
         items.forEach(item => {
             item.classList.toggle('active', item.dataset.filter === selected);
 
+            // Met à jour l’URL avec le filtre sélectionné
             item.addEventListener('click', function() {
                 const filter = item.dataset.filter;
                 const url = new URL(window.location.href);
@@ -111,10 +134,13 @@
                     url.searchParams.set('categorie', filter);
                 }
 
+                // Recharge la page avec le filtre appliqué
                 window.location.href = url.toString();
             });
         });
     });
 </script>
 
+
+<!-- Inclue du footer (répété sur toutes les pages) -->
 <%- include('footer') %>

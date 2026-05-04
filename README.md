@@ -22,7 +22,7 @@ L'objectif est de faciliter la phase de prospection, et de transformer les prosp
 
 ## Structure du Projet
 
-MECA-CN/ ├── README.md ├── [autres fichiers du projet] └── ...
+MECA-CN/ ├── README.md ├── server.js ├── dumpBDD.sql ├── db.js ├── .env ├── public/ ├── uploads/ ├── views/ └── 
 
 Code
 

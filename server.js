@@ -4,6 +4,8 @@
  * - Configure les middlewares (sessions, bodyParser, static)
  * - Configure multer pour la gestion des uploads
  * - Déclare les routes publiques et admin
+
+Lors du renvoi des différentes pages, deux pages css sont aussi renvoyées afin de permettre au serveur de ne pas se surcharger en chargeant toutes les pages CSS
 */
 
 import express from "express";
@@ -47,7 +49,8 @@ const uploadMachines = multer({ storage: storageMachines });
 
 
 
-
+// Setting d'express
+// ==> sert à rendre les views
 const app = express();
 app.set("view engine", "ejs");
 
@@ -73,7 +76,7 @@ app.use((req, res, next) => {
 //MIDDLEWARES MAISON
 
 /**
-Middleware `authenticate`
+Middleware "authenticate"
 Vérifie que l'utilisateur est authentifié (présence de "session.userID").
 Si authentifié -> "next()", sinon redirige vers la page de connexion.
  */
@@ -148,6 +151,8 @@ app.get("/presentation", async function (req, res) {
     }
 });
 
+
+
 // Route publique pour lister les machines
 /**
 GET /machines
@@ -155,8 +160,35 @@ Route client listant toutes les machines (séparées par type).
  */
 app.get("/machines", async function (req, res) {
     try {
+        /* Récupération globale des machines de la BDD
+        Exemple de liste : 
+        [
+            {
+                id_machine: 3,
+                nom_machine: 'Mazak Quick Turn 250MSY',
+                description_courte: 'Tournage-fraisage haute productivité avec axe Y et contre-broche pour le concept Done-In-One.',
+                description_longue: "Centre de tournage haute performance équipé d'une broche de fraisage, d'un axe Y et d'une broche secondaire pour un usinage complet sans reprise manuelle.",
+                image_machine: '/img/machines/Mchn1776863314292.png',
+                statistique1_nom: 'Diamètre de tournage max',
+                statistique1_donnee: '380 mm',
+                statistique2_nom: 'Vitesse outils motorisés',
+                statistique2_donnee: '6.000 RPM',
+                avantage_titre: 'Productivité Intégrée',
+                avantage_description: 'La présence de la contre-broche (S) et des outils motorisés permet de terminer la pièce entièrement sur une seule machine.',
+                d_x: '375.00',
+                d_y: '100.00',
+                d_z: '2500.00',
+                type: 'tournage',
+                annee_entree: 2024
+            },
+            {...}
+        ]
+
+        */
         const [machines] = await pool.query("SELECT * FROM machines");
+        // Séparation des machines entre machines de tournage et de fraisage
         const machinestourneuses = machines.filter(machine => machine.type === "tournage");
+        console.log(machinestourneuses);
         const machinefraiser = machines.filter(machine => machine.type === "fraisage");
         //console.log(machinefraiser);
         res.render("parcmachine", { page_css1: "headerclient.css", page_css2: "parcmachine.css", machines: machines, machinestourneuses: machinestourneuses, machinefraiser: machinefraiser });
@@ -169,7 +201,33 @@ app.get("/machines", async function (req, res) {
 // Route admin pour la gestion du parc machine (protégée)
 app.get("/admin/machines", isAdmin, async function (req, res) {
     try {
+        /* Récupération globale des machines de la BDD
+        Exemple de liste : 
+        [
+            {
+                id_machine: 3,
+                nom_machine: 'Mazak Quick Turn 250MSY',
+                description_courte: 'Tournage-fraisage haute productivité avec axe Y et contre-broche pour le concept Done-In-One.',
+                description_longue: "Centre de tournage haute performance équipé d'une broche de fraisage, d'un axe Y et d'une broche secondaire pour un usinage complet sans reprise manuelle.",
+                image_machine: '/img/machines/Mchn1776863314292.png',
+                statistique1_nom: 'Diamètre de tournage max',
+                statistique1_donnee: '380 mm',
+                statistique2_nom: 'Vitesse outils motorisés',
+                statistique2_donnee: '6.000 RPM',
+                avantage_titre: 'Productivité Intégrée',
+                avantage_description: 'La présence de la contre-broche (S) et des outils motorisés permet de terminer la pièce entièrement sur une seule machine.',
+                d_x: '375.00',
+                d_y: '100.00',
+                d_z: '2500.00',
+                type: 'tournage',
+                annee_entree: 2024
+            },
+            {...}
+        ]
+
+        */
         const [machines] = await pool.query("SELECT * FROM machines");
+        // Séparation des machines entre tournage et fraisage. Renvoie une liste
         const machinestourneuses = machines.filter(machine => machine.type === "tournage");
         const machinefraiser = machines.filter(machine => machine.type === "fraisage");
 
@@ -203,22 +261,36 @@ app.get("/realisations", async function (req, res) {
         let [categories] = await pool.query("SELECT * FROM categories ORDER BY id_cat DESC");
 
         let produitsResultat;
-        
+        /* 
+        La catégorie  "-2" correspond à "autres".
+        -2 a été sélectionné pour ne pas rentrer au conflit avec les id des catégories incrémentés automatiquement
+        */
         if (categorieChoisie == -2){
             const [rows] = await pool.query("SELECT * FROM produits WHERE categorie NOT IN (SELECT id_cat FROM categories);")
             //console.log(rows)
             produitsResultat = rows;
         }
 
+        /*
+        Sinon, si une catégorie a été choisie et qu'elle n'équivaut pas à "all" (tous)
+        */
         else if (categorieChoisie && categorieChoisie !== 'all') {
             const [rows] = await pool.query("SELECT * FROM produits WHERE categorie = ?", [categorieChoisie]);
             produitsResultat = rows;
-        } else {
+
+            
+        }
+
+        // Si la catégorie sélectionnée équivaut à "all" 
+        else {
             const [rows] = await pool.query("SELECT * FROM produits");
             produitsResultat = rows;
         }
 
+        // Définir le premier produit de la liste pour les visiteurs sur ordinateurs (pour la mise en page)
         const produit1 = produitsResultat.length > 0 ? produitsResultat[0] : null;
+
+        // On récupère aussi tout les produits
         const produitsSuivants = produitsResultat;
 
         res.render("realisations", { 
