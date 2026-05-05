@@ -115,8 +115,8 @@
         max-width:640px;
         margin:24px 0 0;
         line-height:1.8;
-        color: rgba(255,255,255,0.95);
-        font-size:1.05rem;
+        color: rgba(255,255,255,0.95) !important;
+        font-size:1.05rem;text-align:left !important;
     }
 
     .CTA-holder{
