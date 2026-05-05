@@ -2,42 +2,44 @@
 
 
 
-<p>Offre unique</p>
-<p> <%= page_css1 %></p>
-
-
-
-<section class="top-part">
+<section class="top-part reveal">
     <img src="/img/placeholders/usinage3.jpg">
     <div class="right-part">
         <h1><%= offre.intitule %></h1>
         <span><%= offre.type %></span>
         <h2>Présentation de l'entreprise</h2>
-        <p> <%= offre.presentation %></p>
+        <p> <%= offre.presentation %> </p>
 
     </div>
 </section>
 
 <main>
-    <div class="mission">
+    <div class="mission reveal">
         <h2>Vos missions</h2>
         <p><%= offre.missions %> </p>
     </div>
-    <div class="compétences">
+    <div class="compétences reveal">
         <h2>Compétences recherchées</h2>
         <p> <%= offre.competences %></p>
     </div>
-    <div class="avantage">
+    <div class="avantage reveal">
         <h2>Avantage</h2>
-        <p> <%= offre.avantage %></p>
+        <p> <%= offre.avantages %></p>
     </div>
-    <div class="recrutement">
+    <div class="recrutement reveal">
         <h2>Processus de recrutement</h2>
         <p> <%= offre.recrutement %> </p>
     </div>
-    <div class="complementaire">
+    <div class="complementaire reveal">
         <h2>Informations complémentaires</h2>
         <p> <%= offre.infos_complementaires %></p>
     </div>
    
+
+    <a href="/postuler/<%= offre.id %>" class="postuler-btn reveal">
+        Postuler à cette offre
+    </a>
 </main>
+
+
+<%- include("footer") %>

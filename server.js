@@ -727,7 +727,7 @@ app.post("/consulter_offre",  async function (req,res){
         // console.log(id)
         const [offres] = await pool.query("SELECT * FROM offres where offre_id = ?", [id]);
         const offre = offres[0]
-        // console.log(offre);
+        console.log(offre);
         res.render("offre", { offre : offre, page_css1 : "offre.css",  page_css2 : "headerclient.css"});
     } catch (err){
         console.error("Erreur SQL ou serveur : ", err)
