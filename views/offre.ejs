@@ -1,0 +1,43 @@
+<%- include("header") %>
+
+
+
+<p>Offre unique</p>
+<p> <%= page_css1 %></p>
+
+
+
+<section class="top-part">
+    <img src="/img/placeholders/usinage3.jpg">
+    <div class="right-part">
+        <h1><%= offre.intitule %></h1>
+        <span><%= offre.type %></span>
+        <h2>Présentation de l'entreprise</h2>
+        <p> <%= offre.presentation %></p>
+
+    </div>
+</section>
+
+<main>
+    <div class="mission">
+        <h2>Vos missions</h2>
+        <p><%= offre.missions %> </p>
+    </div>
+    <div class="compétences">
+        <h2>Compétences recherchées</h2>
+        <p> <%= offre.competences %></p>
+    </div>
+    <div class="avantage">
+        <h2>Avantage</h2>
+        <p> <%= offre.avantage %></p>
+    </div>
+    <div class="recrutement">
+        <h2>Processus de recrutement</h2>
+        <p> <%= offre.recrutement %> </p>
+    </div>
+    <div class="complementaire">
+        <h2>Informations complémentaires</h2>
+        <p> <%= offre.infos_complementaires %></p>
+    </div>
+   
+</main>

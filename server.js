@@ -188,7 +188,7 @@ app.get("/machines", async function (req, res) {
         const [machines] = await pool.query("SELECT * FROM machines");
         // Séparation des machines entre machines de tournage et de fraisage
         const machinestourneuses = machines.filter(machine => machine.type === "tournage");
-        console.log(machinestourneuses);
+        //console.log(machinestourneuses);
         const machinefraiser = machines.filter(machine => machine.type === "fraisage");
         //console.log(machinefraiser);
         res.render("parcmachine", { page_css1: "headerclient.css", page_css2: "parcmachine.css", machines: machines, machinestourneuses: machinestourneuses, machinefraiser: machinefraiser });
@@ -366,13 +366,27 @@ Page des mentions légales.
  */
 app.get("/mentions", async function (req, res) {    
     try {
-        res.render("mentions", { page_css1: "mentions.css", page_css2: "headeradmin.css" });
+        res.render("mentions", { page_css1: "mentions.css", page_css2: "headerclient.css" });
     } catch (err) {
         console.error(err);
         res.status(500).send("Erreur serveur");
     }   
 });
 
+
+app.get("/offres", async function (req,res){
+    try{
+        const liste_offres = await pool.query("SELECT * FROM offres");
+        //console.log(liste_offres[0]);
+        //console.log(liste_offres[0].length)
+        const categories = await pool.query("SELECT categorie, COUNT(*) AS nombre_offres FROM offres GROUP BY categorie;")
+        //console.log(categories[0])
+        res.render("offres", {page_css1:"offres.css", page_css2:"headerclient.css", offres : liste_offres[0], categories : categories[0]})
+    } catch(err){
+        console.error(err)
+        res.status(500).send("Erreur serveur")
+    }
+})
 
 
 
@@ -705,6 +719,22 @@ app.get("/admin/profil", isAdmin, async function (req,res) {
 
 
 // app.post
+
+
+app.post("/consulter_offre",  async function (req,res){
+    try {
+        const id = req.body.offre_id;
+        // console.log(id)
+        const [offres] = await pool.query("SELECT * FROM offres where offre_id = ?", [id]);
+        const offre = offres[0]
+        // console.log(offre);
+        res.render("offre", { offre : offre, page_css1 : "offre.css",  page_css2 : "headerclient.css"});
+    } catch (err){
+        console.error("Erreur SQL ou serveur : ", err)
+        res.status(500).send("Erreur lors de la consultation de l'offre")
+    }
+})
+
 
 
 
@@ -1198,7 +1228,7 @@ app.post("/envoyer-contact", async function (req, res) {
 
     const { nom, entreprise, email, telephone, objet, message } = req.body;
 
-    console.log(message);
+    //console.log(message);
 
     try {
         const transporter = nodemailer.createTransport({

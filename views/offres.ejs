@@ -1,0 +1,85 @@
+<%- include("header") %>
+
+
+<section class="top-holder">
+    <div class="right-side">
+        <h1>Rejoignez notre équipe !</h1>
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
+            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco 
+            laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate 
+            velit esse cillum dolore eu fugiat nulla pariatur. 
+        </p>
+    </div>
+
+    <div class="right-part">
+        <img src="/img/placeholders/usinage1.png">
+    </div>
+
+</section>
+
+
+<% if (offres.length == 0){ %>
+    <p> Désolé, nous n'avons actuellement pas d'offres d'emplois</p>
+<% } else{ %>
+
+    <section class="categorie">
+        
+            <div class="categories">
+                <h2>Rechercher par catégorie</h2>
+                <p>Trouvez le job qui vous correspond le mieux</p>
+
+                <div class="categorie-holder">
+                    <% for (const element of categories){ %>
+                        <div class="categorie-card" data-filter="<%= element.categorie %>">
+                            <h3>
+                                <%= element.categorie %>
+                            </h3>
+                            <p>
+                                <%= element.nombre_offres %>
+                                <% if (element.nombre_offres > 1){ %>
+                                    jobs disponibles
+                                <% } else{ %>
+                                    job disponible
+                                <% } %>
+                            </p>
+
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        
+    </section>
+
+    <section class="offres-holder">
+        <% for (const element of offres){ %>
+            <div class="offre">
+                <div class="offre-id-holder">
+                    <p><span><%= element.offre_id %></span></p>
+                </div>
+
+                <div class="main-infos-holder">
+                    <%= element.intitule %>
+
+                    <div class="type-holder">
+                        <i class="fa-regular fa-newspaper" style="color: rgb(39, 34, 200);"></i>
+                        <p><%= element.type %></p>
+                    </div>
+                    <div class="localisation-holder">
+                        <img src="/img/icons/localisation_gris.svg">
+                        <p> <%= element.localisation %> </p>
+                    </div>
+                </div>
+                <form method="POST" action="/consulter_offre">
+                    <input name="offre_id" type="hidden" value="<%= element.offre_id %>"/>
+                    <button class="consulter" type="submit">
+                        Consulter l'offre
+                    </button>
+                </form>
+                
+            </div>
+        <% } %>
+    </section>
+
+
+<% } %>
