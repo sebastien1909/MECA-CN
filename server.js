@@ -721,6 +721,14 @@ app.get("/admin/profil", isAdmin, async function (req,res) {
 // app.post
 
 
+/* Route post qui permet d'arriver sur une offre d'emploi précise
+l'id de l'offre est passée en paramètre d'URL, puis récupéré
+Grâce à l'id récupéré, on trouve tout les détails de l'offre dans la bdd, puis on les envoie avec la page
+Attention -> Différence entre "offre" et "offres". 
+"offre" renvoie une seule offre avec toute les infos la correspondantes
+"offres" (avec un "s") renvoie la page listant toutes les offres disponibles
+*/
+
 app.post("/consulter_offre",  async function (req,res){
     try {
         const id = req.body.offre_id;
