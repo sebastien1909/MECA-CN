@@ -8,6 +8,8 @@ body {
     line-height: 1.6;
 }
 
+
+
 /* ===== HEADER (si déjà existant, ignore) ===== */
 
 header {
@@ -17,8 +19,9 @@ header {
 
 /* ===== DEBUG / TEST (tu peux virer après) ===== */
 
-p:first-of-type {
-    text-align: center;
+p:first-of-type:not(.presentation-texte) {
+    margin-left:5%;
+    text-align: left;
     color: #64748b;
     font-size: 14px;
 }
@@ -38,8 +41,8 @@ p:first-of-type {
     height: 350px;
     object-fit: cover;
     border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    border: 1px solid #1e293b;
+    box-shadow: 0 10px 30px rgba(110, 110, 110, 0.5);
+    border: 1px solid #ffffff;
 }
 
 .right-part {
@@ -85,7 +88,7 @@ main > div {
     transition: 0.1s ease;
 }
 
-main > div:hover {
+main > div:hover:not(.postuler) {
     transform: translateY(-5px);
     border-color: #3b82f6;
     box-shadow: 0 10px 25px rgba(59,130,246,0.15);
@@ -124,11 +127,15 @@ main p {
 
 
 
-/* ===== ANIMATION SCROLL ===== */
-
-
-
 /* ===== BOUTON POSTULER ===== */
+
+.postuler{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:none;
+    border:none;
+}
 
 .postuler-btn {
     display: inline-block;

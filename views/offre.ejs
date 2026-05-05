@@ -8,7 +8,7 @@
         <h1><%= offre.intitule %></h1>
         <span><%= offre.type %></span>
         <h2>Présentation de l'entreprise</h2>
-        <p> <%= offre.presentation %> </p>
+        <p class="presentation-texte"> <%= offre.presentation %> </p>
 
     </div>
 </section>
@@ -35,10 +35,12 @@
         <p> <%= offre.infos_complementaires %></p>
     </div>
    
-
-    <a href="/postuler/<%= offre.id %>" class="postuler-btn reveal">
-        Postuler à cette offre
-    </a>
+    <div class="postuler">
+        <a href="/postuler/<%= offre.id %>" class="postuler-btn reveal">
+            Postuler à cette offre
+        </a>
+    </div>
+    
 </main>
 
 
