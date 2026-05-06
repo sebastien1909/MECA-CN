@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : mer. 22 avr. 2026 à 07:48
+-- Généré le : mar. 05 mai 2026 à 11:00
 -- Version du serveur : 9.1.0
 -- Version de PHP : 8.3.14
 
@@ -32,13 +32,17 @@ CREATE TABLE IF NOT EXISTS `categories` (
   `id_cat` int NOT NULL AUTO_INCREMENT,
   `nom` varchar(50) NOT NULL,
   PRIMARY KEY (`id_cat`)
-) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=1000006 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `categories`
 --
 
 INSERT INTO `categories` (`id_cat`, `nom`) VALUES
+(1000005, 'catégorie test 5'),
+(1000004, 'catégorie test 4'),
+(1000003, 'catégorie test 3'),
+(-2, 'Autres'),
 (15, 'Automobile'),
 (16, 'Médical'),
 (17, 'Électronique'),
@@ -70,16 +74,51 @@ CREATE TABLE IF NOT EXISTS `machines` (
   `type` enum('tournage','fraisage') DEFAULT 'fraisage',
   `annee_entree` int DEFAULT NULL,
   PRIMARY KEY (`id_machine`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `machines`
 --
 
 INSERT INTO `machines` (`id_machine`, `nom_machine`, `description_courte`, `description_longue`, `image_machine`, `statistique1_nom`, `statistique1_donnee`, `statistique2_nom`, `statistique2_donnee`, `avantage_titre`, `avantage_description`, `d_x`, `d_y`, `d_z`, `type`, `annee_entree`) VALUES
-(1, 'Mazak VCN-530C', 'Usinage intégral de pièces complexes par la fusion du tournage et du fraisage (Concept Done-In-One).', 'Centre d\'usinage vertical haute performance, idéal pour l\'usinage de pièces de grande précision avec une broche haute vitesse.', '/img/machines/Mazak1', 'Vitesse brosse fraisage', '12.000 RPM', 'Magasin d’outils', '36 à 72 postes', 'Polyvalence Haute Technologie', 'Idéal pour les géométries complexes nécessitant un fraisage de précision et un tournage intensif sur une seule machine.', 1050.00, 530.00, 510.00, 'fraisage', 2016),
-(2, 'Mazak VTC-800/30SR', 'Grande capacité longitudinale et tête pivotante pour un usinage multi-faces haute précision.', 'Centre d\'usinage à colonne mobile doté d\'une tête pivotante (axe B), permettant l\'usinage de surfaces complexes et de grandes pièces avec une flexibilité totale.', '/img/machines/Mazak2', 'Vitesse broche', '18.000 RPM', 'Nombre d\'axes', '5 axes simultanés', 'Usinage Grande Dimension', 'Sa table fixe de 3,5 mètres permet d\'usiner des pièces volumineuses ou de travailler en pendulaire (deux zones de travail).', 3000.00, 800.00, 720.00, 'fraisage', 2010),
-(3, 'Mazak Quick Turn 250MSY', 'Tournage-fraisage haute productivité avec axe Y et contre-broche pour le concept Done-In-One.', 'Centre de tournage haute performance équipé d\'une broche de fraisage, d\'un axe Y et d\'une broche secondaire pour un usinage complet sans reprise manuelle.', '/img/machines/Mazak3', 'Diamètre de tournage max', '380 mm', 'Vitesse outils motorisés', '6.000 RPM', 'Productivité Intégrée', 'La présence de la contre-broche (S) et des outils motorisés permet de terminer la pièce entièrement sur une seule machine.', 375.00, 100.00, 541.00, 'tournage', 2024);
+(3, 'Mazak Quick Turn 250MSY', 'Tournage-fraisage haute productivité avec axe Y et contre-broche pour le concept Done-In-One.', 'Centre de tournage haute performance équipé d\'une broche de fraisage, d\'un axe Y et d\'une broche secondaire pour un usinage complet sans reprise manuelle.', '/img/machines/Mchn1776863314292.png', 'Diamètre de tournage max', '380 mm', 'Vitesse outils motorisés', '6.000 RPM', 'Productivité Intégrée', 'La présence de la contre-broche (S) et des outils motorisés permet de terminer la pièce entièrement sur une seule machine.', 375.00, 100.00, 2500.00, 'tournage', 2024),
+(4, 'alqigjmqkj', 'eslfigjarml j ameroifjamo fizmqeroijgm qokrjgaq', 'ersgliz jqmgljh rmlgjqerlmoghaqeromugha mqha qmlkjfham eqljkghanm l', '/img/machines/Mchn1776863323954.png', 'poids', '1100 Kg', 'qdfljh', '125mm', 'qre;fjhlkj', 'sfdlvkjsqfmlkjzjqmrkj', 500.00, 250.00, 1010.00, 'tournage', 2025),
+(5, 'aqergzth', 'zzsth', 'zsthzqtfgztshs gzesrg', '/img/machines/Mchn1776863332222.png', 'qfgq', 'qerg', 'qergqrf', 'regaq', 'sgzety', 'zqrtaergsfgztgzdsfg', 500.00, 500.00, 500.00, 'tournage', 2026),
+(6, 'erfr;gaq glkjhfl qjkf', 'zpoigj pmerough kqifjglzrbfaqlm ofhglq rufh lqfj', 'AQTA QRTzekfhagiigikyugloiqrejg mojgjlso k jmqlkrjglm zqjrhglmqjfhg mqorighl qrjk hn luqerhgol qhlfo qhrl oia h', '/img/machines/Mchn1776862379001.png', 'qlkjhlk', '500', 'kjhluh', '50', 'lkug', 'kquhflqiufhvmlqujhg', 500.00, 500.00, 500.00, 'tournage', 2026),
+(7, 'iuioliuh', 'liugliuyoiu', 'oiuoiuhzrloiguhlqrhuaemrqlfhqleighze oughzerogha zpqerogia ezroighzerpo gh e', '/img/machines/Mchn1776862452722.png', 'bqzjg', '500', 'kysfglkvuih', '25', 'qkiuhlqiudh ', 'lzujujfhlqkfhl ijamprig zmeroi', 500.00, 500.00, 500.00, 'tournage', 2026);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `offres`
+--
+
+DROP TABLE IF EXISTS `offres`;
+CREATE TABLE IF NOT EXISTS `offres` (
+  `offre_id` int NOT NULL AUTO_INCREMENT,
+  `intitule` varchar(100) NOT NULL,
+  `type` enum('CDI','CDD','Stage','Alternance') NOT NULL,
+  `localisation` varchar(100) NOT NULL,
+  `salaire` varchar(100) DEFAULT NULL,
+  `presentation` text NOT NULL,
+  `missions` text NOT NULL,
+  `competences` text NOT NULL,
+  `avantages` text,
+  `recrutement` text,
+  `infos_complementaires` text,
+  `date_creation` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `mode_travail` enum('presentiel','hybride','remote') NOT NULL,
+  `categorie` varchar(50) NOT NULL,
+  PRIMARY KEY (`offre_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `offres`
+--
+
+INSERT INTO `offres` (`offre_id`, `intitule`, `type`, `localisation`, `salaire`, `presentation`, `missions`, `competences`, `avantages`, `recrutement`, `infos_complementaires`, `date_creation`, `mode_travail`, `categorie`) VALUES
+(1, 'Développeur Full-Stack JavaScript', 'CDI', 'Lille, France', '38 000€ - 48 000€ brut/an', 'Entreprise spécialisée dans le développement de solutions web sur mesure pour des clients variés, allant de startups innovantes à des entreprises établies. L’équipe est composée de développeurs, designers et chefs de projet travaillant en méthodologie agile, avec une forte culture de collaboration et d’amélioration continue.', 'Vous participerez au développement complet des applications web, de la conception à la mise en production. Vous serez impliqué dans la création de nouvelles fonctionnalités, la maintenance des projets existants et l’optimisation des performances. Vous travaillerez en lien direct avec les équipes produit et design afin de proposer des solutions techniques adaptées aux besoins utilisateurs.', 'JavaScript, Node.js, React, HTML, CSS, Git, API REST', 'Télétravail 2 à 3 jours par semaine, matériel fourni, tickets restaurant, mutuelle avantageuse', 'Entretien RH → entretien technique → test pratique → entretien final', 'Poste évolutif avec possibilité de montée en compétences rapide', '2026-05-05 07:21:30', 'hybride', 'tournage'),
+(2, 'Alternant Développeur Web Front-End', 'Alternance', 'Paris, France', 'Selon grille légale', 'Agence digitale accompagnant ses clients dans la création de sites web et d’applications sur mesure. Vous intégrerez une équipe dynamique où l’apprentissage, la transmission de compétences et l’implication sur des projets concrets sont au cœur du fonctionnement.', 'Encadré par un développeur expérimenté, vous participerez à l’intégration d’interfaces web, au développement de nouvelles fonctionnalités et à la correction de bugs. Vous serez également amené à collaborer avec les designers pour garantir la qualité visuelle et ergonomique des projets.', 'HTML, CSS, JavaScript, bases en React ou Vue, Git', 'Encadrement personnalisé, ambiance bienveillante, projets variés, possibilité d’embauche', 'Entretien visio → test technique → entretien final', 'Contrat de 12 mois, démarrage en septembre', '2026-05-05 07:21:30', 'presentiel', 'fraisage');
 
 -- --------------------------------------------------------
 
@@ -95,15 +134,15 @@ CREATE TABLE IF NOT EXISTS `produits` (
   `categorie` int NOT NULL,
   `image` text,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `produits`
 --
 
 INSERT INTO `produits` (`id`, `nom`, `description`, `categorie`, `image`) VALUES
-(1, 'Engrenage Hélicoïcal de Transmission', 'Usinage haute précision de pignons pour boîtes de vitesses. Une finition de surface optimisée pour réduire les frottements et les bruits de roulement.', 15, '/img/produits/produit1.png'),
-(2, 'Arbre de Transmission Cannelé ', 'Réalisation d\'arbres de transmission avec cannelures de force. Conçus pour supporter des couples élevés dans les machines agricoles ou de manutention.', 17, '/img/produits/Prdt1776784346166.png'),
+(1, 'Engrenage Hélicoïcal de Transmission 2', 'Usinage haute précision de pignons pour boîtes de vitesses. Une finition de surface optimisée pour réduire les frottements et les bruits de roulement.', 15, '/img/produits/produit1.png'),
+(2, 'Arbre de Transmission Cannelé 2', '(description) Réalisation d\'arbres de transmission avec cannelures de force. Conçus pour supporter des couples élevés dans les machines agricoles ou de manutention.', -2, '/img/produits/Prdt1777014597318.png'),
 (3, 'Pignon de Précision à Droit', 'Fabrication de composants de transmission mécanique standard. Un contrôle rigoureux des tolérances pour assurer une longévité maximale en milieu industriel.', 18, '/img/produits/produit3.png');
 
 -- --------------------------------------------------------
@@ -130,7 +169,7 @@ CREATE TABLE IF NOT EXISTS `utilisateurs` (
 --
 
 INSERT INTO `utilisateurs` (`id`, `identifiant`, `mail`, `password`, `telephone`, `role`) VALUES
-(1, 'adminTest', 'sebastienconfrere6@gmail.com', '6b35d7ac0fc8f9d9d11344091645f33949b781224976045b9934c357c7594749', '0707070707', 'admin');
+(1, 'adminTest', 'confreresebastien6@gmail.com', '6b35d7ac0fc8f9d9d11344091645f33949b781224976045b9934c357c7594749', '0782950362', 'admin');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

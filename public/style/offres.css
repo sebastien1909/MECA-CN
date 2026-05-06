@@ -1,0 +1,268 @@
+/* ===== GLOBAL ===== */
+
+body {
+    background: #f1f3f6;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    color: #1e293b;
+}
+
+/* ===== TOP SECTION ===== */
+
+.top-holder {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 80px 10%;
+    background: #f1f3f6;
+}
+
+.right-side {
+    width: 50%;
+}
+
+.right-side h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.right-side p {
+    color: #6b7280;
+    line-height: 1.6;
+}
+
+.right-part {
+    width: 40%;
+}
+
+.right-part img {
+    width: 100%;
+    border-radius: 20px;
+    object-fit: cover;
+}
+
+/* ===== CATEGORIES ===== */
+
+.categorie {
+    text-align: center;
+    padding: 30px 5%;
+}
+
+.categories h2 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.categories p {
+    color: #6b7280;
+    margin-bottom: 40px;
+}
+
+.categorie-holder {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+/* cartes catégories */
+
+.tri-item {
+    background: white;
+    padding: 20px 30px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    min-width: 180px;
+    border: 1px solid #e5e7eb;
+    transition: 0.25s ease;
+    max-height:50px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.all{
+    justify-content:center;
+}
+.tri-item h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.tri-item p {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* hover */
+
+.tri-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* ACTIVE (important pour toi) */
+
+.tri-item.active {
+    background: #1d4ed8;
+    color: white !important;
+    border-color: #1d4ed8;
+}
+
+.tri-item.active p {
+    color: #dbeafe;
+}
+
+.tri-item.active h3{
+    color:#e5e7eb !important;
+}
+
+/* ===== OFFRES ===== */
+
+.offres-holder {
+    padding: 40px 10% 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* carte offre */
+
+.offre {
+    background: #ffffff;
+    border:1px solid #f0f0f0a6;
+    padding: 25px 30px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.button-holder{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+/* ID */
+
+.offre-id-holder span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 55px;
+    height: 55px;
+    background: #c7d2fe;
+    border-radius: 12px;
+    font-weight: bold;
+    color: #1e3a8a;
+}
+
+/* infos */
+
+.main-infos-holder {
+    flex: 1;
+    margin-left: 25px;
+    font-weight: bold;
+}
+
+.type-holder,
+.localisation-holder {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    font-weight: normal;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.localisation-holder img {
+    width: 16px;
+}
+
+/* bouton */
+
+.consulter {
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid #9ca3af;
+    background: transparent;
+    cursor: pointer;
+    transition: 0.2s;
+    max-width:100%;
+}
+
+.consulter:hover {
+    background: #1d4ed8;
+    color: white;
+    border-color: #1d4ed8;
+}
+
+
+
+
+.modifier{
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid #8ba6d4;
+    background: #1d4ed8;
+    color:white;
+    cursor: pointer;
+    transition: 0.2s;
+    min-width:100%;
+}
+
+.modifier:hover{
+    background: white;
+    color: black;
+    border-color: #1d4ed8;
+}
+
+
+
+
+.supprimer{
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid #9ca3af;
+    background: transparent;
+    cursor: pointer;
+    transition: 0.2s;
+    min-width:100%;
+}
+
+.supprimer:hover{
+    background: #fec2c221;
+    color: black;
+    border-color: #f68585;
+}
+
+
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 900px) {
+    .top-holder {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
+    }
+
+    .right-side,
+    .right-part {
+        width: 100%;
+    }
+
+    .offre {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .main-infos-holder {
+        margin-left: 0;
+    }
+}

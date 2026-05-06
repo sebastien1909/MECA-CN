@@ -374,18 +374,74 @@ app.get("/mentions", async function (req, res) {
 });
 
 
-app.get("/offres", async function (req,res){
+app.get("/offres", async function (req, res) {
+    try {
+        const categorieChoisie = req.query.categorie;
+
+        let offresResultat;
+
+        if (categorieChoisie && categorieChoisie !== 'all') {
+            const [rows] = await pool.query(
+                "SELECT * FROM offres WHERE categorie = ?", 
+                [categorieChoisie]
+            );
+            offresResultat = rows;
+        } else {
+            const [rows] = await pool.query("SELECT * FROM offres");
+            offresResultat = rows;
+        }
+
+        const [categories] = await pool.query(
+            "SELECT categorie, COUNT(*) AS nombre_offres FROM offres GROUP BY categorie"
+        );
+
+        res.render("offres", {
+            page_css1: "offres.css",
+            page_css2: "headerclient.css",
+            offres: offresResultat,
+            categories: categories,
+            categorieChoisie: categorieChoisie || 'all'
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Erreur serveur");
+    }
+});
+
+
+app.get("/offre/:id", async function(req,res){
     try{
-        const liste_offres = await pool.query("SELECT * FROM offres");
-        //console.log(liste_offres[0]);
-        //console.log(liste_offres[0].length)
-        const categories = await pool.query("SELECT categorie, COUNT(*) AS nombre_offres FROM offres GROUP BY categorie;")
-        //console.log(categories[0])
-        res.render("offres", {page_css1:"offres.css", page_css2:"headerclient.css", offres : liste_offres[0], categories : categories[0]})
-    } catch(err){
+        const offre_id = req.params.id;
+        const [offre] = await pool.query("SELECT * FROM offres WHERE offre_id = ?", [offre_id]);
+
+        console.log(offre[0]);
+        res.render("offre", {
+            offre:offre[0],
+            page_css1: "offre.css",
+            page_css2: "headerclient.css"
+        })
+    } catch (err){
         console.error(err)
         res.status(500).send("Erreur serveur")
     }
+})
+
+
+app.get("/postuler/:id", async function(req,res){
+    try{
+        const offre_id = req.params.id;
+        const [offre] = await pool.query("SELECT * FROM offres WHERE offre_id = ?", [offre_id]);
+        // console.log(offre)
+        res.render("cv", {
+            offre: offre[0],
+            page_css1:"cv.css",
+            page_css2:"headerclient.css"
+        });
+    }catch (err){
+        console.error(err);
+        res.status(500).send("Erreur serveur");
+    };
 })
 
 
@@ -691,6 +747,40 @@ app.get("/admin/profil", isAdmin, async function (req,res) {
     }
 })
 
+app.get("/admin/offres",isAdmin, async function (req, res) {
+    try {
+        const categorieChoisie = req.query.categorie;
+
+        let offresResultat;
+
+        if (categorieChoisie && categorieChoisie !== 'all') {
+            const [rows] = await pool.query(
+                "SELECT * FROM offres WHERE categorie = ?", 
+                [categorieChoisie]
+            );
+            offresResultat = rows;
+        } else {
+            const [rows] = await pool.query("SELECT * FROM offres");
+            offresResultat = rows;
+        }
+
+        const [categories] = await pool.query(
+            "SELECT categorie, COUNT(*) AS nombre_offres FROM offres GROUP BY categorie"
+        );
+
+        res.render("admin/offres", {
+            page_css1: "offres.css",
+            page_css2: "headeradmin.css",
+            offres: offresResultat,
+            categories: categories,
+            categorieChoisie: categorieChoisie || 'all'
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Erreur serveur");
+    }
+});
 
 
 
@@ -736,13 +826,57 @@ app.post("/consulter_offre",  async function (req,res){
         const [offres] = await pool.query("SELECT * FROM offres where offre_id = ?", [id]);
         const offre = offres[0]
         console.log(offre);
-        res.render("offre", { offre : offre, page_css1 : "offre.css",  page_css2 : "headerclient.css"});
+        res.render("offre", { offre : offre, page_css1 : "offre.css",  page_css2 : "headeradmin.css"});
     } catch (err){
         console.error("Erreur SQL ou serveur : ", err)
         res.status(500).send("Erreur lors de la consultation de l'offre")
     }
 })
 
+app.post("/admin/consulter_offre",  async function (req,res){
+    try {
+        const id = req.body.offre_id;
+        // console.log(id)
+        const [offres] = await pool.query("SELECT * FROM offres where offre_id = ?", [id]);
+        const offre = offres[0]
+        console.log(offre);
+        res.render("admin/offre", { offre : offre, page_css1 : "offre.css",  page_css2 : "headeradmin.css"});
+    } catch (err){
+        console.error("Erreur SQL ou serveur : ", err)
+        res.status(500).send("Erreur lors de la consultation de l'offre")
+    }
+})
+
+
+/* Route POST qui permet d'arriver sur la page de modification de l'offre
+
+*/
+app.post("/modifier_offre_access", async function (req,res){
+    try{
+        const id = req.body.offre_id;
+        const [offre_format_liste] = await pool.query("SELECT * FROM offres WHERE offre_id = ?", [id]);
+        const offre = offre_format_liste[0];
+        console.log(offre)
+        res.render("admin/modifoffres", {offre: offre, page_css1: "offre.css", page_css2: "headeradmin.css"})
+    } catch (err){
+        console.error("Erreur SQL ou serveur : ", err)
+        res.status(500).send("Erreur lors de la tentative de rejoindre la page de modification de l'offre")
+    }
+})
+
+
+app.post("/supprimer_offre", async function(req,res){
+    try{
+        const id = req.body.offre_id;
+        const requete = "DELETE FROM offres WHERE offre_id = ?"
+        await pool.query(requete, [id]);
+
+        res.redirect("/admin/offres");
+    } catch (err){
+        console.error("Erreur SQL ou serveur : ", err)
+        res.status(500).send("Erreur lors de la suppression de l'offre")
+    }
+})
 
 
 

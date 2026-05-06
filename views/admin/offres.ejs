@@ -29,11 +29,11 @@
                 <p>Trouvez le job qui vous correspond le mieux</p>
 
                 <div class="categorie-holder">
-                    <a href="/offres?categorie=all" class="tri-item all <%= (categorieChoisie === 'all') ? ' active' : '' %>">
+                    <a href="/admin/offres?categorie=all" class="tri-item all <%= (categorieChoisie === 'all') ? ' active' : '' %>">
                         Tous
                     </a>
                     <% for (const element of categories){ %>
-                        <a href="/offres?categorie=<%= element.categorie %>" 
+                        <a href="/admin/offres?categorie=<%= element.categorie %>" 
                         class="tri-item <%= (categorieChoisie === element.categorie) ? ' active' : '' %>">
                             
                             <h3><%= element.categorie %></h3>
@@ -71,12 +71,30 @@
                         <p> <%= element.localisation %> </p>
                     </div>
                 </div>
-                <form method="POST" action="/consulter_offre">
-                    <input name="offre_id" type="hidden" value="<%= element.offre_id %>"/>
-                    <button class="consulter" type="submit">
-                        Consulter l'offre
-                    </button>
-                </form>
+                <div class="button-holder">
+                    <form method="POST" action="/admin/consulter_offre">
+                        <input name="offre_id" type="hidden" value="<%= element.offre_id %>"/>
+                        <button class="consulter" type="submit">
+                            Consulter l'offre
+                        </button>
+                    </form>
+
+
+                    <form method="POST" action="/modifier_offre_access">
+                        <input name="offre_id" type="hidden" value="<%= element.offre_id %>"/>
+                        <button class="modifier" type="submit">
+                            Modifier l'offre
+                        </button>
+                    </form>
+
+
+                    <form method="POST" action="/supprimer_offre" onsubmit="return confirmSuppression(event)">
+                        <input name="offre_id" type="hidden" value="<%= element.offre_id %>"/>
+                        <button class="supprimer" type="submit">
+                            Supprimer l'offre
+                        </button>
+                    </form>
+                </div>
                 
                 
             </div>
@@ -85,3 +103,19 @@
 
 
 <% } %>
+
+
+
+
+<script>
+    function confirmSuppression(e) {
+        const confirmation = confirm("Tu es sûr de vouloir supprimer cette offre ?");
+
+        if (!confirmation) {
+            e.preventDefault();
+            return false;
+        }
+
+        return true;
+    }
+</script>

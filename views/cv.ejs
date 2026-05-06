@@ -1,0 +1,350 @@
+<%- include ("header") %>
+
+<a href="/offre/<%= offre.offre_id %>">Retourner derrière</a>
+
+<div class="form-holder">
+  <form method="POST" action="/envoyer_cv">
+    <div class="mail-holder">
+      <label for="mail">Adresse email</label>
+      <input
+        type="email"
+        id="mail"
+        name="mail"
+        placeholder="Veuillez renseigner votre adresse email"
+      />
+    </div>
+
+    <div class="name-holder">
+      <label for="name">Nom complet</label>
+      <input type="text" id="name" name="name" placeholder="Jean Dupont" />
+    </div>
+
+    <div class="message-holder">
+      <label for="message">Entrez votre message</label>
+      <input
+        type="text"
+        id="message"
+        name="message"
+        placeholder="Entrez ici votre message"
+      />
+    </div>
+
+    <div class="cv-import">
+      <h2>Envoyez-nous votre <span>CV</span></h2>
+      <div class="upload-box">
+        <div class="upload-icon">⇪</div>
+        <p>Glissez-déposez vos plans</p>
+        <span>Fichiers 3D, PDF, images...</span>
+        <button type="button" class="upload-button">
+          Chercher un/des fichiers
+        </button>
+        <input type="file" name="fichiers" multiple id="fichiers-input" />
+      </div>
+      <p class="upload-restrictions">
+        Certains types de fichiers potentiellement dangereux (.zip, .bat, .exe,
+        ...) <br />ne sont pas acceptés. <br />
+        <br />
+        Taille maximale par fichier : 10 Mo. <br />
+        Taille totale maximale : 20 Mo. <br />
+      </p>
+      <br />
+      <div class="upload-files-preview" id="upload-files-preview">
+        <p class="upload-files-empty">Aucun fichier sélectionné.</p>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn">Envoyer</button>
+  </form>
+</div>
+
+<script>
+  document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+      // --- LOGIQUE DE L'AFFICHAGE DES FICHIERS UPLOADÉS ---
+      var fileInput = document.getElementById("fichiers-input");
+      var uploadBox = document.querySelector(".upload-box");
+      var filePreview = document.getElementById("upload-files-preview");
+      var uploadButton = document.querySelector(".upload-button");
+
+      var selectedFiles = [];
+      var MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 Mo
+      var MAX_TOTAL_SIZE = 20 * 1024 * 1024; // 20 Mo
+
+      function formatBytes(bytes) {
+        if (bytes === 0) return "0 octet";
+        var sizes = ["octets", "Ko", "Mo", "Go"];
+        var i = Math.floor(Math.log(bytes) / Math.log(1024));
+        return Math.round(bytes / Math.pow(1024, i)) + " " + sizes[i];
+      }
+
+      function validateFiles(files, existingFiles) {
+        var filtered = [];
+        var errors = [];
+        var totalSize = existingFiles.reduce(function (sum, file) {
+          return sum + file.size;
+        }, 0);
+
+        files.forEach(function (file) {
+          var extension = file.name.split(".").pop().toLowerCase();
+
+          if (extension === "zip") {
+            errors.push(
+              "Les fichiers ZIP ne sont pas autorisés : " + file.name,
+            );
+            return;
+          }
+
+          if (extension === "rar") {
+            errors.push(
+              "Les fichiers RAR ne sont pas autorisés : " + file.name,
+            );
+            return;
+          }
+
+          if (extension === "exe") {
+            errors.push(
+              "Les fichiers EXE ne sont pas autorisés : " + file.name,
+            );
+            return;
+          }
+
+          if (extension === "bat") {
+            errors.push(
+              "Les fichiers BAT ne sont pas autorisés : " + file.name,
+            );
+            return;
+          }
+
+          if (extension === "cmd") {
+            errors.push(
+              "Les fichiers CMD ne sont pas autorisés : " + file.name,
+            );
+            return;
+          }
+
+          if (extension === "js") {
+            errors.push(
+              "Les fichiers Javascript ne sont pas autorisés : " + file.name,
+            );
+            return;
+          }
+
+          if (extension === "vbs") {
+            errors.push(
+              "Les fichiers VBS ne sont pas autorisés : " + file.name,
+            );
+            return;
+          }
+
+          if (extension === "doc") {
+            errors.push(
+              "Les fichiers DOC ne sont pas autorisés : " + file.name,
+            );
+            return;
+          }
+
+          if (extension === "xls") {
+            errors.push(
+              "Les fichiers XLS ne sont pas autorisés : " + file.name,
+            );
+            return;
+          }
+
+          if (extension === "ppt") {
+            errors.push(
+              "Les fichiers PPT ne sont pas autorisés : " + file.name,
+            );
+            return;
+          }
+
+          if (file.size > MAX_FILE_SIZE) {
+            errors.push("Fichier trop volumineux (> 10 Mo) : " + file.name);
+            return;
+          }
+
+          if (totalSize + file.size > MAX_TOTAL_SIZE) {
+            errors.push("La taille totale dépasse 20 Mo avec : " + file.name);
+            return;
+          }
+
+          totalSize += file.size;
+          filtered.push(file);
+        });
+
+        return { files: filtered, errors: errors };
+      }
+
+      function displayUploadError(message) {
+        var errorHtml = "<div class='upload-files-error'>" + message + "</div>";
+        var errorNode = filePreview.querySelector(".upload-files-error");
+        if (errorNode) {
+          errorNode.outerHTML = errorHtml;
+        } else {
+          filePreview.insertAdjacentHTML("beforeend", errorHtml);
+        }
+      }
+
+      function clearUploadError() {
+        var errorNode = filePreview.querySelector(".upload-files-error");
+        if (errorNode) {
+          errorNode.remove();
+        }
+      }
+
+      function updateFileInput() {
+        var dataTransfer = new DataTransfer();
+        selectedFiles.forEach(function (file) {
+          dataTransfer.items.add(file);
+        });
+        fileInput.files = dataTransfer.files;
+      }
+
+      function updateFilePreview() {
+        clearUploadError();
+
+        if (selectedFiles.length === 0) {
+          filePreview.innerHTML =
+            '<p class="upload-files-empty">Aucun fichier sélectionné.</p>';
+          return;
+        }
+
+        var totalSize = selectedFiles.reduce(function (sum, file) {
+          return sum + file.size;
+        }, 0);
+        var totalLabel =
+          '<div class="upload-files-total">Total : ' +
+          formatBytes(totalSize) +
+          " / 100 Mo</div>";
+
+        filePreview.innerHTML =
+          "<p>Fichiers sélectionnés</p><ul>" +
+          selectedFiles
+            .map(function (file, index) {
+              return (
+                '<li><span class="file-name">' +
+                file.name +
+                '</span><span class="file-size">' +
+                formatBytes(file.size) +
+                '</span><button type="button" class="file-remove" data-index="' +
+                index +
+                '">Supprimer</button></li>'
+              );
+            })
+            .join("") +
+          "</ul>" +
+          totalLabel;
+      }
+
+      var pendingRemoveIndex = null;
+      var confirmModal = document.getElementById("confirm-modal");
+      var confirmRemoveButton = document.getElementById("confirm-remove");
+      var cancelRemoveButton = document.getElementById("cancel-remove");
+
+      function removeFile(indexToRemove) {
+        selectedFiles.splice(indexToRemove, 1);
+        updateFileInput();
+        updateFilePreview();
+      }
+
+      function showConfirmModal(index) {
+        pendingRemoveIndex = index;
+        confirmModal.classList.add("visible");
+        confirmModal.setAttribute("aria-hidden", "false");
+      }
+
+      function hideConfirmModal() {
+        pendingRemoveIndex = null;
+        confirmModal.classList.remove("visible");
+        confirmModal.setAttribute("aria-hidden", "true");
+      }
+
+      // --- MODAL ERREUR DIMENSIONS ---
+      var errorModal = document.getElementById("error-modal");
+      var closeErrorModalButton = document.getElementById("close-error-modal");
+
+      function showErrorModal(title, message) {
+        document.getElementById("error-modal-title").textContent = title;
+        document.getElementById("error-modal-message").textContent = message;
+        errorModal.classList.add("visible");
+        errorModal.setAttribute("aria-hidden", "false");
+      }
+
+      function hideErrorModal() {
+        errorModal.classList.remove("visible");
+        errorModal.setAttribute("aria-hidden", "true");
+      }
+
+      closeErrorModalButton.addEventListener("click", hideErrorModal);
+      errorModal.addEventListener("click", function (event) {
+        if (event.target === errorModal) {
+          hideErrorModal();
+        }
+      });
+
+      uploadButton.addEventListener("click", function () {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener("change", function () {
+        var selectedFilesFromInput = Array.from(fileInput.files || []);
+        var validation = validateFiles(selectedFilesFromInput, selectedFiles);
+        selectedFiles = selectedFiles.concat(validation.files);
+        updateFileInput();
+        updateFilePreview();
+        if (validation.errors.length) {
+          displayUploadError(validation.errors.join("<br>"));
+        }
+      });
+
+      filePreview.addEventListener("click", function (event) {
+        var button = event.target.closest(".file-remove");
+        if (!button) return;
+        showConfirmModal(Number(button.dataset.index));
+      });
+
+      confirmRemoveButton.addEventListener("click", function () {
+        if (pendingRemoveIndex !== null) {
+          removeFile(pendingRemoveIndex);
+        }
+        hideConfirmModal();
+      });
+
+      cancelRemoveButton.addEventListener("click", function () {
+        hideConfirmModal();
+      });
+
+      confirmModal.addEventListener("click", function (event) {
+        if (event.target === confirmModal) {
+          hideConfirmModal();
+        }
+      });
+
+      uploadBox.addEventListener("dragover", function (event) {
+        event.preventDefault();
+        uploadBox.classList.add("drag-over");
+      });
+
+      uploadBox.addEventListener("dragleave", function () {
+        uploadBox.classList.remove("drag-over");
+      });
+
+      uploadBox.addEventListener("drop", function (event) {
+        event.preventDefault();
+        uploadBox.classList.remove("drag-over");
+
+        var droppedFiles = Array.from(event.dataTransfer.files || []);
+        var validation = validateFiles(droppedFiles, selectedFiles);
+        selectedFiles = selectedFiles.concat(validation.files);
+        updateFileInput();
+        updateFilePreview();
+        if (validation.errors.length) {
+          displayUploadError(validation.errors.join("<br>"));
+        }
+      });
+
+      updateFilePreview();
+    },
+    false,
+  );
+</script>
