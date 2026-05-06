@@ -20,6 +20,9 @@ import fs from "fs";
 import "dotenv/config";
 import sha256 from "js-sha256";
 
+
+
+
 // Multer
 // --- CONFIGURATION MULTER POUR LES PRODUITS ---
 const storageProduits = multer.diskStorage({
@@ -33,6 +36,8 @@ const storageProduits = multer.diskStorage({
 });
 const uploadProduits = multer({ storage: storageProduits });
 
+
+
 // --- CONFIGURATION MULTER POUR LES MACHINES ---
 const storageMachines = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -44,6 +49,8 @@ const storageMachines = multer.diskStorage({
   },
 });
 const uploadMachines = multer({ storage: storageMachines });
+
+
 
 // Setting d'express
 // ==> sert à rendre les views
@@ -67,6 +74,12 @@ app.use((req, res, next) => {
   next();
 });
 
+
+
+
+
+
+
 //MIDDLEWARES MAISON
 
 /**
@@ -82,6 +95,8 @@ function authenticate(req, res, next) {
   }
 }
 
+
+
 /**
 Middleware "isAdmin"
 Vérifie que la session correspond à un administrateur.
@@ -95,7 +110,30 @@ function isAdmin(req, res, next) {
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
 // ROUTES
+
+
+
+
+
+
+
+// app.get
+
+
+
+
 
 /**
 GET /
@@ -117,6 +155,9 @@ app.get("/", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
+
+
 
 /**
 GET /presentation
@@ -140,6 +181,9 @@ app.get("/presentation", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
+
+
 
 // Route publique pour lister les machines
 /**
@@ -196,6 +240,9 @@ app.get("/machines", async function (req, res) {
   }
 });
 
+
+
+
 // Route admin pour la gestion du parc machine (protégée)
 app.get("/admin/machines", isAdmin, async function (req, res) {
   try {
@@ -251,6 +298,9 @@ app.get("/admin/machines", isAdmin, async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
+
+
 
 /**
 GET /realisations
@@ -315,6 +365,9 @@ app.get("/realisations", async function (req, res) {
   }
 });
 
+
+
+
 /**
 GET /devis
 Page du formulaire de demande de devis. Récupère les dimensions max des machines pour éviter toutes demandes impossibles (affichage et validation côté client).
@@ -337,6 +390,9 @@ app.get("/devis", async function (req, res) {
   }
 });
 
+
+
+
 /**
  * GET /contact
 Page de contact et formulaire pour envoyer un message à l'entreprise.
@@ -355,6 +411,9 @@ app.get("/contact", async function (req, res) {
   }
 });
 
+
+
+
 /**
  * GET /connexion
 Page de connexion pour les utilisateurs (identification).
@@ -371,6 +430,9 @@ app.get("/connexion", async function (req, res) {
   }
 });
 
+
+
+
 /**
  * GET /mentions
 Page des mentions légales.
@@ -386,6 +448,9 @@ app.get("/mentions", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
+
+
 
 app.get("/offres", async function (req, res) {
   try {
@@ -421,6 +486,9 @@ app.get("/offres", async function (req, res) {
   }
 });
 
+
+
+
 app.get("/offre/:id", async function (req, res) {
   try {
     const offre_id = req.params.id;
@@ -441,6 +509,9 @@ app.get("/offre/:id", async function (req, res) {
   }
 });
 
+
+
+
 app.get("/postuler/:id", async function (req, res) {
   try {
     const offre_id = req.params.id;
@@ -460,6 +531,9 @@ app.get("/postuler/:id", async function (req, res) {
   }
 });
 
+
+
+
 /**
  * GET /tests
 Page de test/de développement (utilitaire).
@@ -475,6 +549,9 @@ app.get("/tests", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
+
+
 
 /**
  * GET /admin/accueil
@@ -492,6 +569,9 @@ app.get("/admin/accueil", isAdmin, async function (req, res) {
   }
 });
 
+
+
+
 /**
  * GET /admin/presentation
 Page admin pour modifier la page de présentation publique.
@@ -507,6 +587,9 @@ app.get("/admin/presentation", isAdmin, async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
+
+
 
 /**
  * GET /admin/realisations
@@ -568,6 +651,9 @@ app.get("/admin/realisations", isAdmin, async function (req, res) {
   }
 });
 
+
+
+
 /**
  * GET /deconnexion
 Détruit la session et déconnecte l'utilisateur.
@@ -589,6 +675,9 @@ app.get("/deconnexion", async function (req, res) {
   }
 });
 
+
+
+
 /**
  * GET /api/max-dimensions
 Récupération des dimensions maximales des machines (capacité maximale) et renvoie de ces dernières sous format JSON
@@ -604,6 +693,9 @@ app.get("/api/max-dimensions", async (req, res) => {
     res.status(500).send("Erreur serveur");
   }
 });
+
+
+
 
 /**
  * GET /modif_realisations/:id
@@ -634,6 +726,9 @@ app.get("/modif_realisations/:id", isAdmin, async function (req, res) {
   }
 });
 
+
+
+
 /**
  * GET /suppression
 Page de confirmation de suppression (catégorie, réalisations, machines).
@@ -655,6 +750,9 @@ app.get("/admin/suppression", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de la suppression de la réalisation");
   }
 });
+
+
+
 
 /**
  * GET /modif_machine/:id
@@ -683,6 +781,9 @@ app.get("/modif_machine/:id", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de la récupération des données");
   }
 });
+
+
+
 
 app.get("/admin/ajoutmachine", isAdmin, async function (req, res) {
   try {
@@ -717,6 +818,9 @@ app.get("/admin/ajoutmachine", isAdmin, async function (req, res) {
   }
 });
 
+
+
+
 app.get("/admin/ajoutproduit", isAdmin, async function (req, res) {
   try {
     const [categories] = await pool.query("SELECT * FROM categories");
@@ -741,6 +845,9 @@ app.get("/admin/ajoutproduit", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de l'affichage du formulaire d'ajout");
   }
 });
+
+
+
 
 app.get("/ajout_categorie", isAdmin, async function (req, res) {
   try {
@@ -772,6 +879,9 @@ app.get("/ajout_categorie", isAdmin, async function (req, res) {
   }
 });
 
+
+
+
 app.get("/admin/profil", isAdmin, async function (req, res) {
   try {
     const userId = req.session.userID;
@@ -793,6 +903,9 @@ app.get("/admin/profil", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de l'affichage du profil");
   }
 });
+
+
+
 
 app.get("/admin/offres", isAdmin, async function (req, res) {
   try {
@@ -828,7 +941,29 @@ app.get("/admin/offres", isAdmin, async function (req, res) {
   }
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // app.post
+
+
+
 
 /* Route post qui permet d'arriver sur une offre d'emploi précise
 l'id de l'offre est passée en paramètre d'URL, puis récupéré
@@ -859,6 +994,9 @@ app.post("/consulter_offre", async function (req, res) {
   }
 });
 
+
+
+
 app.post("/admin/consulter_offre", async function (req, res) {
   try {
     const id = req.body.offre_id;
@@ -879,6 +1017,9 @@ app.post("/admin/consulter_offre", async function (req, res) {
     res.status(500).send("Erreur lors de la consultation de l'offre");
   }
 });
+
+
+
 
 /* Route POST qui permet d'arriver sur la page de modification de l'offre
 
@@ -907,6 +1048,9 @@ app.post("/modifier_offre_access", async function (req, res) {
   }
 });
 
+
+
+
 app.post("/supprimer_offre", async function (req, res) {
   try {
     const id = req.body.offre_id;
@@ -919,6 +1063,9 @@ app.post("/supprimer_offre", async function (req, res) {
     res.status(500).send("Erreur lors de la suppression de l'offre");
   }
 });
+
+
+
 
 // Modifications infos profil (identifiant, email, téléphone, mot de passe)
 /*
@@ -950,6 +1097,9 @@ app.post("/modifier-id", isAdmin, async function (req, res) {
   }
 });
 
+
+
+
 app.post("/modifier-email", isAdmin, async function (req, res) {
   try {
     const userId = req.session.userID;
@@ -972,6 +1122,9 @@ app.post("/modifier-email", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de la modification de l'email");
   }
 });
+
+
+
 
 app.post("/modifier-telephone", isAdmin, async function (req, res) {
   try {
@@ -999,6 +1152,9 @@ app.post("/modifier-telephone", isAdmin, async function (req, res) {
       .send("Erreur lors de la modification du numéro de téléphone");
   }
 });
+
+
+
 
 app.post("/modifier-mot-de-passe", isAdmin, async function (req, res) {
   try {
@@ -1055,6 +1211,9 @@ app.post("/modifier-mot-de-passe", isAdmin, async function (req, res) {
   }
 });
 
+
+
+
 app.post("/supprimer-categorie", isAdmin, async function (req, res) {
   try {
     const id_categorie = req.body.categorie_id;
@@ -1067,6 +1226,9 @@ app.post("/supprimer-categorie", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de la suppression de la catégorie");
   }
 });
+
+
+
 
 app.post("/supprimer-realisation", isAdmin, async function (req, res) {
   try {
@@ -1081,6 +1243,9 @@ app.post("/supprimer-realisation", isAdmin, async function (req, res) {
   }
 });
 
+
+
+
 app.post("/supprimer-machine", isAdmin, async function (req, res) {
   try {
     const id_machine = req.body.machine_id;
@@ -1093,6 +1258,9 @@ app.post("/supprimer-machine", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de la suppression de la machine");
   }
 });
+
+
+
 
 app.post("/ajouter_categorie", isAdmin, async function (req, res) {
   try {
@@ -1116,6 +1284,9 @@ app.post("/ajouter_categorie", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de l'ajout de la catégorie");
   }
 });
+
+
+
 
 /**
  * POST /ajouter_produit
@@ -1148,6 +1319,9 @@ app.post(
     }
   },
 );
+
+
+
 
 /**
 POST /ajouter_machine
@@ -1211,6 +1385,9 @@ app.post(
     }
   },
 );
+
+
+
 
 // Route POST pour enregistrer les modifications d'une machine (avec gestion de l'image)
 app.post(
@@ -1296,6 +1473,9 @@ app.post(
     }
   },
 );
+
+
+
 
 /**
  POST /envoyer-devis
@@ -1409,6 +1589,9 @@ app.post(
   },
 );
 
+
+
+
 /**
  * POST /modifier_infos_realisation
 Traite le formulaire d'édition d'une réalisation (admin), gère l'image.
@@ -1476,6 +1659,9 @@ app.post(
   },
 );
 
+
+
+
 /**
 POST /envoyer-contact
 Envoie un email de contact avec les informations fournies.
@@ -1528,6 +1714,9 @@ app.post("/envoyer-contact", async function (req, res) {
   }
 });
 
+
+
+
 /**
  * POST /connexion
 Authentifie un utilisateur en comparant les identifiants au hash stocké.
@@ -1577,6 +1766,9 @@ app.post("/connexion", async function (req, res) {
   }
 });
 
+
+
+
 app.post("/connexionrapide", async function (req, res) {
   try {
     req.session.userID = 1;
@@ -1587,6 +1779,16 @@ app.post("/connexionrapide", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
+
+
+
+
+
+
+
+
+
 
 app.use((req, res) => {
   res.status(404).render("404");
