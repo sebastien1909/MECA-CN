@@ -177,3 +177,126 @@ main p {
 .postuler-btn:hover::after {
     left: 100%;
 }
+
+
+
+
+
+
+/* ===== QUILL GLOBAL ===== */
+
+.ql-toolbar {
+    border-radius: 8px 8px 0 0 !important;
+    border-color: #cbd5e1 !important;
+    background: #f8fafc !important;
+    padding: 6px 8px !important;
+    line-height: normal !important;
+}
+
+/* Reset complet des boutons Quill pour éviter l'héritage du CSS global */
+.ql-toolbar button {
+    background: none !important;
+    border: none !important;
+    border-radius: 4px !important;
+    padding: 3px 5px !important;
+    width: 28px !important;
+    height: 28px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    color: #475569 !important;
+}
+
+.ql-toolbar button:hover {
+    background: #e2e8f0 !important;
+    transform: none !important;
+}
+
+.ql-toolbar button.ql-active {
+    background: #dbeafe !important;
+    color: #3b82f6 !important;
+}
+
+.ql-toolbar .ql-formats {
+    margin-right: 8px !important;
+}
+
+/* Select "Normal/H1/H2" */
+.ql-toolbar .ql-picker {
+    height: 28px !important;
+    font-size: 13px !important;
+    color: #475569 !important;
+}
+
+.ql-toolbar .ql-picker-label {
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 4px !important;
+    padding: 0 6px !important;
+    background: white !important;
+}
+
+.ql-container {
+    border-radius: 0 0 8px 8px !important;
+    border-color: #cbd5e1 !important;
+    font-size: 15px !important;
+    color: #1e293b !important;
+    font-family: Arial, sans-serif !important;
+}
+
+.ql-editor {
+    min-height: 80px !important;
+    padding: 10px 14px !important;
+    color: #1e293b !important;
+}
+
+/* Le texte s'affiche bien en haut */
+.ql-editor p {
+    margin: 0 0 4px !important;
+    color: #1e293b !important;
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+}
+
+
+/* ===== QUILL DANS LA TOP-PART ===== */
+
+.editable-top {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 100% !important;
+}
+
+.editor-top {
+    width: 100% !important;
+}
+
+.intitule-holder .ql-editor {
+    font-size: 28px !important;
+    font-weight: bold !important;
+    color: #60a5fa !important;
+    min-height: 50px !important;
+}
+
+.type-holder .ql-editor {
+    min-height: 40px !important;
+    font-size: 13px !important;
+}
+
+
+/* ===== QUILL DANS LES SECTIONS DU BAS ===== */
+
+.mission-holder .editor {
+    width: 100% !important;
+}
+
+.mission-holder .ql-editor {
+    min-height: 80px !important;
+    color: #1e293b !important;
+}
+
+.mission-holder > div {
+    overflow: visible !important;
+    position: relative !important;
+}
