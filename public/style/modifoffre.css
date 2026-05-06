@@ -1,0 +1,276 @@
+/* ===== .mission-holder SECTIONS ===== */
+
+.mission-holder {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    padding: 60px 10%;
+}
+
+/* cartes */
+.mission-holder > div {
+    background: #F1F5FD;
+    padding: 25px;
+    border-radius: 15px;
+    /*border: 1px solid #1e293b; */
+    transition: 0.1s ease;
+}
+
+.mission-holder > div:hover:not(.postuler) {
+    transform: translateY(-5px);
+    border-color: #3b82f6;
+    box-shadow: 0 10px 25px rgba(59,130,246,0.15);
+}
+
+.mission-holder h2 {
+    color: #60a5fa;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.mission-holder p {
+    color: #cbd5e1;
+    font-size: 15px;
+}
+
+
+
+
+.modifierIcon{
+    position:absolute;
+    top:-18px;
+    right:-18px;
+    width:36px;
+    transition:0.3s ease-in-out
+}
+
+.modifierIcon:hover{
+    transform:scale(1.12);
+    cursor:pointer;
+}
+
+.confirmer_modif{
+    background:none !important;
+    box-shadow:none !important;
+}
+
+.confirmer_modif:hover{
+    background:none !important;
+    box-shadow:none !important;
+    transform:scale(1) !important
+}
+
+.content p{
+    color:black !important;
+    line-height: 0.8rem;
+}
+
+.postuler-btn{
+    border:none;
+}
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 900px) {
+
+    .mission-holder {
+        grid-template-columns: 1fr;
+        padding: 40px 5%;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+/* ===== TOP PART ===== */
+
+.top-part {
+    display: flex;
+    gap: 40px;
+    padding: 60px 10%;
+    align-items: center;
+    background: linear-gradient(135deg, #F1F5FD, #e4edfd);
+}
+
+.top-part > img {
+    width: 45%;
+    height: 350px;
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(110, 110, 110, 0.5);
+    border: 1px solid #ffffff;
+    flex-shrink: 0;
+}
+
+.right-part {
+    width: 55%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Blocs éditables de la top-part */
+.intitule-holder,
+.type-holder,
+.presentation-holder {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.presentation-holder {
+    align-items: flex-start; /* le texte long s'aligne en haut */
+}
+
+/* Icône stylo */
+.modifierIcon-top {
+    width: 18px !important;
+    height: 18px !important;
+    opacity: 0.3;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+    flex-shrink: 0;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.intitule-holder:hover .modifierIcon-top,
+.type-holder:hover .modifierIcon-top,
+.presentation-holder:hover .modifierIcon-top {
+    opacity: 1;
+}
+
+.modifierIcon-top:hover {
+    transform: scale(1.2);
+}
+
+/* Titres et textes */
+.right-part h1 {
+    font-size: 38px;
+    margin: 0;
+    color: #60a5fa;
+}
+
+.right-part h2 {
+    margin: 16px 0 4px;
+    font-size: 16px;
+    color: #93c5fd;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.right-part span {
+    display: inline-block;
+    background: #9dbdff;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+}
+
+.presentation-texte {
+    color: #475569;
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===== QUILL GLOBAL ===== */
+
+.ql-toolbar {
+    border-radius: 8px 8px 0 0;
+    border-color: #cbd5e1 !important;
+    background: #fbfdff;
+}
+
+.ql-container {
+    border-radius: 0 0 8px 8px;
+    border-color: #cbd5e1 !important;
+    min-height: 80px;
+    font-size: 15px;
+    color: #1e293b;
+}
+
+.ql-editor {
+    min-height: 80px;
+    padding: 10px 14px;
+}
+
+
+/* ===== QUILL DANS LA TOP-PART ===== */
+
+.editable-top {
+    flex-direction: column;  /* empile content + editor verticalement */
+    align-items: flex-start;
+    width: 100%;
+}
+
+/* Quand l'éditeur est ouvert, on cache l'icône pour gagner de la place */
+.editable-top .editor-top[style*="display: block"] ~ .modifierIcon-top,
+.editable-top .editor-top[style*="display:block"] ~ .modifierIcon-top {
+    display: none;
+}
+
+.editor-top {
+    width: 100%;
+}
+
+.editor-top .ql-toolbar {
+    background: rgba(255,255,255,0.8);
+}
+
+/* H1 et span dans l'intitule/type gardent leur style */
+.intitule-holder .ql-editor {
+    font-size: 28px;
+    font-weight: bold;
+    color: #60a5fa;
+    min-height: 50px;
+}
+
+.type-holder .ql-editor {
+    min-height: 40px;
+    font-size: 14px;
+}
+
+
+/* ===== QUILL DANS LES SECTIONS DU BAS ===== */
+
+.mission-holder .editor {
+    width: 100%;
+}
+
+.mission-holder .ql-container {
+    min-height: 120px;
+}
+
+.mission-holder .ql-editor {
+    min-height: 120px;
+    color: #1e293b;
+}
+
+/* Les divs de section ont position:relative pour l'icône, 
+   mais ça crée un overflow avec Quill */
+.mission-holder > div {
+    overflow: visible;
+    position: relative;
+}

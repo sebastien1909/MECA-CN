@@ -1,47 +1,220 @@
 <%- include("header") %>
 
-
-
 <section class="top-part reveal">
-    <img src="/img/placeholders/usinage3.jpg">
-    <div class="right-part">
-        <h1><%= offre.intitule %></h1>
-        <span><%= offre.type %></span>
-        <h2>Présentation de l'entreprise</h2>
-        <p class="presentation-texte"> <%= offre.presentation %> </p>
-
+  <img src="/img/placeholders/usinage3.jpg" />
+  <div class="right-part">
+    <div class="intitule-holder editable-top" data-field="intitule">
+      <h1 class="content-top"><%- offre.intitule %></h1>
+      <div class="editor-top" style="display: none"></div>
+      <img
+        src="/img/icons/modifier.svg"
+        alt="modifier"
+        class="modifierIcon-top"
+      />
     </div>
+
+    <div class="type-holder editable-top" data-field="type">
+      <span class="content-top"><%- offre.type %></span>
+      <div class="editor-top" style="display: none"></div>
+      <img
+        src="/img/icons/modifier.svg"
+        alt="modifier"
+        class="modifierIcon-top"
+      />
+    </div>
+
+    <h2>Présentation de l'entreprise</h2>
+    <div class="presentation-holder editable-top" data-field="presentation">
+      <p class="presentation-texte content-top"><%- offre.presentation %></p>
+      <div class="editor-top" style="display: none"></div>
+      <img
+        src="/img/icons/modifier.svg"
+        alt="modifier"
+        class="modifierIcon-top"
+      />
+    </div>
+  </div>
 </section>
 
-<main>
-    <div class="mission reveal">
-        <h2>Vos missions</h2>
-        <p><%= offre.missions %> </p>
-    </div>
-    <div class="compétences reveal">
-        <h2>Compétences recherchées</h2>
-        <p> <%= offre.competences %></p>
-    </div>
-    <div class="avantage reveal">
-        <h2>Avantage</h2>
-        <p> <%= offre.avantages %></p>
-    </div>
-    <div class="recrutement reveal">
-        <h2>Processus de recrutement</h2>
-        <p> <%= offre.recrutement %> </p>
-    </div>
-    <div class="complementaire reveal">
-        <h2>Informations complémentaires</h2>
-        <p> <%= offre.infos_complementaires %></p>
-    </div>
-   
-    <div class="postuler">
-        <a href="/postuler/<%= offre.id %>" class="postuler-btn reveal">
-            Confirmer les modifications
-        </a>
-    </div>
-    
-</main>
+<form
+  class="mission-holder"
+  method="POST"
+  action="/confirmer_modif/<%= offre.offre_id %>"
+>
+  <!-- Formulaires pour les autres infos (celles qui ne sont pas dans le formulaire, compliqué à comprendre) -->
+  <input type="hidden" name="intitule" />
+  <input type="hidden" name="type" />
+  <input type="hidden" name="presentation" />
 
+  <div class="mission reveal">
+    <h2>Vos missions</h2>
+    <div class="editable" data-field="missions">
+      <div class="content">
+        <p><%- offre.missions %></p>
+      </div>
+      <div class="editor" style="display: none"></div>
+      <input type="hidden" name="missions" />
+    </div>
+    <img src="/img/icons/modifier.svg" class="modifierIcon" />
+  </div>
 
+  <div class="competences reveal">
+    <h2>Compétences recherchées</h2>
+    <div class="editable" data-field="competences">
+      <div class="content">
+        <p><%- offre.competences %></p>
+      </div>
+      <div class="editor" style="display: none"></div>
+      <input type="hidden" name="competences" />
+    </div>
+    <img src="/img/icons/modifier.svg" alt="modifier" class="modifierIcon" />
+  </div>
+
+  <div class="avantage reveal">
+    <h2>Avantage</h2>
+    <div class="editable" data-field="avantages">
+      <div class="content">
+        <p><%- offre.avantages %></p>
+      </div>
+      <div class="editor" style="display: none"></div>
+      <input type="hidden" name="avantages" />
+    </div>
+
+    <img src="/img/icons/modifier.svg" alt="modifier" class="modifierIcon" />
+  </div>
+
+  <div class="recrutement reveal">
+    <h2>Processus de recrutement</h2>
+    <div class="editable" data-field="recrutement">
+      <div class="content">
+        <p><%- offre.recrutement %></p>
+      </div>
+      <div class="editor" style="display: none"></div>
+      <input type="hidden" name="recrutement" />
+    </div>
+
+    <img src="/img/icons/modifier.svg" alt="modifier" class="modifierIcon" />
+  </div>
+
+  <div class="complementaire reveal">
+    <h2>Informations complémentaires</h2>
+    <div class="editable" data-field="infos_complementaires">
+      <div class="content">
+        <p><%- offre.infos_complementaires %></p>
+      </div>
+      <div class="editor" style="display: none"></div>
+      <input type="hidden" name="infos_complementaires" />
+    </div>
+
+    <img src="/img/icons/modifier.svg" alt="modifier" class="modifierIcon" />
+  </div>
+
+  <div class="confirmer_modif">
+    <button type="submit" class="postuler-btn">
+      Confirmer les modifications
+    </button>
+  </div>
+</form>
+
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" />
+
+<script>
+  let editors = {};
+
+  document.querySelectorAll(".modifierIcon").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const container = btn.closest(
+        ".mission, .competences, .avantage, .recrutement, .complementaire",
+      );
+      const editable = container.querySelector(".editable");
+      const content = editable.querySelector(".content");
+      const editorDiv = editable.querySelector(".editor");
+
+      // éviter double init
+      if (editors[editable.dataset.field]) return;
+
+      content.style.display = "none";
+      editorDiv.style.display = "block";
+
+      const quill = new Quill(editorDiv, {
+        theme: "snow",
+        modules: {
+          toolbar: [
+            [{ header: [1, 2, false] }],
+            ["bold", "italic", "underline"],
+            [{ list: "ordered" }, { list: "bullet" }],
+            ["link"],
+          ],
+        },
+      });
+
+      quill.root.innerHTML = content.innerHTML;
+
+      editors[editable.dataset.field] = quill;
+    });
+  });
+
+  document.querySelector("form").addEventListener("submit", function (e) {
+    e.preventDefault(); // Stoppe la soumission immédiate
+
+    document.querySelectorAll(".editable").forEach((editable) => {
+      const field = editable.dataset.field;
+      const input = editable.querySelector('input[type="hidden"]');
+
+      if (editors[field]) {
+        input.value = editors[field].root.innerHTML;
+      } else {
+        input.value = editable.querySelector(".content").innerHTML;
+      }
+
+      console.log(field, "=>", input.value); // Pour vérifier dans la console
+    });
+
+    ['intitule', 'type', 'presentation'].forEach(field => {
+      const input = document.querySelector(`input[name="${field}"]`);
+      if (editorsTop[field]) {
+        input.value = editorsTop[field].root.innerHTML;
+      } else {
+        const contentEl = document.querySelector(`.editable-top[data-field="${field}"] .content-top`);
+        input.value = contentEl.innerHTML;
+      }
+    });
+
+    this.submit(); // Soumet après avoir tout rempli
+  });
+
+  let editorsTop = {};
+
+  document.querySelectorAll(".modifierIcon-top").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const container = btn.closest(".editable-top");
+      const field = container.dataset.field;
+      const contentEl = container.querySelector(".content-top");
+      const editorDiv = container.querySelector(".editor-top");
+
+      // éviter double init
+      if (editorsTop[field]) return;
+
+      editorDiv.style.display = "block";
+
+      const quill = new Quill(editorDiv, {
+        theme: "snow",
+        modules: {
+          toolbar: [
+            [{ header: [1, 2, false] }],
+            ["bold", "italic", "underline"],
+            [{ list: "ordered" }, { list: "bullet" }],
+            ["link"],
+          ],
+        },
+      });
+
+      quill.root.innerHTML = contentEl.innerHTML;
+      contentEl.style.display = "none";
+
+      editorsTop[field] = quill;
+    });
+  });
+</script>
 <%- include("footer") %>

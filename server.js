@@ -20,9 +20,6 @@ import fs from "fs";
 import "dotenv/config";
 import sha256 from "js-sha256";
 
-
-
-
 // Multer
 // --- CONFIGURATION MULTER POUR LES PRODUITS ---
 const storageProduits = multer.diskStorage({
@@ -36,8 +33,6 @@ const storageProduits = multer.diskStorage({
 });
 const uploadProduits = multer({ storage: storageProduits });
 
-
-
 // --- CONFIGURATION MULTER POUR LES MACHINES ---
 const storageMachines = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -49,8 +44,6 @@ const storageMachines = multer.diskStorage({
   },
 });
 const uploadMachines = multer({ storage: storageMachines });
-
-
 
 // Setting d'express
 // ==> sert à rendre les views
@@ -74,12 +67,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
-
-
-
-
 //MIDDLEWARES MAISON
 
 /**
@@ -95,8 +82,6 @@ function authenticate(req, res, next) {
   }
 }
 
-
-
 /**
 Middleware "isAdmin"
 Vérifie que la session correspond à un administrateur.
@@ -110,30 +95,9 @@ function isAdmin(req, res, next) {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
 // ROUTES
 
-
-
-
-
-
-
 // app.get
-
-
-
-
 
 /**
 GET /
@@ -155,9 +119,6 @@ app.get("/", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
-
-
-
 
 /**
 GET /presentation
@@ -181,9 +142,6 @@ app.get("/presentation", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
-
-
-
 
 // Route publique pour lister les machines
 /**
@@ -239,9 +197,6 @@ app.get("/machines", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
-
-
-
 
 // Route admin pour la gestion du parc machine (protégée)
 app.get("/admin/machines", isAdmin, async function (req, res) {
@@ -299,9 +254,6 @@ app.get("/admin/machines", isAdmin, async function (req, res) {
   }
 });
 
-
-
-
 /**
 GET /realisations
 Liste les réalisations (portfolio). Supporte le filtrage par catégorie
@@ -328,8 +280,7 @@ app.get("/realisations", async function (req, res) {
       //console.log(rows)
       produitsResultat = rows;
     } else if (categorieChoisie && categorieChoisie !== "all") {
-
-    /*
+      /*
         Sinon, si une catégorie a été choisie et qu'elle n'équivaut pas à "all" (tous)
         */
       const [rows] = await pool.query(
@@ -365,9 +316,6 @@ app.get("/realisations", async function (req, res) {
   }
 });
 
-
-
-
 /**
 GET /devis
 Page du formulaire de demande de devis. Récupère les dimensions max des machines pour éviter toutes demandes impossibles (affichage et validation côté client).
@@ -390,9 +338,6 @@ app.get("/devis", async function (req, res) {
   }
 });
 
-
-
-
 /**
  * GET /contact
 Page de contact et formulaire pour envoyer un message à l'entreprise.
@@ -411,9 +356,6 @@ app.get("/contact", async function (req, res) {
   }
 });
 
-
-
-
 /**
  * GET /connexion
 Page de connexion pour les utilisateurs (identification).
@@ -430,9 +372,6 @@ app.get("/connexion", async function (req, res) {
   }
 });
 
-
-
-
 /**
  * GET /mentions
 Page des mentions légales.
@@ -448,9 +387,6 @@ app.get("/mentions", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
-
-
-
 
 app.get("/offres", async function (req, res) {
   try {
@@ -486,9 +422,6 @@ app.get("/offres", async function (req, res) {
   }
 });
 
-
-
-
 app.get("/offre/:id", async function (req, res) {
   try {
     const offre_id = req.params.id;
@@ -497,7 +430,7 @@ app.get("/offre/:id", async function (req, res) {
       [offre_id],
     );
 
-    console.log(offre[0]);
+    //console.log(offre[0]);
     res.render("offre", {
       offre: offre[0],
       page_css1: "offre.css",
@@ -508,9 +441,6 @@ app.get("/offre/:id", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
-
-
-
 
 app.get("/postuler/:id", async function (req, res) {
   try {
@@ -531,9 +461,6 @@ app.get("/postuler/:id", async function (req, res) {
   }
 });
 
-
-
-
 /**
  * GET /tests
 Page de test/de développement (utilitaire).
@@ -549,9 +476,6 @@ app.get("/tests", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
-
-
-
 
 /**
  * GET /admin/accueil
@@ -569,9 +493,6 @@ app.get("/admin/accueil", isAdmin, async function (req, res) {
   }
 });
 
-
-
-
 /**
  * GET /admin/presentation
 Page admin pour modifier la page de présentation publique.
@@ -587,9 +508,6 @@ app.get("/admin/presentation", isAdmin, async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
-
-
-
 
 /**
  * GET /admin/realisations
@@ -651,9 +569,6 @@ app.get("/admin/realisations", isAdmin, async function (req, res) {
   }
 });
 
-
-
-
 /**
  * GET /deconnexion
 Détruit la session et déconnecte l'utilisateur.
@@ -675,9 +590,6 @@ app.get("/deconnexion", async function (req, res) {
   }
 });
 
-
-
-
 /**
  * GET /api/max-dimensions
 Récupération des dimensions maximales des machines (capacité maximale) et renvoie de ces dernières sous format JSON
@@ -693,9 +605,6 @@ app.get("/api/max-dimensions", async (req, res) => {
     res.status(500).send("Erreur serveur");
   }
 });
-
-
-
 
 /**
  * GET /modif_realisations/:id
@@ -726,9 +635,6 @@ app.get("/modif_realisations/:id", isAdmin, async function (req, res) {
   }
 });
 
-
-
-
 /**
  * GET /suppression
 Page de confirmation de suppression (catégorie, réalisations, machines).
@@ -750,9 +656,6 @@ app.get("/admin/suppression", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de la suppression de la réalisation");
   }
 });
-
-
-
 
 /**
  * GET /modif_machine/:id
@@ -781,9 +684,6 @@ app.get("/modif_machine/:id", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de la récupération des données");
   }
 });
-
-
-
 
 app.get("/admin/ajoutmachine", isAdmin, async function (req, res) {
   try {
@@ -818,9 +718,6 @@ app.get("/admin/ajoutmachine", isAdmin, async function (req, res) {
   }
 });
 
-
-
-
 app.get("/admin/ajoutproduit", isAdmin, async function (req, res) {
   try {
     const [categories] = await pool.query("SELECT * FROM categories");
@@ -845,9 +742,6 @@ app.get("/admin/ajoutproduit", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de l'affichage du formulaire d'ajout");
   }
 });
-
-
-
 
 app.get("/ajout_categorie", isAdmin, async function (req, res) {
   try {
@@ -879,9 +773,6 @@ app.get("/ajout_categorie", isAdmin, async function (req, res) {
   }
 });
 
-
-
-
 app.get("/admin/profil", isAdmin, async function (req, res) {
   try {
     const userId = req.session.userID;
@@ -903,9 +794,6 @@ app.get("/admin/profil", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de l'affichage du profil");
   }
 });
-
-
-
 
 app.get("/admin/offres", isAdmin, async function (req, res) {
   try {
@@ -950,20 +838,7 @@ app.get("/admin/offres", isAdmin, async function (req, res) {
 
 
 
-
-
-
-
-
-
-
-
-
-
 // app.post
-
-
-
 
 /* Route post qui permet d'arriver sur une offre d'emploi précise
 l'id de l'offre est passée en paramètre d'URL, puis récupéré
@@ -982,7 +857,7 @@ app.post("/consulter_offre", async function (req, res) {
       [id],
     );
     const offre = offres[0];
-    console.log(offre);
+    //console.log(offre);
     res.render("offre", {
       offre: offre,
       page_css1: "offre.css",
@@ -995,6 +870,184 @@ app.post("/consulter_offre", async function (req, res) {
 });
 
 
+app.post('/confirmer_modif/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    
+    // console.log(req.body);
+
+
+    const {
+      intitule,
+      type,
+      presentation,
+      missions,
+      competences,
+      avantages,
+      recrutement,
+      infos_complementaires
+    } = req.body;
+
+    // console.log("nouvelle missions : ",missions)
+
+
+
+    /*
+    Afin de n'actualiser que la section concernée, on test si chacun est différentde ce qui est stocké dans la bdd
+
+    Je vais être honnête, les conditions (if) n'apportent apparemment rien étant donné que 
+    tout les console.log s'effectuent lorsque je modifies une seule section de l'offre.
+    Seul problème : j'ai modifié plein de trucs en même temps, donc je ne sais pas si les if ont aidé ou non
+
+    Si vous voyez ce message, ca ve ut surement dire que je n'ai pas eu le temps ou le courage de confirmer l'utilité 
+    des "if" utilisés ci-dessous
+    */
+
+
+    // missions
+
+        const [old_miss] = await pool.query("SELECT missions FROM offres WHERE offre_id = ?", [id]);
+        const ancienne_missions = old_miss[0].missions
+        // console.log("Ancienne missions : ", ancienne_missions)
+        // console.log(ancienne_missions);
+        if (ancienne_missions !== missions){
+          await pool.query(`UPDATE offres SET 
+                              missions = ? 
+                              WHERE offre_id = ?`, 
+                              [missions, id]);
+          // console.log("Les missions ont été modifiées")
+        };
+
+
+    // competences
+
+        const [old_comp] = await pool.query("SELECT competences FROM offres WHERE offre_id = ?", [id]);
+        const ancienne_competences = old_comp[0].competences;
+        if (ancienne_competences !== competences){
+          await pool.query(`UPDATE offres SET 
+                              competences = ? 
+                              WHERE offre_id = ?`, 
+                              [competences, id])
+          //console.log("Les compétences ont été modifiées");
+        };
+
+
+    // avantages
+
+        const [old_advantage] = await pool.query("SELECT avantages FROM offres WHERE offre_id = ?", [id])
+        const ancien_avantage = old_advantage[0].avantages
+        if (ancien_avantage !== avantages){
+          await pool.query(`UPDATE offres SET 
+                              avantages = ? 
+                              WHERE offre_id = ?`, 
+                              [avantages, id]);
+          //console.log("Les avantages ont été modifiés");
+        };
+
+
+    // recrutements
+
+        const [old_recruit] = await pool.query("SELECT recrutement FROM offres WHERE offre_id = ?", [id]);
+        const ancien_recrutement = old_recruit[0].recrutement;
+        if (ancien_recrutement !== recrutement){
+          await pool.query(`UPDATE offres SET 
+                              recrutement = ? ù
+                              WHERE offre_id = ?`, 
+                              [recrutement, id]);
+          // console.log("Le process de recrutement a été modifié")
+        };
+
+
+    // informations complémentaires
+
+        const [old_infos] = await pool.query("SELECT infos_complementaires FROM offres WHERE offre_id = ?", [id]);
+        const ancienne_infos = old_infos[0].infos_complementaires;
+        if (ancienne_infos !== infos_complementaires){
+          await pool.query(`UPDATE offres SET 
+                              infos_complementaires = ? 
+                              WHERE offre_id = ?`, 
+                              [infos_complementaires, id]);
+          //console.log("Les informations complémentaires ont bien été modifiées");
+        };
+
+
+    //  presentation
+
+        const [old_pres] = await pool.query("SELECT presentation FROM offres WHERE offre_id = ?", [id])
+        const ancienne_presentation = old_pres[0].presenation;
+        if (ancienne_presentation !== presentation){
+          await pool.query(`UPDATE offres SET
+                              presentation = ?
+                              WHERE offre_id = ?`,
+                            [presentation, id]);
+        };
+
+
+    // intitule
+        
+        const [old_int] = await pool.query("SELECT intitule FROM offres WHERE offre_id = ?", [id]);
+        const ancien_intitule = old_int[0].intitule;
+        if (ancien_intitule !== intitule){
+          await pool.query(`UPDATE offres SET
+                              intitule = ?
+                              WHERE offre_id = ?`,
+                            [intitule, id]);
+        };
+
+
+    // Type
+
+        const [old_type] = await pool.query("SELECT type FROM offres WHERE offre_id = ?", [id]);
+        const ancien_type = old_int[0].type;
+        if (ancien_type !== type){
+          await pool.query(`UPDATE offres SET
+                              type = ?
+                              WHERE offre_id = ?`,
+                            [type, id]);
+        };
+
+
+    /*
+    
+    Requête originale
+
+    await pool.query(`
+      UPDATE offres SET
+        missions = ?,
+        competences = ?,
+        avantages = ?,
+        recrutement = ?,
+        infos_complementaires = ?
+      WHERE offre_id = ?
+    `, [missions, competences, avantages, recrutement, infos_complementaires, id]);
+
+
+
+      Deuxième requête originale
+
+        UPDATE offres SET
+          intitule = ?,
+          type = ?,
+          presentation = ?,
+          missions = ?,
+          competences = ?,
+          avantages = ?,
+          recrutement = ?,
+          infos_complementaires = ?
+        WHERE offre_id = ?
+      `, [intitule, type, presentation, missions, competences, avantages, recrutement, infos_complementaires, id]);
+
+
+    */
+
+
+    res.redirect('/admin/offres');
+
+  } catch (err) {
+    console.error("Erreur modif offre :", err);
+    res.status(500).send("Erreur serveur");
+  }
+});
 
 
 app.post("/admin/consulter_offre", async function (req, res) {
@@ -1006,7 +1059,7 @@ app.post("/admin/consulter_offre", async function (req, res) {
       [id],
     );
     const offre = offres[0];
-    console.log(offre);
+    //console.log(offre);
     res.render("admin/offre", {
       offre: offre,
       page_css1: "offre.css",
@@ -1017,9 +1070,6 @@ app.post("/admin/consulter_offre", async function (req, res) {
     res.status(500).send("Erreur lors de la consultation de l'offre");
   }
 });
-
-
-
 
 /* Route POST qui permet d'arriver sur la page de modification de l'offre
 
@@ -1032,11 +1082,12 @@ app.post("/modifier_offre_access", async function (req, res) {
       [id],
     );
     const offre = offre_format_liste[0];
-    console.log(offre);
+    //console.log(offre);
     res.render("admin/modifoffres", {
       offre: offre,
       page_css1: "offre.css",
       page_css2: "headeradmin.css",
+      page_css3: "modifoffre.css",
     });
   } catch (err) {
     console.error("Erreur SQL ou serveur : ", err);
@@ -1047,9 +1098,6 @@ app.post("/modifier_offre_access", async function (req, res) {
       );
   }
 });
-
-
-
 
 app.post("/supprimer_offre", async function (req, res) {
   try {
@@ -1063,9 +1111,6 @@ app.post("/supprimer_offre", async function (req, res) {
     res.status(500).send("Erreur lors de la suppression de l'offre");
   }
 });
-
-
-
 
 // Modifications infos profil (identifiant, email, téléphone, mot de passe)
 /*
@@ -1097,9 +1142,6 @@ app.post("/modifier-id", isAdmin, async function (req, res) {
   }
 });
 
-
-
-
 app.post("/modifier-email", isAdmin, async function (req, res) {
   try {
     const userId = req.session.userID;
@@ -1122,9 +1164,6 @@ app.post("/modifier-email", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de la modification de l'email");
   }
 });
-
-
-
 
 app.post("/modifier-telephone", isAdmin, async function (req, res) {
   try {
@@ -1152,9 +1191,6 @@ app.post("/modifier-telephone", isAdmin, async function (req, res) {
       .send("Erreur lors de la modification du numéro de téléphone");
   }
 });
-
-
-
 
 app.post("/modifier-mot-de-passe", isAdmin, async function (req, res) {
   try {
@@ -1211,9 +1247,6 @@ app.post("/modifier-mot-de-passe", isAdmin, async function (req, res) {
   }
 });
 
-
-
-
 app.post("/supprimer-categorie", isAdmin, async function (req, res) {
   try {
     const id_categorie = req.body.categorie_id;
@@ -1226,9 +1259,6 @@ app.post("/supprimer-categorie", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de la suppression de la catégorie");
   }
 });
-
-
-
 
 app.post("/supprimer-realisation", isAdmin, async function (req, res) {
   try {
@@ -1243,9 +1273,6 @@ app.post("/supprimer-realisation", isAdmin, async function (req, res) {
   }
 });
 
-
-
-
 app.post("/supprimer-machine", isAdmin, async function (req, res) {
   try {
     const id_machine = req.body.machine_id;
@@ -1258,9 +1285,6 @@ app.post("/supprimer-machine", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de la suppression de la machine");
   }
 });
-
-
-
 
 app.post("/ajouter_categorie", isAdmin, async function (req, res) {
   try {
@@ -1284,9 +1308,6 @@ app.post("/ajouter_categorie", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de l'ajout de la catégorie");
   }
 });
-
-
-
 
 /**
  * POST /ajouter_produit
@@ -1319,9 +1340,6 @@ app.post(
     }
   },
 );
-
-
-
 
 /**
 POST /ajouter_machine
@@ -1385,9 +1403,6 @@ app.post(
     }
   },
 );
-
-
-
 
 // Route POST pour enregistrer les modifications d'une machine (avec gestion de l'image)
 app.post(
@@ -1473,9 +1488,6 @@ app.post(
     }
   },
 );
-
-
-
 
 /**
  POST /envoyer-devis
@@ -1589,9 +1601,6 @@ app.post(
   },
 );
 
-
-
-
 /**
  * POST /modifier_infos_realisation
 Traite le formulaire d'édition d'une réalisation (admin), gère l'image.
@@ -1659,9 +1668,6 @@ app.post(
   },
 );
 
-
-
-
 /**
 POST /envoyer-contact
 Envoie un email de contact avec les informations fournies.
@@ -1714,9 +1720,6 @@ app.post("/envoyer-contact", async function (req, res) {
   }
 });
 
-
-
-
 /**
  * POST /connexion
 Authentifie un utilisateur en comparant les identifiants au hash stocké.
@@ -1766,9 +1769,6 @@ app.post("/connexion", async function (req, res) {
   }
 });
 
-
-
-
 app.post("/connexionrapide", async function (req, res) {
   try {
     req.session.userID = 1;
@@ -1779,16 +1779,6 @@ app.post("/connexionrapide", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
-
-
-
-
-
-
-
-
-
-
 
 app.use((req, res) => {
   res.status(404).render("404");
