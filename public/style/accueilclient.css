@@ -396,15 +396,70 @@
         object-fit:cover;
         box-shadow:0 30px 70px rgba(20,31,75,0.12);
     }
+
+    
+
 }
 
 
+.bandeau_offre{
+        background-color:#d79e4e;
+        margin-top:0px;
+        margin-bottom:0px;
+        height:35px;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+    }
+
+    .bandeau_texte{
+        margin:0 !important;
+        font-weight:bold !important;
+        
+    }
+    .bandeau_texte a{
+        text-decoration:none;
+        color:#1e4fd8;
+        position:relative;
+    }
+
+    .bandeau_texte a::after{
+        content:"";
+        position:absolute;
+        left:0;
+        bottom:-2px;
+        width:100%;
+        height:2px;
+        background-color:#1e4fd8;
+
+        transform:scaleX(0);
+        transform-origin: center;
+
+        transition:transform 0.3s ease;
+    }
+
+    .bandeau_texte a:hover::after{
+        transform:scaleX(1);
+    }
+
+.soft-pulse {
+    animation: softPulse 1.5s infinite ease-in-out;
+}
 
 
+@keyframes softPulse {
+    0% {
+        transform: scale(1);
+    }
 
+    50% {
+        transform: scale(1.01);
+    }
 
-
-
+    100% {
+        transform: scale(1);
+    }
+}
 
 
 

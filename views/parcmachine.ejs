@@ -20,7 +20,7 @@
 
     <section class="machine-container pc-only">
 
-        <div class="filter-wrapper">
+        <div class="filter-wrapper reveal-machine">
             <button class="filter-btn active" data-filter="all">Tous</button>
             <button class="filter-btn" data-filter="fraisage">Fraisage</button>
             <button class="filter-btn" data-filter="tournage">Tournage</button>
@@ -30,7 +30,7 @@
             <h4 class="section-title tournage-title">Tournage</h4>
             <!-- Pour chaque machine de tournage -->
             <% for (const element of machinestourneuses) { %>
-                <section class="machine-holder">
+                <section class="machine-holder reveal-machine">
 
 
                     <div class="first-column">
@@ -120,79 +120,75 @@
             <% } %>
 
                 <% for (const element of machinefraiser) { %>
-                    <section class="machine-holder">
+                    <section class="machine-holder reveal-machine">
                         
-                    <div class="first-column">
-                        <div class="top-part">
-                            <h2>
-                                <%= element.nom_machine %>
-                            </h2>
-                            <p>
-                                <%= element.description_longue %>
+                        <div class="first-column">
+                            <div class="top-part">
+                                <h2>
+                                    <%= element.nom_machine %>
+                                </h2>
+                                <p>
+                                    <%= element.description_longue %>
+                                </p>
+
+                                <div class="info1">
+                                    <p> 
+                                        <%= element.statistique1_nom %>
+                                    </p>
+                                    <p> <%= element.statistique1_donnee %> </p>
+                                </div>
+                                <div class="info2">
+                                    <p> 
+                                        <%= element.statistique2_nom %>
+                                    </p>
+                                    <p> <%= element.statistique2_donnee %> </p>
+                                </div>
+                            </div>
+
+                            <div class="bottom-part">
+                                <h2>
+                                    <%= element.avantage_titre %>
+                                </h2>
+
+                                <p>
+                                    <%= element.avantage_description %>
+                                </p>
+                            </div>
+                        </div>
+
+
+                        <div class="second-column">
+                            <img src="<%= element.image_machine %>" alt="Machine Mazak">
+                            <div class="main-info-top">
+                                <h4><%= element.nom_machine %></h4>
+                                <span class="date-holder">
+                                    <%= element.annee_entree %>
+                                </span>
+                            </div>
+                            
+                            <p> 
+                                <%= element.description_courte %>
                             </p>
 
-                            <div class="info1">
-                                <p> 
-                                    <%= element.statistique1_nom %>
-                                </p>
-                                <p> <%= element.statistique1_donnee %> </p>
+                            <div class="stats-holder">
+                                <div class="first-stat">
+                                    <h5>dimension X</h5>
+                                    <span><%= element.d_x %></span>
+                                </div>
+
+                                <div class="second-stat">
+                                    <h5>dimension Y</h5>
+                                    <span><%= element.d_y %></span>
+                                </div>
+
+                                <div class="third-stat">
+                                    <h5>dimension Z</h5>
+                                    <span><%= element.d_z %></span>
+                                </div>
                             </div>
-                            <div class="info2">
-                                <p> 
-                                    <%= element.statistique2_nom %>
-                                </p>
-                                <p> <%= element.statistique2_donnee %> </p>
-                            </div>
+
                         </div>
-
-                        <div class="bottom-part">
-                            <h2>
-                                <%= element.avantage_titre %>
-                            </h2>
-
-                            <p>
-                                <%= element.avantage_description %>
-                            </p>
-                        </div>
-                    </div>
-
-
-
-
-
-
-                    <div class="second-column">
-                        <img src="<%= element.image_machine %>" alt="Machine Mazak">
-                        <div class="main-info-top">
-                            <h4><%= element.nom_machine %></h4>
-                            <span class="date-holder">
-                                <%= element.annee_entree %>
-                            </span>
-                        </div>
-                        
-                        <p> 
-                            <%= element.description_courte %>
-                        </p>
-
-                        <div class="stats-holder">
-                            <div class="first-stat">
-                                <h5>dimension X</h5>
-                                <span><%= element.d_x %></span>
-                            </div>
-
-                            <div class="second-stat">
-                                <h5>dimension Y</h5>
-                                <span><%= element.d_y %></span>
-                            </div>
-
-                            <div class="third-stat">
-                                <h5>dimension Z</h5>
-                                <span><%= element.d_z %></span>
-                            </div>
-                        </div>
-
-                    </div>
-                </section>
+                    </section>
 
             <% } %>
 

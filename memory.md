@@ -10,13 +10,13 @@
         - [x] Lien vers la page
         - [x] Modification
     - [x] Consultation
-    - [ ] Création
+    - [x] Création
 
-- [ ] Réparer les dates lors de la création d'une offre
+    - [ ] Réparer les dates lors de la création d'une offre
 
 
 ---
-Faut faire en sorte que si les éléments sont mis comme "cachés", ca ne les affiche pas sur le rendu (les trucs des offres)
+
 ---
 
 

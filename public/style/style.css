@@ -48,6 +48,16 @@ h1 span{
 }
 
 
+.reveal-machine{
+    opacity:0;
+    transition:all 0.8s ease;
+}
+
+.reveal-machine.active{
+    opacity:1;
+}
+
+
 
 
 /* Ordinateur */

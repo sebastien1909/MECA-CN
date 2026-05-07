@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "animate.css": "^4.1.1",
     "dotenv": "^17.4.2",
     "ejs": "^5.0.1",
     "express": "^5.2.1",

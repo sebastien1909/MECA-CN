@@ -22,18 +22,30 @@
         <h2>Compétences recherchées</h2>
         <p> <%= offre.competences %></p>
     </div>
-    <div class="avantage reveal">
-        <h2>Avantage</h2>
-        <p> <%= offre.avantages %></p>
-    </div>
-    <div class="recrutement reveal">
-        <h2>Processus de recrutement</h2>
-        <p> <%= offre.recrutement %> </p>
-    </div>
-    <div class="complementaire reveal">
-        <h2>Informations complémentaires</h2>
-        <p> <%= offre.infos_complementaires %></p>
-    </div>
+
+    <% if (avantageE == 1){ %>
+        <div class="avantage reveal">
+            <h2>Avantage</h2>
+            <p> <%= offre.avantages %></p>
+        </div>
+    <% } %>
+
+
+    <% if (recrutementE == 1){ %>
+        <div class="recrutement reveal">
+            <h2>Processus de recrutement</h2>
+            <p> <%= offre.recrutement %> </p>
+        </div>
+    <% } %>
+
+
+    <% if (infosE == 1 ){ %>
+        <div class="complementaire reveal">
+            <h2>Informations complémentaires</h2>
+            <p> <%= offre.infos_complementaires %></p>
+        </div>
+    <% } %>
+    
    
     <div class="postuler">
         <a href="/postuler/<%= offre.offre_id %>" class="postuler-btn reveal">

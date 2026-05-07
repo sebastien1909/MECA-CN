@@ -19,6 +19,7 @@ import nodemailer from "nodemailer";
 import fs from "fs";
 import "dotenv/config";
 import sha256 from "js-sha256";
+import { findSourceMap } from "module";
 
 // Multer
 // --- CONFIGURATION MULTER POUR LES PRODUITS ---
@@ -106,12 +107,17 @@ sinon affiche la page publique d'accueil.
 */
 app.get("/", async function (req, res) {
   try {
+    // regarde s'il y a des offres et affiche le bandeau dans le cas positif
+    const [offres] = await pool.query("SELECT * FROM offres");
+    const taille_liste_offre = offres.length
+    // console.log(offres.length)
     if (req.session.role === "admin") {
       return res.redirect("/admin/accueil");
     } else {
       res.render("accueil", {
         page_css1: "headerclient.css",
         page_css2: "accueilclient.css",
+        nbOffres: taille_liste_offre
       });
     }
   } catch (err) {
@@ -886,11 +892,26 @@ app.post("/consulter_offre", async function (req, res) {
       [id],
     );
     const offre = offres[0];
+
+
+    // récupérationde "l'enabilité" des sections plus secondaires
+    const methodeEnable = offre.MethodeEnable;
+    const infosEnable = offre.InfosEnable;
+    const salaireEnable = offre.SalaireEnable;
+    const recrutementEnable = offre.RecrutementEnable;
+    const avantageEnable = offre.AvantageEnable;
+
+
     //console.log(offre);
     res.render("offre", {
       offre: offre,
       page_css1: "offre.css",
       page_css2: "headeradmin.css",
+      methodeE: methodeEnable,
+      infosE:infosEnable,
+      salaireE:salaireEnable,
+      recrutementE:recrutementEnable,
+      avantageE:avantageEnable
     });
   } catch (err) {
     console.error("Erreur SQL ou serveur : ", err);
@@ -931,7 +952,18 @@ app.post("/ajouteroffre", async function(req,res){
   }
 
   const today = new Date();
-  const date = today.toLocaleDateString();
+
+  // On récupère chaque élément et on s'assure qu'ils ont 2 chiffres avec padStart(2, '0')
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0'); // Janvier est 0 !
+  const dd = String(today.getDate()).padStart(2, '0');
+
+  const hh = String(today.getHours()).padStart(2, '0');
+  const min = String(today.getMinutes()).padStart(2, '0');
+  const ss = String(today.getSeconds()).padStart(2, '0');
+
+  const formattedDate = `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+  // console.log(formattedDate);
 
 
 
@@ -991,7 +1023,7 @@ app.post("/ajouteroffre", async function(req,res){
 
   await pool.query(requete, [
       id_final, intitule, type, location, salaire, salaireEnable, presentation, missions,
-      competences, avantage, avantageEnable, recrutement, recrutementEnable, complementaire, infosEnable, date, methode, methodeEnable, categorie
+      competences, avantage, avantageEnable, recrutement, recrutementEnable, complementaire, infosEnable, formattedDate, methode, methodeEnable, categorie
   ]);
   
 
@@ -1189,10 +1221,26 @@ app.post("/admin/consulter_offre", async function (req, res) {
     );
     const offre = offres[0];
     //console.log(offre);
+
+
+    // récupération de "l'enabilité" des sections plus secondaires
+    const methodeEnable = offre.MethodeEnable;
+    const infosEnable = offre.InfosEnable;
+    const salaireEnable = offre.SalaireEnable;
+    const recrutementEnable = offre.RecrutementEnable;
+    const avantageEnable = offre.AvantageEnable;
+
+
+
     res.render("admin/offre", {
       offre: offre,
       page_css1: "offre.css",
       page_css2: "headeradmin.css",
+      methodeE:methodeEnable,
+      infosE:infosEnable,
+      salaireE:salaireEnable,
+      recrutementE:recrutementEnable,
+      avantageE:avantageEnable
     });
   } catch (err) {
     console.error("Erreur SQL ou serveur : ", err);

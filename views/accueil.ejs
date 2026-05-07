@@ -1,5 +1,6 @@
 <%# Public homepage %> <%- include('header') %>
 
+
 <navbar class="navbar mobile-hidden">
   <div class="link-container">
     <div class="separateur-navbar"></div>
@@ -13,6 +14,14 @@
     <div class="separateur-navbar"></div>
   </div>
 </navbar>
+
+<% if (nbOffres > 0){ %>
+  <section class="bandeau_offre">
+    <p class="soft-pulse bandeau_texte">
+      Vous recherchez du travail ? Ça tombe ! Nous aussi ! <a href="/offres">Cliquez ici</a>
+    </p>
+  </section>
+<% } %>
 
 <a href="/offres"> Page offres d'emploi </a>
 
@@ -51,7 +60,7 @@
 
 <br /><br /><br />
 
-<section id="decouvrir" class="presentation-section">
+<section id="decouvrir" class="presentation-section reveal">
   <div class="pc-only presentation-section">
     <div class="presentation-left-side">
       <img src="/img/placeholders/MECA-CN.png" alt="Image de présentation" />
@@ -77,7 +86,7 @@
     </div>
   </div>
 
-  <div class="pc-hidden presentation-mobile">
+  <div class="pc-hidden presentation-mobile reveal">
     <article class="home-feature large-feature">
       <div class="presentation-icon-holder">
         <img
@@ -93,7 +102,7 @@
       </p>
     </article>
 
-    <div class="feature-row">
+    <div class="feature-row reveal">
       <article class="home-feature small-feature">
         <div class="presentation-icon-holder">
           <img
@@ -133,7 +142,7 @@
 
 <br /><br /><br />
 
-<section id="domaines" class="home-feature-list">
+<section id="domaines" class="home-feature-list reveal">
   <div class="tablet-hidden mobile-hidden">
     <h2>Innover et usiner pour tous les secteurs</h2>
     <p>
@@ -193,7 +202,7 @@
 
 <br /><br /><br />
 
-<section id="machine" class="machine-showcase">
+<section id="machine" class="machine-showcase reveal">
   <div class="mobile-hidden tablet-hidden machine-section">
     <div class="machine-left-side">
       <h2>Parc machine haute Précision</h2>
@@ -255,7 +264,7 @@
 
 <br />
 
-<section id="produits" class="product-carousel-section">
+<section id="produits" class="product-carousel-section reveal">
   <div class="product-carousel-header pc-hidden">
     <div class="machine-carousel-header">
       <h2>Nos produits</h2>
