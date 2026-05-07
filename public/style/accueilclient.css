@@ -699,7 +699,7 @@
         min-width:50%;
         font-weight:700;
         text-decoration:none;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease ;
         cursor:pointer;
         margin-top:25px;
     }
@@ -707,6 +707,7 @@
     .know-more-btn-mobile:hover{
         transform:translateY(-2px);
         box-shadow:0 22px 40px rgba(0,0,0,0.18);
+        transform:scale(1.05);
     }
 
     .machine-carousel-container{
@@ -956,6 +957,12 @@
 /* Téléphone */
 @media screen and (max-width : 600px) {
 
+    .bandeau_texte{
+        margin:0 !important;
+        font-weight:bold !important;
+        font-size: 0.8rem !important;
+    }
+
     .landing_section{
         
         position: relative;
@@ -1123,6 +1130,10 @@
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         cursor:pointer;
         margin-top:25px;
+    }
+
+    .know-more-btn-mobile:hover{
+        transform:scale(1.05)
     }
 
     .machine-carousel-container{

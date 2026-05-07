@@ -254,7 +254,7 @@
 
 .form-holder input[type="text"],
 .form-holder input[type="email"] {
-    width: 100%;
+    width: 95%;
     padding: 14px 18px;
     border-radius: 12px;
     border: 1px solid #e2e8f0;
@@ -316,3 +316,34 @@
 
 
 
+
+/* Claude */
+
+.message-input {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #fcfdfe;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    margin-bottom: 24px;
+    min-height: 160px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.6;
+    box-sizing: border-box;
+}
+
+.message-input:focus {
+    outline: none;
+    border-color: #0f4bb7;
+    box-shadow: 0 0 0 4px rgba(15, 75, 183, 0.1);
+    background: #fff;
+}
+
+
+
+.retour-arriere{
+    margin:15px !important;
+}

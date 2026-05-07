@@ -4,7 +4,7 @@
 - [x] Faire système de tri des offres d'emploi
 - [x] Faire le style de la page de listing des offres d'emploi
 
-- [ ] Faire les fonctionnalités pour le listing des offres côté admin
+- [x] Faire les fonctionnalités pour le listing des offres côté admin
     - [x] Suppression
     - [x] Modification
         - [x] Lien vers la page
@@ -12,13 +12,16 @@
     - [x] Consultation
     - [x] Création
 
-    - [ ] Réparer les dates lors de la création d'une offre
+    - [x] Réparer les dates lors de la création d'une offre
 
 
 ---
 
 ---
 
+
+RESPONSIVE
+- [ ] Téléphone : Page offres (liste des offres) -> issue width catégorie tri
 
 
 

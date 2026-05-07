@@ -1,17 +1,12 @@
 <%- include ("header") %>
-
-<a href="/offre/<%= offre.offre_id %>">Retourner derrière</a>
+<br>
+<a href="/offre/<%= offre.offre_id %>" class="retour-arriere">Retourner en arrière</a>
 
 <div class="form-holder">
   <form method="POST" action="/envoyer_cv">
     <div class="mail-holder">
       <label for="mail">Adresse email</label>
-      <input
-        type="email"
-        id="mail"
-        name="mail"
-        placeholder="Veuillez renseigner votre adresse email"
-      />
+      <input type="email" id="mail" name="mail" placeholder="Veuillez renseigner votre adresse email"/>
     </div>
 
     <div class="name-holder">
@@ -21,12 +16,7 @@
 
     <div class="message-holder">
       <label for="message">Entrez votre message</label>
-      <input
-        type="text"
-        id="message"
-        name="message"
-        placeholder="Entrez ici votre message"
-      />
+      <textarea id="message" name="message" placeholder="Lettre de motivation ou autre" class="message-input"></textarea>
     </div>
 
     <div class="cv-import">
@@ -42,7 +32,9 @@
       </div>
       <p class="upload-restrictions">
         Certains types de fichiers potentiellement dangereux (.zip, .bat, .exe,
-        ...) <br />ne sont pas acceptés. <br />
+        ...) 
+        <br />ne sont pas acceptés. 
+        <br />
         <br />
         Taille maximale par fichier : 10 Mo. <br />
         Taille totale maximale : 20 Mo. <br />

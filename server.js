@@ -394,12 +394,21 @@ app.get("/mentions", async function (req, res) {
   }
 });
 
+
+/*
+GET /offres
+Renvoie la page listant toutes les offres d'emploi disponibles sur le moment 
+Gère le choix des catégories par l'utilisateur
+Gère que la quantité do'ffre par catégorie et la distribution de ces dernières
+*/
 app.get("/offres", async function (req, res) {
   try {
+    // Récupération de la catégorie envoyée par l'utilisateur dans la requête
     const categorieChoisie = req.query.categorie;
-
+    // Initialisation
     let offresResultat;
 
+    // S'il y a une catégorie et qu'on ne demande pas TOUTES les offres
     if (categorieChoisie && categorieChoisie !== "all") {
       const [rows] = await pool.query(
         "SELECT * FROM offres WHERE categorie = ? ORDER BY offre_id ASC",
@@ -411,6 +420,8 @@ app.get("/offres", async function (req, res) {
       offresResultat = rows;
     }
 
+
+    // Quantité
     const [categories] = await pool.query(
       "SELECT categorie, COUNT(*) AS nombre_offres FROM offres GROUP BY categorie",
     );
@@ -427,6 +438,12 @@ app.get("/offres", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
+/*
+GET /offre/:id
+Renvoie les informations concernant une offre d'emploi
+Récupère l'id de l'offre dans la requête, puis récupère les infos dans la bdd grace à cet id
+*/
 
 app.get("/offre/:id", async function (req, res) {
   try {
@@ -448,6 +465,12 @@ app.get("/offre/:id", async function (req, res) {
   }
 });
 
+
+
+/*
+GET postuler/:id
+Renvoie l'utilisateur vers la page d'envoi pour postuler sur l'offre
+*/
 app.get("/postuler/:id", async function (req, res) {
   try {
     const offre_id = req.params.id;
