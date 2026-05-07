@@ -122,6 +122,20 @@
 
 <script>
   let editors = {};
+  let editorsTop = {};
+
+  function cleanQuillHTML(html) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+
+    tmp.querySelectorAll('p').forEach(p => {
+      if (p.innerHTML.trim() === '' || p.innerHTML.trim() === '<br>') {
+        p.remove();
+      }
+    });
+
+    return tmp.innerHTML.trim();
+  }
 
   document.querySelectorAll(".modifierIcon").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -132,7 +146,6 @@
       const content = editable.querySelector(".content");
       const editorDiv = editable.querySelector(".editor");
 
-      // éviter double init
       if (editors[editable.dataset.field]) return;
 
       content.style.display = "none";
@@ -150,42 +163,11 @@
         },
       });
 
-      quill.root.innerHTML = content.innerHTML;
+      quill.root.innerHTML = cleanQuillHTML(content.innerHTML);
 
       editors[editable.dataset.field] = quill;
     });
   });
-
-  document.querySelector("form").addEventListener("submit", function (e) {
-    e.preventDefault(); // Stoppe la soumission immédiate
-
-    document.querySelectorAll(".editable").forEach((editable) => {
-      const field = editable.dataset.field;
-      const input = editable.querySelector('input[type="hidden"]');
-
-      if (editors[field]) {
-        input.value = editors[field].root.innerHTML;
-      } else {
-        input.value = editable.querySelector(".content").innerHTML;
-      }
-
-      console.log(field, "=>", input.value); // Pour vérifier dans la console
-    });
-
-    ['intitule', 'type', 'presentation'].forEach(field => {
-      const input = document.querySelector(`input[name="${field}"]`);
-      if (editorsTop[field]) {
-        input.value = editorsTop[field].root.innerHTML;
-      } else {
-        const contentEl = document.querySelector(`.editable-top[data-field="${field}"] .content-top`);
-        input.value = contentEl.innerHTML;
-      }
-    });
-
-    this.submit(); // Soumet après avoir tout rempli
-  });
-
-  let editorsTop = {};
 
   document.querySelectorAll(".modifierIcon-top").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -194,7 +176,6 @@
       const contentEl = container.querySelector(".content-top");
       const editorDiv = container.querySelector(".editor-top");
 
-      // éviter double init
       if (editorsTop[field]) return;
 
       editorDiv.style.display = "block";
@@ -211,11 +192,38 @@
         },
       });
 
-      quill.root.innerHTML = contentEl.innerHTML;
+      quill.root.innerHTML = cleanQuillHTML(contentEl.innerHTML);
       contentEl.style.display = "none";
 
       editorsTop[field] = quill;
     });
+  });
+
+  document.querySelector("form").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    document.querySelectorAll(".editable").forEach((editable) => {
+      const field = editable.dataset.field;
+      const input = editable.querySelector('input[type="hidden"]');
+
+      if (editors[field]) {
+        input.value = cleanQuillHTML(editors[field].root.innerHTML);
+      } else {
+        input.value = cleanQuillHTML(editable.querySelector(".content").innerHTML);
+      }
+    });
+
+    ['intitule', 'type', 'presentation'].forEach(field => {
+      const input = document.querySelector(`input[name="${field}"]`);
+      if (editorsTop[field]) {
+        input.value = cleanQuillHTML(editorsTop[field].root.innerHTML);
+      } else {
+        const contentEl = document.querySelector(`.editable-top[data-field="${field}"] .content-top`);
+        input.value = cleanQuillHTML(contentEl.innerHTML);
+      }
+    });
+
+    this.submit();
   });
 </script>
 <%- include("footer") %>

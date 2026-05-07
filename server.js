@@ -396,12 +396,12 @@ app.get("/offres", async function (req, res) {
 
     if (categorieChoisie && categorieChoisie !== "all") {
       const [rows] = await pool.query(
-        "SELECT * FROM offres WHERE categorie = ?",
+        "SELECT * FROM offres WHERE categorie = ? ORDER BY offre_id ASC",
         [categorieChoisie],
       );
       offresResultat = rows;
     } else {
-      const [rows] = await pool.query("SELECT * FROM offres");
+      const [rows] = await pool.query("SELECT * FROM offres ORDER BY offre_id ASC");
       offresResultat = rows;
     }
 
@@ -803,12 +803,12 @@ app.get("/admin/offres", isAdmin, async function (req, res) {
 
     if (categorieChoisie && categorieChoisie !== "all") {
       const [rows] = await pool.query(
-        "SELECT * FROM offres WHERE categorie = ?",
+        "SELECT * FROM offres WHERE categorie = ? ORDER BY offre_id ASC",
         [categorieChoisie],
       );
       offresResultat = rows;
     } else {
-      const [rows] = await pool.query("SELECT * FROM offres");
+      const [rows] = await pool.query("SELECT * FROM offres ORDER BY offre_id ASC");
       offresResultat = rows;
     }
 
@@ -828,6 +828,35 @@ app.get("/admin/offres", isAdmin, async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
+
+app.get("/ajoutoffre", isAdmin, async function(req,res){
+  const [offres] = await pool.query("SELECT * FROM offres")
+  // console.log(offres)
+  const user_id = req.session.userID
+  // console.log("ID utilisateur : ", user_id)
+  const [username] = await pool.query("SELECT identifiant FROM utilisateurs WHERE id = ?", [user_id])
+  const [types] = await pool.query("SELECT DISTINCT type FROM offres");
+  // console.log(types[1].type)
+  const [pres] = await pool.query("SELECT DISTINCT presentation FROM offres");
+  const presentation = pres[0].presentation
+  //console.log(presentation[0].presentation)
+
+  const [categoriesData] = await pool.query("SELECT DISTINCT categorie FROM offres");
+  const categories = categoriesData.map(cat => cat.categorie);
+
+  //console.log(username[0].identifiant)
+  res.render("admin/ajoutoffre", {
+    offres:offres, 
+    page_css1:"headeradmin.css", 
+    page_css2:"ajoutoffre.css", 
+    username:username[0].identifiant, 
+    types:types, 
+    presentation:presentation,
+    categories:categories
+  })
+})
+
 
 
 
@@ -868,6 +897,62 @@ app.post("/consulter_offre", async function (req, res) {
     res.status(500).send("Erreur lors de la consultation de l'offre");
   }
 });
+
+app.post("/ajouteroffre", async function(req,res){
+
+  //cconsole.log(req.body)
+
+  // Récupération des paramètres
+  
+  const intitule = req.body.intitule;
+  const type = req.body["type-offre"];
+  const location = req.body.localisation;
+  const salaire = req.body.salaire;
+  const presentation = req.body.presentation;
+  const missions = req.body.missions;
+  const competences = req.body.competences;
+  const avantage = req.body.avantage;
+  const recrutement = req.body.recrutement;
+  const complementaire = req.body.complementaire;
+  const methode = req.body.methode;
+  
+  let categorie = req.body.categorie;
+
+  if(categorie === "autre"){
+    categorie = req.body.nouvelleCategorie;
+  }
+
+  const today = new Date();
+  const date = today.toLocaleDateString();
+
+
+  // Trouver le plus petit ID disponible
+  const [liste_ids] = await pool.query("SELECT offre_id FROM offres ORDER BY offre_id ASC");
+
+  let id_final = 1;
+  for (const element of liste_ids) {
+      if (element.offre_id !== id_final) {
+          break;
+      }
+      id_final++;
+  }
+
+  // Une seule requête, on spécifie toujours l'id
+  const requete = `INSERT INTO offres 
+      (offre_id, intitule, type, localisation, salaire, presentation, missions, 
+      competences, avantages, recrutement, infos_complementaires, date_creation, 
+      mode_travail, categorie) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  await pool.query(requete, [
+      id_final, intitule, type, location, salaire, presentation, missions,
+      competences, avantage, recrutement, complementaire, date, methode, categorie
+  ]);
+  
+
+
+ res.redirect("/ajoutoffre")
+})
 
 
 app.post('/confirmer_modif/:id', async (req, res) => {
@@ -951,7 +1036,7 @@ app.post('/confirmer_modif/:id', async (req, res) => {
         const ancien_recrutement = old_recruit[0].recrutement;
         if (ancien_recrutement !== recrutement){
           await pool.query(`UPDATE offres SET 
-                              recrutement = ? ù
+                              recrutement = ? 
                               WHERE offre_id = ?`, 
                               [recrutement, id]);
           // console.log("Le process de recrutement a été modifié")
@@ -977,9 +1062,8 @@ app.post('/confirmer_modif/:id', async (req, res) => {
         const ancienne_presentation = old_pres[0].presenation;
         if (ancienne_presentation !== presentation){
           await pool.query(`UPDATE offres SET
-                              presentation = ?
-                              WHERE offre_id = ?`,
-                            [presentation, id]);
+                              presentation = ?`,
+                            [presentation]);
         };
 
 
@@ -1313,11 +1397,7 @@ app.post("/ajouter_categorie", isAdmin, async function (req, res) {
  * POST /ajouter_produit
  * Traite l'ajout d'une nouvelle réalisation (produit) depuis le back-office.
  */
-app.post(
-  "/ajouter_produit",
-  isAdmin,
-  uploadProduits.single("image_produit"),
-  async function (req, res) {
+app.post("/ajouter_produit",isAdmin,uploadProduits.single("image_produit"),async function (req, res) {
     try {
       const { nom_produit, description_produit, categorie } = req.body;
       const image = req.file ? "/img/produits/" + req.file.filename : null;
@@ -1346,11 +1426,7 @@ POST /ajouter_machine
 Traite le formulaire d'ajout d'une nouvelle machine (admin).
 Gère l'upload d'image et insère la nouvelle ligne dans la table `machines`.
  */
-app.post(
-  "/ajouter_machine",
-  isAdmin,
-  uploadMachines.single("image_machine"),
-  async function (req, res) {
+app.post("/ajouter_machine",isAdmin,uploadMachines.single("image_machine"),async function (req, res) {
     try {
       const {
         nom_machine,
@@ -1405,11 +1481,7 @@ app.post(
 );
 
 // Route POST pour enregistrer les modifications d'une machine (avec gestion de l'image)
-app.post(
-  "/modifier_infos_machine",
-  isAdmin,
-  uploadMachines.single("image_machine"),
-  async function (req, res) {
+app.post("/modifier_infos_machine",isAdmin,uploadMachines.single("image_machine"),async function (req, res) {
     try {
       const {
         id_machine,
@@ -1494,10 +1566,7 @@ app.post(
 Traite le formulaire de demande de devis, envoie un email avec les pièces jointes.
 Style du mail géré par le serveur
  */
-app.post(
-  "/envoyer-devis",
-  uploadProduits.array("fichiers", 10),
-  async (req, res) => {
+app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) => {
     try {
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -1605,10 +1674,7 @@ app.post(
  * POST /modifier_infos_realisation
 Traite le formulaire d'édition d'une réalisation (admin), gère l'image.
  */
-app.post(
-  "/modifier_infos_realisation",
-  uploadProduits.array("fichiers", 1),
-  async function (req, res) {
+app.post("/modifier_infos_realisation",uploadProduits.array("fichiers", 1),async function (req, res) {
     try {
       const { id_produit, nom_produit, description, categorie } = req.body;
 
@@ -1779,6 +1845,11 @@ app.post("/connexionrapide", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
+
+
+
+
 
 app.use((req, res) => {
   res.status(404).render("404");

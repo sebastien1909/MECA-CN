@@ -165,12 +165,14 @@
     letter-spacing: 0.05em;
 }
 
+
 .right-part span {
     display: inline-block;
-    background: #9dbdff;
+    background: #f8faff;
     padding: 5px 12px;
     border-radius: 20px;
     font-size: 13px;
+    margin-bottom: 0px !important;
 }
 
 .presentation-texte {
@@ -200,7 +202,11 @@
 .ql-toolbar {
     border-radius: 8px 8px 0 0;
     border-color: #cbd5e1 !important;
-    background: #fbfdff;
+    background: #0080ff;
+}
+
+.ql-formats{
+    background:white;
 }
 
 .ql-container {
@@ -232,7 +238,7 @@
 }
 
 .editor-top {
-    width: 100%;
+    width: 75% !important;
 }
 
 .editor-top .ql-toolbar {
@@ -265,7 +271,7 @@
 
 .mission-holder .ql-editor {
     min-height: 120px;
-    color: #1e293b;
+    color: #0062ff;
 }
 
 /* Les divs de section ont position:relative pour l'icône, 
