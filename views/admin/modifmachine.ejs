@@ -74,8 +74,8 @@
                     <div class="upload-icon">
                         <img id="preview-image" src="<%= machine.image_machine || '/img/icons/upload.png' %>" alt="Image machine">
                     </div>
-                    <p id="upload-text">Image actuelle : <%= machine.image_machine || 'Aucune image' %></p>
-                    <span id="upload-status"><%= machine.image_machine || '' %></span>
+                    <p id="upload-text">Image actuelle : <%= machine.image_machine ? machine.image_machine.split('/').pop() : 'Aucune image' %></p>
+                    <span id="upload-status"><%= machine.image_machine ? machine.image_machine.split('/').pop() : '' %></span>
                     <button type="button" class="upload-button">Changer l'image</button>
                     <input type="file" name="image_machine" id="image_machine_input" style="display:none;">
                 </div>

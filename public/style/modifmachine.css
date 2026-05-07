@@ -90,8 +90,7 @@ main {
 }
 
 .upload-icon img {
-  width: 108px;
-  height: 108px;
+  width: 81px;
   object-fit: contain;
 }
 
@@ -420,3 +419,29 @@ main::before {
     position : relative; 
     z-index :2;
 }
+
+
+
+.upload-box p {
+  word-break:break-all;
+  font-size: 12px;
+  max-width: 100%;
+  overflow:hidden;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+#upload-status{
+  word-break:break-all;
+  font-size:11px;
+  color:#64748b;
+  max-width:100%;
+  overflow:hidden;
+  display: -webkit-box;
+  line-clamp:2;
+  -webkit-box-orient:vertical;
+  
+}
+
+
