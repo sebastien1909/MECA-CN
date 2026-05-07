@@ -1,5 +1,7 @@
 <%- include("header") %>
 
+<% indexOffre = 1 %>
+
 
 <section class="top-holder">
     <div class="right-side">
@@ -56,8 +58,16 @@
         <% for (const element of offres){ %>
             <div class="offre">
                 <div class="offre-id-holder">
-                    <p><span><%= element.offre_id %></span></p>
+                    <p><span>
+                        <% if (indexOffre < 10){ %>
+                            <% const nouvel_index = "0" + indexOffre %>
+                            <%= nouvel_index %>
+                        <% } else {%>
+                            <%= indexOffre %>
+                        <% } %>
+                    </span></p>
                 </div>
+                <% indexOffre ++ %>
 
                 <div class="main-infos-holder">
                     <%= element.intitule %>
@@ -85,3 +95,5 @@
 
 
 <% } %>
+
+<%- include ("footer") %>

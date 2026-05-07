@@ -24,14 +24,26 @@
         </div>
 
         <div class="row-two">
+
+
             <div class="localisation">
                 <label>Localisation</label>
                 <input type="text" value="Widehem" id="localisation" name="localisation"/>
             </div>
+
+
             <div class="salaire">
                 <label>Salaire proposé</label>
                 <input type="text" placeholder="41 000 €/an" name="salaire" id="salaire"/>
+
+                <label class="switch">
+                    <label class="smaller-label">Afficher</label>
+                    <input name="salaire-switch" type="checkbox" checked>
+                    <span class="slider round"></span>
+                </label>
             </div>
+
+
         </div>
 
         <div class="form-separator"></div>
@@ -46,25 +58,58 @@
             <input type="text" placeholder="Au sein de l'entreprise, vous devrez..." name="missions" id="missions"/>
         </div>
 
+
+
+
         <div class="methode">
             <label>Méthode de travail</label>
             <input type="text" placeholder="Télétravail" name="methode" id="methode"/>
+
+            <label class="switch">
+                <label class="smaller-label">Afficher</label>
+                <input name="methode-switch" type="checkbox" checked>
+                <span class="slider round"></span>
+            </label>
         </div>
+
+
+
 
         <div class="competences">
             <label>Compétences recherchées</label>
             <input type="text" placeholder="Nous recherchons quelqu'un qui..." name="competences" id="competences"/>
         </div>
 
+
+
+
         <div class="avantage">
             <label>Avantages proposés</label>
             <input type="text" placeholder="À nos côtés, vous bénéficierez de..." name="avantage" id="avantage"/>
+
+            <label class="switch">
+                <label class="smaller-label">Afficher</label>
+                <input name="avantage-switch" type="checkbox" checked>
+                <span class="slider round"></span>
+            </label>
         </div>
+
+
+
 
         <div class="recrutement">
             <label>Processus de recrutement</label>
             <input type="text" placeholder="Si vous êtes sélectionnés..." name="recrutement" id="recrutement"/>
+
+            <label class="switch">
+                <label class="smaller-label">Afficher</label>
+                <input name="recrutement-switch" type="checkbox" checked>
+                <span class="slider round"></span>
+            </label>
         </div>
+
+
+
 
         <div class="form-separator"></div>
 
@@ -84,10 +129,22 @@
             </div>
         </div>
 
+
+
+
         <div class="complementaire">
             <label>Informations complémentaires</label>
             <input type="text" placeholder="Informations supplémentaires..." name="complementaire" id="complementaire"/>
+
+            <label class="switch">
+                <label class="smaller-label">Afficher</label>
+                <input name="infos-switch" type="checkbox" checked>
+                <span class="slider round"></span>
+            </label>
         </div>
+
+
+
 
         <div class="validate-holder">
             <button type="submit" class="validate-btn">Valider l'offre</button>

@@ -1,5 +1,6 @@
 <%- include("header") %>
 
+<% indexOffre = 1 %>
 
 <section class="top-holder">
     <div class="right-side">
@@ -43,6 +44,7 @@
                     <a href="/admin/offres?categorie=all" class="tri-item all <%= (categorieChoisie === 'all') ? ' active' : '' %>">
                         Tous
                     </a>
+                    
                     <% for (const element of categories){ %>
                         <a href="/admin/offres?categorie=<%= element.categorie %>" 
                         class="tri-item <%= (categorieChoisie === element.categorie) ? ' active' : '' %>">
@@ -67,8 +69,16 @@
         <% for (const element of offres){ %>
             <div class="offre">
                 <div class="offre-id-holder">
-                    <p><span><%= element.offre_id %></span></p>
+                    <p><span>
+                        <% if (indexOffre < 10){ %>
+                            <% const nouvel_index = "0" + indexOffre %>
+                            <%= nouvel_index %>
+                        <% } else {%>
+                            <%= indexOffre %>
+                        <% } %>
+                    </span></p>
                 </div>
+                <% indexOffre ++ %>
 
                 <div class="main-infos-holder">
                     <%= element.intitule %>
@@ -130,3 +140,6 @@
         return true;
     }
 </script>
+
+
+<%- include ("footer") %>

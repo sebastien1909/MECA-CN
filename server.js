@@ -915,7 +915,15 @@ app.post("/ajouteroffre", async function(req,res){
   const recrutement = req.body.recrutement;
   const complementaire = req.body.complementaire;
   const methode = req.body.methode;
+  let salaireEnable = req.body["salaire-switch"]
+  let methodeEnable = req.body["methode-switch"]
+  let avantageEnable = req.body["avantage-switch"]
+  let recrutementEnable = req.body["recrutement-switch"]
+  let infosEnable = req.body["infos-switch"]
   
+
+  // console.log(infosEnable);
+
   let categorie = req.body.categorie;
 
   if(categorie === "autre"){
@@ -924,6 +932,43 @@ app.post("/ajouteroffre", async function(req,res){
 
   const today = new Date();
   const date = today.toLocaleDateString();
+
+
+
+  // transformer les "on" / "off" en booleen
+  if (infosEnable == "on"){
+    infosEnable = 1
+  } else{
+    infosEnable = 0
+  }
+
+  if (recrutementEnable == "on"){
+    recrutementEnable = 1
+  } else{
+    recrutementEnable = 0
+  }
+
+  if (avantageEnable == "on"){
+    avantageEnable = 1
+  } else{
+    avantageEnable = 0
+  }
+
+  if (methodeEnable == "on"){
+    methodeEnable = 1
+  } else{
+    methodeEnable = 0
+  }
+
+  if (salaireEnable == "on"){
+    salaireEnable = 1
+  } else{
+    salaireEnable = 0
+  }
+
+  //console.log(salaireEnable);
+
+  
 
 
   // Trouver le plus petit ID disponible
@@ -939,14 +984,14 @@ app.post("/ajouteroffre", async function(req,res){
 
   // Une seule requête, on spécifie toujours l'id
   const requete = `INSERT INTO offres 
-      (offre_id, intitule, type, localisation, salaire, presentation, missions, 
-      competences, avantages, recrutement, infos_complementaires, date_creation, 
-      mode_travail, categorie) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      (offre_id, intitule, type, localisation, salaire, SalaireEnable, presentation, missions, 
+      competences, avantages, AvantageEnable, recrutement, RecrutementEnable, Infos_complementaires, InfosEnable, date_creation, 
+      mode_travail, MethodeEnable, categorie) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
   await pool.query(requete, [
-      id_final, intitule, type, location, salaire, presentation, missions,
-      competences, avantage, recrutement, complementaire, date, methode, categorie
+      id_final, intitule, type, location, salaire, salaireEnable, presentation, missions,
+      competences, avantage, avantageEnable, recrutement, recrutementEnable, complementaire, infosEnable, date, methode, methodeEnable, categorie
   ]);
   
 
