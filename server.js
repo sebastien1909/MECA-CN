@@ -903,8 +903,8 @@ app.get("/actualites", async function(req,res){
   const actu_une = une[0];
 
   res.render("actualite_liste", {
-    page_css1:"actu_liste.css",
-    page_css2:"headerclient.css",
+    page_css1:"headerclient.css",
+    page_css2:"actualite-liste.css",
     une: actu_une,
     actus:actualites
   })

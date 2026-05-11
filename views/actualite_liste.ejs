@@ -57,12 +57,10 @@
                         <%= element.baseline %>
                     </p>
 
-                    <form method="POST" action="/article">
-                        <input name="id" value="<%= element.id %>" type="hidden">
-                        <button class="suite" type="submit">
-                            Lire la suite →
-                        </button>
-                    </form>
+                    <a class="suite" href="#" onclick="document.getElementById('form-<%= element.id %>').submit()">Lire la suite →</a>
+                        <form id="form-<%= element.id %>" method="POST" action="/article" style="display:none">
+                            <input name="id" value="<%= element.id %>">
+                        </form>
                 </div>
 
             <% } %>

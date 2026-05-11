@@ -1,0 +1,446 @@
+/* =============================================
+   PAGE ACTUALITÉS — MECA-CN
+   ============================================= */
+
+/* --- Section principale --- */
+.actu-holder {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 40px 80px;
+}
+
+/* =============================================
+   À LA UNE
+   ============================================= */
+
+.une-container {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    margin-bottom: 60px;
+}
+
+.une-container .left-side {
+    flex: 1 1 45%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.une-container .right-side {
+    flex: 1 1 45%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Badge "À la une" */
+.une-span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #1a4fa3;
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 5px 12px;
+    border-radius: 20px;
+    width: fit-content;
+}
+
+.une-span .star-icon {
+    width: 14px;
+    height: 14px;
+    filter: brightness(0) invert(1);
+}
+
+/* Titre principal */
+.une-container .left-side h1 {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 800;
+    color: #111;
+    line-height: 1.25;
+    margin: 0;
+}
+
+/* Baseline / description */
+.une-container .left-side > p:not(.date) {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* Date */
+.une-container .left-side .date {
+    font-size: 0.82rem;
+    color: #888;
+    margin: 4px 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* Bouton "Lire l'article complet" */
+.lire-complet {
+    display: inline-block;
+    background-color: #1a4fa3;
+    color: #fff;
+    border: none;
+    padding: 11px 22px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    width: fit-content;
+}
+
+.lire-complet:hover {
+    background-color: #163f85;
+}
+
+/* Image de présentation — À la une */
+.une-container .right-side .img-presentation {
+    width: 100%;
+    max-width: 420px;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+}
+
+/* =============================================
+   SÉPARATEUR
+   ============================================= */
+
+.actu-separateur {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 60px 0;
+}
+
+/* =============================================
+   FIL D'ACTUALITÉ
+   ============================================= */
+
+.actu-holder > h2 {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #1a4fa3;
+    margin: 0 0 10px;
+}
+
+.actu-holder > h1 {
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 800;
+    color: #111;
+    line-height: 1.2;
+    margin: 0 0 40px;
+}
+
+/* Grille des actualités */
+.liste-actu {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-bottom: 70px;
+}
+
+/* Carte d'actualité */
+.actu-presentation {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Image de la carte */
+.actu-presentation .img-presentation {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+/* Ligne date + catégorie */
+.actu-presentation .date {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+/* Badge catégorie (ex: QUALITÉ) — généré via JS ou via classe additionnelle si nécessaire */
+.actu-presentation .date::after {
+    /* Si le badge catégorie est inséré séparément dans le HTML, supprimez ce pseudo-élément */
+    content: none;
+}
+
+/* Titre de la carte */
+.actu-presentation h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Baseline de la carte */
+.actu-presentation .baseline {
+    font-size: 0.875rem;
+    color: #555;
+    line-height: 1.65;
+    margin: 0;
+    display: -webkit-box;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Lien "Lire la suite" */
+.suite {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    color: #1a4fa3;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s ease, gap 0.2s ease;
+    width: fit-content;
+    margin-top: 4px;
+}
+
+.suite:hover {
+    color: #163f85;
+    gap: 8px;
+}
+
+/* =============================================
+   BADGE QUALITÉ (si inclus dans le HTML)
+   ============================================= */
+
+.badge-categorie {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #1a4fa3;
+    background-color: #e8effa;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* =============================================
+   BLOC NEWSLETTER
+   ============================================= */
+
+.newsletter-block {
+    background-color: #1a4fa3;
+    border-radius: 12px;
+    padding: 50px 60px;
+    color: #fff;
+    margin-bottom: 40px;
+}
+
+.newsletter-block h2 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 800;
+    margin: 0 0 8px;
+    color: #fff;
+}
+
+.newsletter-block p {
+    font-size: 0.9rem;
+    margin: 0 0 6px;
+    opacity: 0.9;
+}
+
+.newsletter-block .ne-ratez {
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.newsletter-form {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
+
+.newsletter-form input[type="email"] {
+    flex: 1 1 240px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.9rem;
+    color: #333;
+    outline: none;
+    min-width: 200px;
+}
+
+.newsletter-form button {
+    background-color: #0d2f6b;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    white-space: nowrap;
+}
+
+.newsletter-form button:hover {
+    background-color: #071d47;
+}
+
+/* =============================================
+   ÉTAT VIDE
+   ============================================= */
+
+.desole {
+    text-align: center;
+    color: #888;
+    font-size: 1rem;
+    padding: 60px 0;
+}
+
+/* =============================================
+   RESPONSIVE — TABLETTE (≤ 900px)
+   ============================================= */
+
+@media (max-width: 900px) {
+    .actu-holder {
+        padding: 40px 28px 60px;
+    }
+
+    /* À la une : empilé */
+    .une-container {
+        flex-direction: column;
+        gap: 32px;
+    }
+
+    .une-container .left-side,
+    .une-container .right-side {
+        flex: none;
+        width: 100%;
+    }
+
+    .une-container .right-side {
+        justify-content: center;
+    }
+
+    .une-container .right-side .img-presentation {
+        max-width: 100%;
+        height: 240px;
+    }
+
+    /* Grille : 2 colonnes */
+    .liste-actu {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+
+    /* Newsletter */
+    .newsletter-block {
+        padding: 40px 32px;
+    }
+}
+
+/* =============================================
+   RESPONSIVE — MOBILE (≤ 600px)
+   ============================================= */
+
+@media (max-width: 600px) {
+    .actu-holder {
+        padding: 28px 18px 48px;
+    }
+
+    .une-container {
+        gap: 24px;
+        margin-bottom: 40px;
+    }
+
+    .une-container .left-side h1 {
+        font-size: 1.5rem;
+    }
+
+    .une-container .right-side .img-presentation {
+        height: 200px;
+    }
+
+    .actu-separateur {
+        margin: 40px 0;
+    }
+
+    .actu-holder > h1 {
+        font-size: 1.7rem;
+        margin-bottom: 28px;
+    }
+
+    /* Grille : 1 colonne */
+    .liste-actu {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .actu-presentation .img-presentation {
+        height: 200px;
+    }
+
+    /* Newsletter */
+    .newsletter-block {
+        padding: 32px 20px;
+        border-radius: 8px;
+    }
+
+    .newsletter-form {
+        flex-direction: column;
+    }
+
+    .newsletter-form input[type="email"],
+    .newsletter-form button {
+        width: 100%;
+    }
+}
+
+
+
+
+
+
+.suite {
+    display: inline;          /* inline pur = width colle au texte */
+    background: none;
+    border: none;
+    color: #1a4fa3;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 4px;
+    text-decoration: none;
+    background-image: linear-gradient(#1a4fa3, #1a4fa3);
+    background-size: 0% 1.5px;
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    transition: background-size 0.3s ease, color 0.2s ease;
+}
+
+.suite:hover {
+    color: #163f85;
+    background-size: 100% 1.5px;
+}
