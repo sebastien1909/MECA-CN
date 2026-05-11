@@ -20,7 +20,6 @@ import fs from "fs";
 import "dotenv/config";
 import sha256 from "js-sha256";
 import { findSourceMap } from "module";
-import cors from 'cors'
 
 
 
@@ -59,7 +58,6 @@ const uploadMachines = multer({ storage: storageMachines });
 const app = express();
 app.set("view engine", "ejs");
 
-app.use(cors())
 app.use(express.static("public"));
 app.use(express.json())
 app.use(bodyParser.json());
@@ -914,7 +912,7 @@ app.get("/actualites", async function(req,res){
 
 
 app.get("/ajoutarticle", async function(req,res){
-   res.redirect("http://localhost:5173/")
+   res.redirect("admin/ajoutarticle")
 })
 
 
