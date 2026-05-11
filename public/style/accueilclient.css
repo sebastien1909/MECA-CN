@@ -345,6 +345,7 @@
         background: #f5f7fb;
         max-width: 1200px;
         margin: 40px auto 0;
+        margin-bottom:40px;
         border-radius: 28px;
         box-shadow: 0 25px 60px rgba(20,31,75,0.08);
     }
