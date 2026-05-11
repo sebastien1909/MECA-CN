@@ -887,9 +887,28 @@ app.get("/ajoutoffre", isAdmin, async function(req,res){
 })
 
 
+app.get("/actualites", async function(req,res){
+  const [actualites] = await pool.query("SELECT * FROM actualite ORDER BY date_publication DESC LIMIT 99999 OFFSET 1");
+  //console.log(actualites);
+  const [une] = await pool.query("SELECT * FROM actualite ORDER BY date_publication DESC LIMIT 1");
+  // console.log(une)
+  const actu_une = une[0];
+
+  res.render("actualite_liste", {
+    page_css1:"actu_liste.css",
+    page_css2:"headerclient.css",
+    une: actu_une,
+    actus:actualites
+  })
+})
 
 
-
+app.get("/ajoutarticle", async function(req,res){
+  res.render("admin/ajoutarticle", {
+    page_css1:"ajoutarticle.css",
+    page_css2:"headeradmin.css"
+  })
+})
 
 
 
@@ -897,6 +916,70 @@ app.get("/ajoutoffre", isAdmin, async function(req,res){
 
 
 // app.post
+
+
+
+app.post("/newsletter_add", async function(req,res){
+  try{
+    const email = req.body.mail
+    const date = new Date()
+    // console.log(email);
+    const [rows] = await pool.query("SELECT * FROM abonnement WHERE email = ?", [email])
+    // console.log(rows)
+
+    if (rows.length > 0){
+      const abonnement = rows[0];
+      if (abonnement.actif){
+          return res.status(200).json({
+                    success: false,
+                    message: "Cette adresse mail est déjà abonnée."
+                });
+      } else{
+        await pool.query("UPDATE abonnement SET actif = true WHERE email = ?", [email]);
+        return res.status(200).json({
+          success:true,
+          message:"Abonnement réactivé"
+        })
+      }
+    } else{
+      await pool.query("INSERT INTO abonnement (email, date_abonnement, actif) VALUES (?, ?, true)", [email,date])
+      return res.status(200).json({
+        success:true,
+        message:"Vous êtes maintenant abonné à la Newsletter"
+      })
+    }
+    
+  } catch(err){
+      console.error("Erreur SQL ou serveur : ", err);
+
+      return res.status(500).json({
+        success: false,
+        message: "Erreur lors de l'abonnement à la Newsletter"
+      });
+    }
+})
+
+app.post("/article", async function(req,res){
+  try{
+    const id = req.body.id;
+    //console.log(id);
+    const [article] = await pool.query("SELECT * FROM actualite WHERE id = ?", [id]);
+    // console.log(article);
+
+    const [autres] = await pool.query("SELECT * FROM actualite WHERE id != ? LIMIT 2", [id])
+    res.render("actualite", {
+      page_css1:"actualite.css",
+      page_css2:"headerclient.css",
+      article:article[0],
+      autres: autres
+    })
+
+  } catch (err){
+    console.error("Erreur SQL ou serveru : ", err);
+    res.status(500).send("Erreur lors de la récupération de l'article")
+  }
+})
+
 
 /* Route post qui permet d'arriver sur une offre d'emploi précise
 l'id de l'offre est passée en paramètre d'URL, puis récupéré

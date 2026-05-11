@@ -1,0 +1,126 @@
+<%- include("header") %>
+
+<div id="toast"></div>
+
+
+<section class="presentation">
+    <img src="<%= article.img_presentation %>" class="presentation_img">
+    <h1>
+        <%= article.titre %>
+    </h1>
+
+    <p class="date"> <%= new Date(article.date_publication).toLocaleDateString('fr-FR') %></p>
+</section>
+
+<a href="/actualite">
+    <h3>
+        ←   Retour aux actualités
+    </h3>
+</a>
+<main>
+    <div class="actu-content">
+        <%- article.contenu %>
+    </div>
+    <div class="right-part">
+        <h3>
+            Autres articles
+        </h3>
+
+        <% for (const element of autres){ %>
+            <div class="autre">
+                <img src="<%=element.img_presentation %>" class="autres-presentation">
+                <p class="date"><%= new Date(element.date_publication).toLocaleDateString('fr-FR') %></p>
+                <h4>
+                    <%= element.titre %>
+                </h4>
+            </div>
+            
+
+        <% } %>
+
+        <div class="newsletter">
+            <p class="newsletter-title">
+                NEWSLETTER
+            </p>
+
+            <p>
+                Recevez un mail lorsqu'un nouvel article est sortit.
+            </p>
+
+            <form id="newsletter-form">
+                <input type="email" placeholder="Votre email" name="mail" />
+                
+                <button type="submit">
+                    S'abonner
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
+
+
+<%- include ("footer") %>
+
+<script>
+
+    function showToast(message, type = "success"){
+
+        const toast = document.getElementById("toast");
+
+        toast.textContent = message;
+
+        toast.className = "";
+        toast.classList.add("show");
+        toast.classList.add(type);
+
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 3000);
+
+    }
+
+    const form = document.getElementById("newsletter-form");
+
+    form.addEventListener("submit", async function(e){
+
+        e.preventDefault();
+
+        const email = form.mail.value;
+
+        try{
+
+            const response = await fetch("/newsletter_add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    mail: email
+                })
+            });
+
+            const data = await response.json();
+
+            showToast(
+                data.message,
+                data.success ? "success" : "error"
+            );
+
+            if(data.success){
+                form.reset();
+            }
+
+        } catch(err){
+
+            console.error(err);
+
+            showToast(
+                "Erreur serveur.",
+                "error"
+            );
+
+        }
+
+    });
+
+</script>

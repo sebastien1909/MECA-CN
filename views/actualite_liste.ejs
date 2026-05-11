@@ -1,0 +1,79 @@
+<%- include("header") %>
+<section class="actu-holder">
+    <% if(une !== undefined){ %>
+
+
+        <div class="une-container">
+            <div class="left-side">
+                <span class="une-span">
+                    <img src="/img/icons/etoile.svg" class="star-icon">
+                    <p>À la une</p>
+                </span>
+
+                <h1>
+                    <%= une.titre %>
+                </h1>
+                <p>
+                    <%= une.baseline %>
+                </p>
+                <p class="date">
+                    <%= new Date(une.date_publication).toLocaleDateString('fr-FR') %>
+                </p>
+
+                <form method="POST" action="/article">
+                    <input name="id" value="<%= une.id %>" type="hidden">
+                    <button type="submit" class="lire-complet">
+                        Lire l'article complet →
+                    </button>
+                </form>
+            </div>
+            <div class="right-side">
+                <img src="<%=une.img_presentation %>" class="img-presentation">
+            </div>
+        </div>
+
+
+        <div class="actu-separateur"></div>
+
+
+        <h2>
+            FIL D'ACTUALITÉ
+        </h2>
+
+        <h1>
+            Découvrez toute notre actualité
+        </h1>
+
+        <div class="liste-actu">
+            <% for (const element of actus){ %>
+                <div class="actu-presentation">
+                    <img src="<%= element.img_presentation %>" class="img-presentation">
+                    <p class="date"><%= new Date(element.date_publication).toLocaleDateString('fr-FR') %></p>
+                    <h3>
+                        <%= element.titre %>
+                    </h3>
+
+                    <p class="baseline">
+                        <%= element.baseline %>
+                    </p>
+
+                    <form method="POST" action="/article">
+                        <input name="id" value="<%= element.id %>" type="hidden">
+                        <button class="suite" type="submit">
+                            Lire la suite →
+                        </button>
+                    </form>
+                </div>
+
+            <% } %>
+        </div>
+
+    <% } else { %>
+        <p class="desole">Aucune actualité pour le moment</p>
+    <% } %>
+
+</section>
+
+
+
+<%- include("footer") %>
