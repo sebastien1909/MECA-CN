@@ -20,6 +20,10 @@ import fs from "fs";
 import "dotenv/config";
 import sha256 from "js-sha256";
 import { findSourceMap } from "module";
+import cors from 'cors'
+
+
+
 
 // Multer
 // --- CONFIGURATION MULTER POUR LES PRODUITS ---
@@ -46,12 +50,18 @@ const storageMachines = multer.diskStorage({
 });
 const uploadMachines = multer({ storage: storageMachines });
 
+
+
+
+
 // Setting d'express
 // ==> sert à rendre les views
 const app = express();
 app.set("view engine", "ejs");
 
+app.use(cors())
 app.use(express.static("public"));
+app.use(express.json())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -904,10 +914,7 @@ app.get("/actualites", async function(req,res){
 
 
 app.get("/ajoutarticle", async function(req,res){
-  res.render("admin/ajoutarticle", {
-    page_css1:"ajoutarticle.css",
-    page_css2:"headeradmin.css"
-  })
+   res.redirect("http://localhost:5173/")
 })
 
 
@@ -915,7 +922,42 @@ app.get("/ajoutarticle", async function(req,res){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 // app.post
+
+
+
+
+
+app.post('/api/articles', (req, res) => {
+  const article = req.body
+
+  const id = Date.now()
+
+  fs.writeFileSync(
+    `articles/${id}.json`,
+    JSON.stringify(article, null, 2)
+  )
+
+  res.json({ success: true, id })
+})
+
+
+
+
+
+
+
 
 
 
