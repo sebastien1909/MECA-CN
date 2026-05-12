@@ -2,7 +2,9 @@
 
 <div class="admin-container">
 
-  <input type="text" id="titre" placeholder="Titre de l'article">
+  <input type="text"  id="titre" placeholder="Titre de l'article" required>
+  <input type="text" id="baseline" placeholder="Baseline de l'article (courte description)" required>
+  <input type="file" id="presentation" accept="image/*" required>
 
   <textarea id="editor" placeholder="/titre&#10;Bonjour&#10;&#10;/paragraphe&#10;Je suis un paragraphe"></textarea>
 
@@ -15,99 +17,385 @@
 
 </div>
 
-<script src="/js/cms.js"></script>
-
 <%- include("footer") %>
 
 
 <script>
+  const COMMANDES = [
+    { label: 'Titre 1', valeur: '/titre1', icone: 'H1' },
+    { label: 'Titre 2', valeur: '/titre2', icone: 'H2' },
+    { label: 'Paragraphe', valeur: '/paragraphe', icone: '¶'  },
+    { label: 'Citation', valeur: '/citation', icone: '"'  },
+    { label: 'Image', valeur: '/image', icone: '🖼' },
+    { label: 'Gras', valeur: '/gras', icone: 'G'  },
+    { label: 'Italique', valeur: '/italique', icone: 'I'  },
+    { label: 'Souligné',valeur: '/souligne', icone: 'S'  },
+    { label: 'Surligné', valeur: '/surligne',icone: '▬'  },
+    { label: 'Normal',valeur: '/normal', icone: 'N'  },
+    { label: 'Séparateur', valeur: '/separateur', icone: '—'  },
+  ];
 
-  function parseCMS(text){
+  const editor = document.querySelector('#editor');
+  const preview = document.querySelector('#preview');
+  let menu = null;
+  let slashLineIndex = -1;
 
-    const lines = text.split('\n')
+  // --- MENU ---
 
-    let html = ''
+  function creerMenu(commandes) {
+    const div = document.createElement('div');
+    div.id = 'cms-menu';
+    div.style.cssText = `
+      position: absolute;
+      background: var(--color-background-primary, #fff);
+      border: 0.5px solid var(--color-border-secondary, #ccc);
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      overflow: hidden;
+      z-index: 999;
+      min-width: 200px;
+      font-family: sans-serif;
+    `;
 
-    let currentCommand = ''
+    if (commandes.length === 0) {
+      const vide = document.createElement('div');
+      vide.style.cssText = `padding: 10px 14px; font-size: 13px; color: var(--color-text-secondary, #888);`;
+      vide.textContent = 'Aucun résultat';
+      div.append(vide);
+      return div;
+    }
 
-    lines.forEach(line => {
+    commandes.forEach((cmd, i) => {
+      const item = document.createElement('div');
+      item.dataset.index = i;
+      item.style.cssText = `
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 14px;
+        cursor: pointer;
+        font-size: 14px;
+        color: var(--color-text-primary, #111);
+        transition: background 0.1s;
+      `;
 
-        line = line.trim()
+      const badge = document.createElement('span');
+      badge.textContent = cmd.icone;
+      badge.style.cssText = `
+        width: 26px;
+        height: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--color-background-secondary, #f5f5f5);
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 500;
+        flex-shrink: 0;
+      `;
 
-        if(line.startsWith('/')){
-            currentCommand = line.toLowerCase()
-            return
-        }
+      const label = document.createElement('span');
+      label.textContent = cmd.label;
 
-        if(line === '') return
+      item.append(badge, label);
+      item.addEventListener('mouseenter', () => surbrillance(i));
+      item.addEventListener('click', () => inserer(i));
+      div.append(item);
+    });
 
-        switch(currentCommand){
-
-            case '/titre':
-                html += `
-                    <h1 class="article-titre">
-                        ${line}
-                    </h1>
-                `
-            break
-
-            case '/paragraphe':
-                html += `
-                    <p class="article-paragraphe">
-                        ${line}
-                    </p>
-                `
-            break
-
-            case '/citation':
-                html += `
-                    <blockquote class="article-citation">
-                        ${line}
-                    </blockquote>
-                `
-            break
-
-        }
-
-    })
-
-    return html
+    return div;
   }
 
-  const editor = document.querySelector('#editor')
-  const preview = document.querySelector('#preview')
+  function surbrillance(index) {
+    if (!menu) return;
+    [...menu.querySelectorAll('[data-index]')].forEach((el, i) => {
+      el.style.background = i === index
+        ? 'var(--color-background-secondary, #f5f5f5)'
+        : 'transparent';
+    });
+  }
 
-  document.querySelector('#preview-btn')
-  .addEventListener('click', () => {
+  function positionnerMenu() {
+    const rect = editor.getBoundingClientRect();
+    const scrollTop = window.scrollY;
+    const lineHeight = parseInt(getComputedStyle(editor).lineHeight) || 20;
+    const lines = editor.value.substr(0, editor.selectionStart).split('\n');
+    // +lineHeight pour descendre d'une ligne en dessous du curseur
+    const offsetY = lines.length * lineHeight;
 
-      preview.innerHTML = parseCMS(editor.value)
+    menu.style.left = (rect.left + 8) + 'px';
+    menu.style.top  = (rect.top + scrollTop + Math.min(offsetY, rect.height - 10) + lineHeight) + 'px';
+  }
 
-  })
+  function ouvrirMenu(filtre = '') {
+    // Trouver la ligne où se trouve le curseur
+    const lines = editor.value.split('\n');
+    const cursor = editor.selectionStart;
+    let compte = 0;
+    for (let i = 0; i < lines.length; i++) {
+      compte += lines[i].length + 1;
+      if (compte >= cursor) { slashLineIndex = i; break; }
+    }
 
-  document.querySelector('#save-btn')
-  .addEventListener('click', async () => {
+    const filtrees = COMMANDES.filter(cmd =>
+      cmd.label.toLowerCase().includes(filtre.toLowerCase()) ||
+      cmd.valeur.toLowerCase().includes(filtre.toLowerCase())
+    );
 
-      const contenu = parseCMS(editor.value)
+    // Reconstruire le menu avec les résultats filtrés
+    if (menu) menu.remove();
+    menu = creerMenu(filtrees);
+    // On stocke les commandes filtrées sur le menu pour y accéder depuis inserer()
+    menu._commandes = filtrees;
+    document.body.append(menu);
+    positionnerMenu();
+    if (filtrees.length > 0) surbrillance(0);
+  }
 
-      const data = {
-          titre: document.querySelector('#titre').value,
-          contenu
+  function fermerMenu() {
+    if (menu) { menu.remove(); menu = null; }
+    slashLineIndex = -1;
+  }
+
+  function inserer(index) {
+    // Utiliser les commandes filtrées stockées sur le menu
+    const commandes = menu?._commandes ?? COMMANDES;
+    if (index < 0 || index >= commandes.length) return;
+    const cmd = commandes[index];
+
+    const lines = editor.value.split('\n');
+    lines[slashLineIndex] = cmd.valeur;
+    editor.value = lines.join('\n');
+
+    // Placer le curseur après la commande insérée + saut de ligne
+    const nouvellePos = lines.slice(0, slashLineIndex + 1).join('\n').length + 1;
+    editor.focus();
+    editor.setSelectionRange(nouvellePos, nouvellePos);
+    fermerMenu();
+  }
+
+  // --- ÉVÉNEMENTS ---
+
+  editor.addEventListener('keydown', (e) => {
+    if (!menu) return;
+    const items = [...menu.querySelectorAll('[data-index]')];
+    if (items.length === 0) {
+      if (e.key === 'Escape') fermerMenu();
+      return;
+    }
+    const actif = items.findIndex(el =>
+      el.style.background && el.style.background !== 'transparent'
+    );
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      surbrillance((actif + 1) % items.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      surbrillance((actif - 1 + items.length) % items.length);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      inserer(actif >= 0 ? actif : 0);
+    } else if (e.key === 'Escape') {
+      fermerMenu();
+    }
+  });
+
+  editor.addEventListener('input', () => {
+    const cursor = editor.selectionStart;
+    const lines = editor.value.split('\n');
+    let compte = 0;
+    let ligneCourante = '';
+    for (let i = 0; i < lines.length; i++) {
+      compte += lines[i].length + 1;
+      if (compte >= cursor) { ligneCourante = lines[i]; break; }
+    }
+
+    const trimmed = ligneCourante.trim();
+
+    if (trimmed === '/') {
+      // Juste "/" : afficher toutes les commandes
+      ouvrirMenu('');
+    } else if (trimmed.startsWith('/') && !trimmed.slice(1).includes('/')) {
+      // "/para", "/ti", etc. : filtrer selon ce qui suit le "/"
+      ouvrirMenu(trimmed.slice(1));
+    } else {
+      fermerMenu();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (menu && !menu.contains(e.target) && e.target !== editor) fermerMenu();
+  });
+
+  // --- PARSING ---
+
+  function parseCMS(text) {
+    // Découpe le texte en tokens : commandes (/mot) et texte brut
+    // Une commande de "bloc" (titre, paragraphe, etc.) crée un nouvel élément block
+    // Une commande "inline" (gras, italique, etc.) s'applique au texte qui suit, dans le bloc courant
+
+    const BLOCS   = ['/titre1', '/titre2', '/paragraphe', '/citation', '/separateur', '/image'];
+    const INLINES = ['/gras', '/italique', '/souligne', '/surligne', '/normal'];
+
+    // Tokenisation : on découpe sur les commandes /mot
+    // Le regex capture la commande ET le texte qui suit jusqu'à la prochaine commande
+    const tokens = [];
+    const regex = /(\/[a-zéèàù0-9]+)|([^/]+(?:\/(?![a-zéèàù0-9])[^/]*)*)/gi;
+    
+    // Approche plus simple : split sur les commandes connues
+    const toutes = [...BLOCS, ...INLINES];
+    
+    // On construit une liste ordonnée de {type, texte}
+    // en parcourant le texte caractère par caractère via regex
+    const splitRegex = new RegExp(
+      '(' + toutes.map(c => c.replace('/', '\\/')).join('|') + ')',
+      'gi'
+    );
+    
+    const parts = text.split(splitRegex).filter(p => p !== undefined && p !== '');
+
+    let html = '';
+    let blocCourant = null;   // tag HTML du bloc en cours ('p', 'h1', etc.)
+    let contenuBloc = '';     // HTML accumulé dans le bloc courant
+    let inlineCourant = null; // tag inline en cours ('strong', 'em', etc.)
+
+    const tagBloc = {
+      '/titre1':{ open: '<h1 class="article-titre1">',  close: '</h1>'},
+      '/titre2':{ open: '<h2 class="article-titre2">', close: '</h2>'},
+      '/paragraphe':{ open: '<p class="article-paragraphe">', close: '</p>'},
+      '/citation': { open: '<blockquote class="article-citation">', close: '</blockquote>' },
+      '/image':{ open: '<img class="article-image" src="', close: '" alt="">'},
+      '/separateur':{ open: '<hr class="article-separateur">', close: ''},
+    };
+
+    const tagInline = {
+      
+      '/gras':{ open: '<strong>',close:'</strong>'},
+      '/italique': { open: '<em>', close: '</em>'},
+      '/souligne':{ open: '<span style="text-decoration:underline">', close: '</span>' },
+      '/surligne':{ open: '<mark>', close: '</mark>'},
+      '/normal': { open: '', close: '' }, // ne fait qu'appeler la fonction fermerInline()
+    };
+
+    function fermerInline() {
+      if (inlineCourant) {
+        contenuBloc += tagInline[inlineCourant].close;
+        inlineCourant = null;
       }
+    }
 
+    function fermerBloc() {
+      fermerInline();
+      if (blocCourant) {
+        if (blocCourant === '/separateur') {
+          html += tagBloc[blocCourant].open;
+        } else if (blocCourant === '/image') {
+          html += tagBloc[blocCourant].open + contenuBloc.trim() + tagBloc[blocCourant].close;
+        } else {
+          html += tagBloc[blocCourant].open + contenuBloc + tagBloc[blocCourant].close;
+        }
+        blocCourant = null;
+        contenuBloc = '';
+      }
+    }
+
+    parts.forEach(part => {
+      const partLower = part.toLowerCase().trim();
+
+      if (tagBloc[partLower] !== undefined) {
+        // Nouvelle commande de bloc -> on ferme ce qui était ouvert
+        fermerBloc();
+        blocCourant = partLower;
+
+      } else if (tagInline[partLower] !== undefined) {
+          // Commande inline -> on ferme l'inline précédent, on ouvre le nouveau
+          if (!blocCourant) {
+            blocCourant = '/paragraphe';
+          }
+          fermerInline();
+          // /normal ferme juste le style sans en ouvrir un nouveau
+          if (partLower !== '/normal') {
+            inlineCourant = partLower;
+            contenuBloc += tagInline[inlineCourant].open;
+          }
+      } else {
+        // Texte brut
+        const texte = part
+          .replace(/^\n+/, '')   // retirer les sauts de ligne en début
+          .replace(/\n+$/, '')   // et en fin
+          .replace(/\n/g, ' ');  // les sauts de ligne internes deviennent des espaces
+
+        if (texte === '') return;
+
+        if (!blocCourant) {
+          blocCourant = '/paragraphe';
+        }
+        contenuBloc += texte;
+      }
+    });
+
+    // Fermer ce qui reste ouvert
+    fermerBloc();
+
+    return html;
+  }
+
+  // --- BOUTONS ---
+
+  document.querySelector('#preview-btn').addEventListener('click', () => {
+    preview.innerHTML = parseCMS(editor.value);
+  });
+
+  document.querySelector('#save-btn').addEventListener('click', async () => {
+    const titre = document.querySelector('#titre').value.trim();
+    const baseline = document.querySelector('#baseline').value.trim();
+    const fichierImage = document.querySelector('#presentation').files[0];
+    const contenu = parseCMS(editor.value);
+
+    // Validation
+    if (!titre) {
+      alert('Le titre est obligatoire.');
+      document.querySelector('#titre').focus();
+      return;
+    }
+    if (!baseline) {
+      alert('La baseline est obligatoire.');
+      document.querySelector('#baseline').focus();
+      return;
+    }
+    if (!fichierImage) {
+      alert("L'image de présentation est obligatoire.");
+      document.querySelector('#presentation').focus();
+      return;
+    }
+    if (!contenu) {
+      alert("Le contenu de l'article est vide.");
+      editor.focus();
+      return;
+    }
+
+    // FormData pour envoyer le fichier + les champs texte ensemble
+    const formData = new FormData();
+    formData.append('titre', titre);
+    formData.append('baseline', baseline);
+    formData.append('presentation', fichierImage); // le champ doit correspondre à uploadActu.single("presentation")
+    formData.append('contenu', contenu);
+
+    try {
       const res = await fetch('/api/articles', {
-          method:'POST',
-          headers:{
-              'Content-Type':'application/json'
-          },
-          body: JSON.stringify(data)
-      })
-
-      const result = await res.json()
-
-      alert('Article publié')
-
-      console.log(result)
-
-  })
-
+        method: 'POST',
+        // Pas de Content-Type ici : le navigateur le définit automatiquement avec le boundary multipart
+        body: formData
+      });
+      const result = await res.json();
+      if (result.success) {
+        alert('Article publié avec succès !');
+      } else {
+        alert('Erreur : ' + (result.message || 'Publication échouée.'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erreur réseau, réessayez.');
+    }
+  });
 </script>

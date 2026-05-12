@@ -52,6 +52,17 @@ const storageMachines = multer.diskStorage({
 const uploadMachines = multer({ storage: storageMachines });
 
 
+const storageActu = multer.diskStorage({
+  destination: (req, file, cb) =>{
+    cb(null, "public/img/actus");
+  },
+  filename: (req, file, cb) =>{
+    const ext = path.extname(file.originalname);
+    cb(null, "Actu_main" + Date.now() + ext)
+  },
+});
+const uploadActu = multer({ storage: storageActu})
+
 
 
 
@@ -943,6 +954,16 @@ app.get("/ajoutarticle", isAdmin, async function(req,res){
 })
 
 
+app.get("/actualite/:id", async function(req,res){
+  const [rows] = await pool.query("SELECT * FROM actualite WHERE id = ?", [req.params.id])
+
+  const article = rows[0];
+  res.render('actualite', {
+    article
+  })
+})
+
+
 
 
 
@@ -961,8 +982,7 @@ app.get("/ajoutarticle", isAdmin, async function(req,res){
 // app.post
 
 
-app.post("/api/articles", async function(req,res){
-
+app.post("/api/articles", async function(req, res) {
   /*
   titre = titre de l'article
   contenu = contenu de l'article (récupéré sous forme de HTML (
@@ -979,22 +999,33 @@ app.post("/api/articles", async function(req,res){
   date_publication et redacteur créés dans l'appel à l'API
   */
 
-  const {titre, contenu, presentation, baseline} = req.body;
-  const date = new Date();
-  const redacteur_id = req.session.userID;
-  const [redacteurs] = await pool.query("SELECT identifiant FROM utilisateurs WHERE id = ?", [redacteur_id])
-  const redacteur = redacteurs[0].identifiant
-  // console.log(redacteur)
+  const { titre, baseline, contenu } = req.body;
+  const presentation = req.file ? "/img/actus/" + req.file.filename : null;
 
-  await pool.query(`
-    insert into ACTUALITES 
-    (contenu, date_publication, redacteur, titre, baseline, img_presentation) 
-    VALUES (?, ?, ?, ?, ?, ?)`, 
-    [contenu, date, redacteur, titre, baseline, presentation]);
+  // Validation serveur
+  if (!titre || !contenu || !presentation || !baseline) {
+    return res.status(400).json({ success: false, message: 'Tous les champs sont obligatoires.' });
+  }
 
-    res.json({
-      success:true
-    });
+  try {
+    const date = new Date();
+    const redacteur_id = req.session.userID;
+    const [redacteurs] = await pool.query(
+      "SELECT identifiant FROM utilisateurs WHERE id = ?", [redacteur_id]
+    );
+    const redacteur = redacteurs[0].identifiant;
+
+    await pool.query(`
+      INSERT INTO actualite (contenu, date_publication, redacteur, titre, baseline, img_presentation)
+      VALUES (?, ?, ?, ?, ?, ?)`,
+      [contenu, date, redacteur, titre, baseline, presentation]
+    );
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Erreur SQL :", err);
+    res.status(500).json({ success: false, message: "Erreur serveur." });
+  }
 });
 
 
