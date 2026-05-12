@@ -1,22 +1,113 @@
 <%- include("header") %>
 
+<div class="admin-container">
 
-<div id="editor"></div>
+  <input type="text" id="titre" placeholder="Titre de l'article">
 
+  <textarea id="editor" placeholder="/titre&#10;Bonjour&#10;&#10;/paragraphe&#10;Je suis un paragraphe"></textarea>
 
+  <button id="preview-btn">Prévisualiser</button>
+  <button id="save-btn">Publier</button>
 
+  <h2>Prévisualisation :</h2>
 
+  <div id="preview"></div>
 
-<script type="module">
-  import { Editor } from 'https://esm.sh/@tiptap/core'
-  import StarterKit from 'https://esm.sh/@tiptap/starter-kit'
+</div>
 
-  const editor = new Editor({
-    element: document.querySelector('#editor'),
-    extensions: [StarterKit],
-    content: '<p>Hello world</p>',
-  })
-</script>
+<script src="/js/cms.js"></script>
 
 <%- include("footer") %>
 
+
+<script>
+
+  function parseCMS(text){
+
+    const lines = text.split('\n')
+
+    let html = ''
+
+    let currentCommand = ''
+
+    lines.forEach(line => {
+
+        line = line.trim()
+
+        if(line.startsWith('/')){
+            currentCommand = line.toLowerCase()
+            return
+        }
+
+        if(line === '') return
+
+        switch(currentCommand){
+
+            case '/titre':
+                html += `
+                    <h1 class="article-titre">
+                        ${line}
+                    </h1>
+                `
+            break
+
+            case '/paragraphe':
+                html += `
+                    <p class="article-paragraphe">
+                        ${line}
+                    </p>
+                `
+            break
+
+            case '/citation':
+                html += `
+                    <blockquote class="article-citation">
+                        ${line}
+                    </blockquote>
+                `
+            break
+
+        }
+
+    })
+
+    return html
+  }
+
+  const editor = document.querySelector('#editor')
+  const preview = document.querySelector('#preview')
+
+  document.querySelector('#preview-btn')
+  .addEventListener('click', () => {
+
+      preview.innerHTML = parseCMS(editor.value)
+
+  })
+
+  document.querySelector('#save-btn')
+  .addEventListener('click', async () => {
+
+      const contenu = parseCMS(editor.value)
+
+      const data = {
+          titre: document.querySelector('#titre').value,
+          contenu
+      }
+
+      const res = await fetch('/api/articles', {
+          method:'POST',
+          headers:{
+              'Content-Type':'application/json'
+          },
+          body: JSON.stringify(data)
+      })
+
+      const result = await res.json()
+
+      alert('Article publié')
+
+      console.log(result)
+
+  })
+
+</script>

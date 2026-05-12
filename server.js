@@ -14,12 +14,14 @@ import crypto from "crypto";
 import bodyParser from "body-parser";
 import pool from "./db.js";
 import multer from "multer";
-import path from "path";
 import nodemailer from "nodemailer";
 import fs from "fs";
+import path from "path";
 import "dotenv/config";
 import sha256 from "js-sha256";
 import { findSourceMap } from "module";
+import {generateHTML} from '@tiptap/html';
+import StarterKit from '@tiptap/starter-kit';
 
 
 
@@ -58,6 +60,7 @@ const uploadMachines = multer({ storage: storageMachines });
 const app = express();
 app.set("view engine", "ejs");
 
+app.use(express.urlencoded({extended:true}))
 app.use(express.static("public"));
 app.use(express.json())
 app.use(bodyParser.json());
@@ -908,11 +911,35 @@ app.get("/actualites", async function(req,res){
     une: actu_une,
     actus:actualites
   })
+});
+
+
+
+app.get("/articles/:id", (req,res) => {
+  const file = fs.readFileSync(
+    `articles/${req.params.id}.json`
+  );
+  const article = JSON.parse(file);
+
+  const html = generateHTML(article.content, [StarterKit])
+
+  res.render('actualite', {
+    article: article,
+    content:html
+  })
 })
 
 
-app.get("/ajoutarticle", async function(req,res){
-   res.redirect("admin/ajoutarticle")
+
+
+
+app.get("/ajoutarticle", isAdmin, async function(req,res){
+
+
+  res.render("admin/ajoutarticle", {
+    page_css1:"ajoutarticle.css",
+    page_css2:"headeradmin.css"
+   })
 })
 
 
@@ -934,29 +961,41 @@ app.get("/ajoutarticle", async function(req,res){
 // app.post
 
 
+app.post("/api/articles", async function(req,res){
 
+  /*
+  titre = titre de l'article
+  contenu = contenu de l'article (récupéré sous forme de HTML (
+    "<h1> ... </h1>
+     <p> ... </p> 
+     ..."
+    ))
 
+  presentation = image de presentation (image principale)
+  baseline = courte description 
 
-app.post('/api/articles', (req, res) => {
-  const article = req.body
+  Le tout est envoyé dans la BDD (table actualites)
 
-  const id = Date.now()
+  date_publication et redacteur créés dans l'appel à l'API
+  */
 
-  fs.writeFileSync(
-    `articles/${id}.json`,
-    JSON.stringify(article, null, 2)
-  )
+  const {titre, contenu, presentation, baseline} = req.body;
+  const date = new Date();
+  const redacteur_id = req.session.userID;
+  const [redacteurs] = await pool.query("SELECT identifiant FROM utilisateurs WHERE id = ?", [redacteur_id])
+  const redacteur = redacteurs[0].identifiant
+  // console.log(redacteur)
 
-  res.json({ success: true, id })
-})
+  await pool.query(`
+    insert into ACTUALITES 
+    (contenu, date_publication, redacteur, titre, baseline, img_presentation) 
+    VALUES (?, ?, ?, ?, ?, ?)`, 
+    [contenu, date, redacteur, titre, baseline, presentation]);
 
-
-
-
-
-
-
-
+    res.json({
+      success:true
+    });
+});
 
 
 app.post("/newsletter_add", async function(req,res){

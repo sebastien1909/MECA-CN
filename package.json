@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@tiptap/core": "^3.23.1",
+    "@tiptap/html": "^3.23.1",
     "@tiptap/pm": "^3.23.1",
     "@tiptap/starter-kit": "^3.23.1",
     "animate.css": "^4.1.1",

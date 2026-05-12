@@ -1,0 +1,22 @@
+#editor{
+    width:100%;
+    min-height:300px;
+    padding:20px;
+    font-size:16px;
+}
+
+#preview{
+    border:1px solid #444;
+    padding:20px;
+    margin-top:20px;
+}
+
+.article-titre{
+    font-size:32px;
+    margin-bottom:20px;
+}
+
+.article-paragraphe{
+    margin-bottom:15px;
+    line-height:1.6;
+}
