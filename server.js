@@ -963,6 +963,20 @@ app.get("/actualite/:id", async function(req,res){
   })
 })
 
+app.get("/admin/actu", async function(req,res){
+  const [actualites] = await pool.query("SELECT * FROM actualite ORDER BY date_publication DESC LIMIT 99999 OFFSET 1");
+  //console.log(actualites);
+  const [une] = await pool.query("SELECT * FROM actualite ORDER BY date_publication DESC LIMIT 1");
+  // console.log(une)
+  const actu_une = une[0];
+
+  res.render("admin/actualite_liste", {
+    page_css1:"headeradmin.css",
+    page_css2:"actualite-liste.css",
+    une: actu_une,
+    actus:actualites
+  })
+})
 
 
 
@@ -982,7 +996,20 @@ app.get("/actualite/:id", async function(req,res){
 // app.post
 
 
-app.post("/api/articles", async function(req, res) {
+
+
+app.post("/supprimerArticle", isAdmin, async function(req,res){
+  const idNews = req.body.id;
+  // console.log(idNews);
+  await pool.query("DELETE FROM actualite WHERE id = ?", [idNews])
+
+  res.redirect("/admin/actu")
+})
+
+
+
+
+app.post("/api/articles", isAdmin, uploadActu.single("presentation"), async function(req, res) {
   /*
   titre = titre de l'article
   contenu = contenu de l'article (récupéré sous forme de HTML (

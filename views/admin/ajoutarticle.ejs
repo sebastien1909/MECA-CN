@@ -295,7 +295,7 @@
           html += tagBloc[blocCourant].open + contenuBloc + tagBloc[blocCourant].close;
         }
         blocCourant = null;
-        contenuBloc = '';
+        contentBloc: '';
       }
     }
 
@@ -340,7 +340,7 @@
     return html;
   }
 
-  // --- BOUTONS ---
+  // Boutons
 
   document.querySelector('#preview-btn').addEventListener('click', () => {
     preview.innerHTML = parseCMS(editor.value);
@@ -374,19 +374,19 @@
       return;
     }
 
-    // FormData pour envoyer le fichier + les champs texte ensemble
+
     const formData = new FormData();
     formData.append('titre', titre);
     formData.append('baseline', baseline);
-    formData.append('presentation', fichierImage); // le champ doit correspondre à uploadActu.single("presentation")
+    formData.append('presentation', fichierImage); 
     formData.append('contenu', contenu);
 
     try {
       const res = await fetch('/api/articles', {
         method: 'POST',
-        // Pas de Content-Type ici : le navigateur le définit automatiquement avec le boundary multipart
         body: formData
       });
+      console.log(res);
       const result = await res.json();
       if (result.success) {
         alert('Article publié avec succès !');

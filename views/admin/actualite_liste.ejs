@@ -30,6 +30,14 @@
             <div class="right-side">
                 <img src="<%=une.img_presentation %>" class="img-presentation">
             </div>
+
+
+            <form method="POST" action="/supprimerArticle">
+                <input name="id" value="<%= une.id %>" type="hidden">
+                <button type="submit" class="supprimer-article">
+                    <img src="/img/icons/poubelle.png" class="supprimer-icon">
+                </button> 
+            </form>
         </div>
 
 
@@ -61,6 +69,14 @@
                         <form id="form-<%= element.id %>" method="POST" action="/article" style="display:none">
                             <input name="id" value="<%= element.id %>">
                         </form>
+
+
+                    <form method="POST" action="/supprimerArticle">
+                        <input name="id" value="<%= element.id %>" type="hidden">
+                        <button type="submit" class="supprimer-article">
+                            <img src="/img/icons/poubelle.png" class="supprimer-icon">
+                        </button> 
+                    </form>
                 </div>
 
             <% } %>
