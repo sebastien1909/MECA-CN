@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : lun. 11 mai 2026 à 15:00
+-- Généré le : mar. 12 mai 2026 à 13:44
 -- Version du serveur : 9.1.0
 -- Version de PHP : 8.3.14
 
@@ -60,14 +60,14 @@ CREATE TABLE IF NOT EXISTS `actualite` (
   `baseline` varchar(255) DEFAULT NULL,
   `img_presentation` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `actualite`
 --
 
 INSERT INTO `actualite` (`id`, `contenu`, `date_publication`, `redacteur`, `titre`, `baseline`, `img_presentation`) VALUES
-(1, '<h1 class=\"actu-title\">Certification ISO 9001:2015 obtenue</h1>\r\n<p class=\"actu-texte\">MECA-CN franchit une étape importante en obtenant la certification ISO 9001:2015. Cette reconnaissance atteste de la rigueur des processus de production et de la volonté constante d’améliorer la qualité des pièces usinées.</p>\r\n<img src=\"/img/placeholders/usinage1.png\" class=\"actu-img\">', '2026-04-15 09:00:00', 'Direction qualité', 'Certification ISO 9001:2015 obtenue', 'MECA-CN obtient la certification ISO 9001:2015, validant la conformité de son système qualité et son engagement dans l’amélioration continue des processus industriels.', '/img/placeholders/iso9001.jpg'),
+(1, '<h1 class=\"actu-title\">Certification ISO 9001:2015 obtenue</h1>\n<p class=\"actu-texte\">MECA-CN franchit une étape importante en obtenant la certification ISO 9001:2015. Cette reconnaissance atteste de la rigueur des processus de production et de la volonté constante d’améliorer la qualité des pièces usinées.</p>\n<img src=\"/img/placeholders/usinage1.png\" class=\"actu-img\">', '2026-04-15 09:00:00', 'Direction qualité', 'Certification ISO 9001:2015 obtenue', 'MECA-CN obtient la certification ISO 9001:2015, validant la conformité de son système qualité et son engagement dans l’amélioration continue des processus industriels.', '/img/placeholders/iso9001.jpg'),
 (2, '<h1 class=\"actu-title\">Arrivée d’une nouvelle machine 5 axes</h1>\r\n<p class=\"actu-texte\">L’atelier s’équipe d’une nouvelle machine de fraisage 5 axes, améliorant fortement la capacité de production sur des pièces complexes tout en réduisant les temps d’usinage.</p>\r\n<img src=\"/img/placeholders/usinage1.png\" class=\"actu-img\">', '2026-03-28 14:30:00', 'Responsable production', 'Arrivée d’une nouvelle machine 5 axes', 'Installation d’une machine de fraisage 5 axes de dernière génération permettant d’augmenter la précision et la complexité des pièces usinées.', '/img/placeholders/machine5axes.jpg'),
 (3, '<h1 class=\"actu-title\">Réorganisation de l’atelier CNC</h1>\r\n<p class=\"actu-texte\">Une nouvelle organisation de l’atelier CNC a été mise en place afin d’améliorer la circulation des pièces et d’optimiser l’efficacité des opérateurs.</p>\r\n<img src=\"/img/placeholders/usinage1.png\" class=\"actu-img\">', '2025-11-10 08:15:00', 'Chef d’atelier', 'Reorganisation de l’atelier CNC', 'Réorganisation des postes de travail dans l’atelier CNC afin d’optimiser les flux de production et réduire les temps de déplacement.', '/img/placeholders/atelier_cnc.jpg'),
 (4, '<h1 class=\"actu-title\">Nouveau système de gestion des stocks</h1>\r\n<p class=\"actu-texte\">Un nouveau système de gestion des stocks a été déployé afin de suivre plus efficacement les matières premières et limiter les ruptures dans l’atelier de production.</p>\r\n<img src=\"/img/placeholders/usinage1.png\" class=\"actu-img\">', '2025-06-22 10:00:00', 'Administration', 'Nouveau système de gestion des stocks', 'Mise en place d’un système de gestion des stocks permettant un meilleur suivi des matières premières et une réduction des ruptures en production.', '/img/placeholders/stock_system.jpg');

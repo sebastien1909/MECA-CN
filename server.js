@@ -22,7 +22,7 @@ import sha256 from "js-sha256";
 import { findSourceMap } from "module";
 import {generateHTML} from '@tiptap/html';
 import StarterKit from '@tiptap/starter-kit';
-
+import { fileURLToPath } from 'url';
 
 
 
@@ -51,7 +51,7 @@ const storageMachines = multer.diskStorage({
 });
 const uploadMachines = multer({ storage: storageMachines });
 
-
+// --- CONFIGURATION MULTER POUR LES ACTUS --- 
 const storageActu = multer.diskStorage({
   destination: (req, file, cb) =>{
     cb(null, "public/img/actus");
@@ -63,7 +63,8 @@ const storageActu = multer.diskStorage({
 });
 const uploadActu = multer({ storage: storageActu})
 
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
 // Setting d'express
@@ -998,13 +999,37 @@ app.get("/admin/actu", async function(req,res){
 
 
 
-app.post("/supprimerArticle", isAdmin, async function(req,res){
-  const idNews = req.body.id;
-  // console.log(idNews);
-  await pool.query("DELETE FROM actualite WHERE id = ?", [idNews])
+app.post("/supprimerArticle", isAdmin, async function(req, res) {
+    const idNews = req.body.id;
 
-  res.redirect("/admin/actu")
-})
+    try {
+        // Récupérer l'article avant de le supprimer de la BDD
+        const [rows] = await pool.query("SELECT img_presentation FROM actualite WHERE id = ?", [idNews]);
+        
+        if (rows.length > 0 && rows[0].img_presentation) {
+            const img_path = rows[0].img_presentation;
+
+            // Construire le chemin absolu
+            // Si img_path est "/img/actus/photo.jpg", on le joint proprement
+            const fullPath = path.join(__dirname, 'public', img_path);
+
+            // Supprimer le fichier
+            if (fs.existsSync(fullPath)) {
+                fs.unlinkSync(fullPath);
+                // console.log("Fichier supprimé :", fullPath);
+            }
+        }
+
+        // Supprimer dans la bdd
+        await pool.query("DELETE FROM actualite WHERE id = ?", [idNews]);
+
+        res.redirect("/admin/actu");
+
+    } catch (err) {
+        console.error("Erreur lors de la suppression :", err);
+        res.status(500).send("Erreur lors de la suppression de l'article.");
+    }
+});
 
 
 
@@ -1056,14 +1081,23 @@ app.post("/api/articles", isAdmin, uploadActu.single("presentation"), async func
 });
 
 
+
+/*
+route POST ajoutant l'adresse mail de la personne à la table de newslette
+Vérifie si l'addresse est déjà présente dans la bdd ou non, ou bien si elle est "active" ou "innactive"
+*/
 app.post("/newsletter_add", async function(req,res){
   try{
+    // Récupération de l'addresse mail et de la date (date -> pour statistiques)
     const email = req.body.mail
     const date = new Date()
     // console.log(email);
+
+    // regarde si l'address mail est déjà présente dans la table
     const [rows] = await pool.query("SELECT * FROM abonnement WHERE email = ?", [email])
     // console.log(rows)
 
+    // S'il y a déjà une addresse mail ↓
     if (rows.length > 0){
       const abonnement = rows[0];
       if (abonnement.actif){
@@ -1096,6 +1130,13 @@ app.post("/newsletter_add", async function(req,res){
     }
 })
 
+
+
+/*
+route POST qui renvoie à la page des détails sur un article d'actualité précis
+Récupération de l'id depuis l'URL (envoyé grace au formulaire metho POST)
+récupération de l'article grace à cet id
+*/
 app.post("/article", async function(req,res){
   try{
     const id = req.body.id;
@@ -1103,6 +1144,7 @@ app.post("/article", async function(req,res){
     const [article] = await pool.query("SELECT * FROM actualite WHERE id = ?", [id]);
     // console.log(article);
 
+    // Récupération des autres articles pour les afficher sur la page
     const [autres] = await pool.query("SELECT * FROM actualite WHERE id != ? LIMIT 2", [id])
     res.render("actualite", {
       page_css1:"actualite.css",
@@ -1110,6 +1152,8 @@ app.post("/article", async function(req,res){
       article:article[0],
       autres: autres
     })
+
+    
 
   } catch (err){
     console.error("Erreur SQL ou serveru : ", err);
@@ -1162,11 +1206,20 @@ app.post("/consulter_offre", async function (req, res) {
   }
 });
 
+
+/*
+route POST pour ajouter une offre d'emploi
+Elle est longue, il faut pas se décourager
+*/
 app.post("/ajouteroffre", async function(req,res){
 
   //cconsole.log(req.body)
 
-  // Récupération des paramètres
+  /* 
+  Récupération des paramètres (différentes informations de l'offre)
+  -> textes
+  -> ON / OFF pour les informations plus "complémentaires"
+  */
   
   const intitule = req.body.intitule;
   const type = req.body["type-offre"];
@@ -1184,19 +1237,19 @@ app.post("/ajouteroffre", async function(req,res){
   let avantageEnable = req.body["avantage-switch"]
   let recrutementEnable = req.body["recrutement-switch"]
   let infosEnable = req.body["infos-switch"]
-  
-
   // console.log(infosEnable);
-
   let categorie = req.body.categorie;
 
   if(categorie === "autre"){
     categorie = req.body.nouvelleCategorie;
   }
 
+  // Récupération de la date actuelle, pour préciser depuis quand l'offre est disponible
   const today = new Date();
 
-  // On récupère chaque élément et on s'assure qu'ils ont 2 chiffres avec padStart(2, '0')
+
+  // Mise en forme de la date pour correspondre au format demandé JJ/MM/AAAA
+  // On s'assure qu'ils ont 2 chiffres avec padStart(2, '0')
   const yyyy = today.getFullYear();
   const mm = String(today.getMonth() + 1).padStart(2, '0'); // Janvier est 0 !
   const dd = String(today.getDate()).padStart(2, '0');
@@ -1211,6 +1264,7 @@ app.post("/ajouteroffre", async function(req,res){
 
 
   // transformer les "on" / "off" en booleen
+  // Transformation nécessaire -> utilisation de SWITCH envoyant ON/OFF -> ne marche pas avec les booleen de la BDD
   if (infosEnable == "on"){
     infosEnable = 1
   } else{
@@ -1240,13 +1294,12 @@ app.post("/ajouteroffre", async function(req,res){
   } else{
     salaireEnable = 0
   }
-
   //console.log(salaireEnable);
 
-  
 
-
-  // Trouver le plus petit ID disponible
+  /*
+  On cherche ici le plus petit ID libre dans la BDD pour garder des données avec un ID assez bas
+  */
   const [liste_ids] = await pool.query("SELECT offre_id FROM offres ORDER BY offre_id ASC");
 
   let id_final = 1;
@@ -1275,6 +1328,14 @@ app.post("/ajouteroffre", async function(req,res){
 })
 
 
+
+/*
+route POST pour confirmer les modifications apportées à une offre d'emploi.
+récupère toutes les informations dans l'URL
+
+La route compare les anciennes versions des différentes informations avec les "nouvelles" pour ne modifier que celles qui ont été changées
+-> performances améliorées
+*/
 app.post('/confirmer_modif/:id', async (req, res) => {
   try {
     const id = req.params.id;
@@ -1454,6 +1515,11 @@ app.post('/confirmer_modif/:id', async (req, res) => {
 });
 
 
+
+/*
+Route POST pour consulter une offre en tant qu'admin
+récupère les informations de l'offre séparément pour les différencier plus facilement dans le fichier EJS
+*/
 app.post("/admin/consulter_offre", async function (req, res) {
   try {
     const id = req.body.offre_id;
@@ -1491,8 +1557,9 @@ app.post("/admin/consulter_offre", async function (req, res) {
   }
 });
 
-/* Route POST qui permet d'arriver sur la page de modification de l'offre
-
+/* 
+Route POST qui permet d'arriver sur la page de modification de l'offre
+récupère l'id de l'offre concernée pour ensuite récupérer les infos de l'offre depuis la bdd et les renvoyer à la page correspondante
 */
 app.post("/modifier_offre_access", async function (req, res) {
   try {
@@ -1519,6 +1586,12 @@ app.post("/modifier_offre_access", async function (req, res) {
   }
 });
 
+
+/*
+route POST pour supprimer une offre d'emploi
+demande validation avant l'envoi de l'appel (géré par fichier EJS)
+Récupère l'id de l'offre dans l'URL, puis la supprime de la BDD
+*/
 app.post("/supprimer_offre", async function (req, res) {
   try {
     const id = req.body.offre_id;
@@ -1531,6 +1604,10 @@ app.post("/supprimer_offre", async function (req, res) {
     res.status(500).send("Erreur lors de la suppression de l'offre");
   }
 });
+
+
+
+
 
 // Modifications infos profil (identifiant, email, téléphone, mot de passe)
 /*
@@ -1562,6 +1639,12 @@ app.post("/modifier-id", isAdmin, async function (req, res) {
   }
 });
 
+
+
+/*
+route POST pour modifier l'addresse email de l'utilisateur
+vérifie si l'ancien email = le nouveau pour éviter d'update la bdd inutilement
+*/
 app.post("/modifier-email", isAdmin, async function (req, res) {
   try {
     const userId = req.session.userID;
@@ -1585,6 +1668,13 @@ app.post("/modifier-email", isAdmin, async function (req, res) {
   }
 });
 
+
+
+/*
+route POST pour modifier le numéro de téléphone de l'utilisateur
+Récupère le nouveau et l'ancien numéro de téléphone depuis l'URL (formulaire method POST)
+compare l'ancien numéro et le nouveau pour éviter toutes interactions inutiles si l'utilisateur ne l'a pas changé -> performances du site
+*/
 app.post("/modifier-telephone", isAdmin, async function (req, res) {
   try {
     const userId = req.session.userID;
@@ -1612,18 +1702,41 @@ app.post("/modifier-telephone", isAdmin, async function (req, res) {
   }
 });
 
+
+
+/*
+route POST pour modifier le mot de passe de l'utilisateur
+Utilisation de sha256 -> hashage de mot de passe sécurisé
+*/
 app.post("/modifier-mot-de-passe", isAdmin, async function (req, res) {
   try {
+    // Récupération de l'id de l'utilisateur
     const userId = req.session.userID;
+    /* 
+    Récupération de l'ancien mot de passe de l'utilisateur rentré par l'utilisateur lui-même (vérification s'il connait encore son ancien mot de passe)
+    Sert à comparer par la suite avec le nouveau pour savoir s'il respecte différentes règles
+    */
     const ancien_motdepasse = req.body.motdepasse;
+    // On hash l'ancien mot de passe pour le comparer avec le nouveau hashé
     const hashed = sha256(ancien_motdepasse);
+    // Récupération de l'ancien mot de passe hashé dans la bdd
     const [rows] = await pool.query(
       "SELECT password from utilisateurs WHERE id = ?",
       [userId],
     );
+
+    /* 
+    Récupération du nouveau mot de passe
+    Dans le formulaire, il y a deux input, un normal ainsi qu'un de confirmation où l'utilisateur doit de nouveau rentrer son mot de passe.
+    Sert à vérifier qu'il n'ait pas fait d'erreur.
+    */
     const nouveau_motdepasse = req.body.nouveau_motdepasse;
     const confirm_motdepasse = req.body.confirm_motdepasse;
 
+    /* 
+    Sécurité -> Vérification si le nouveau mot de passe est identique à l'ancien mot de passe
+    À terme, peut-être mettre une colonne "anciens_mdp" dans la BDD qui stockerait tout les anciens mot de passe, pour être sur que l'utilisateur ne mette pas un mot de passe identique à un ancien, pas uniquement le dernier
+    */
     if (nouveau_motdepasse == ancien_motdepasse) {
       return res
         .status(400)
@@ -1632,28 +1745,46 @@ app.post("/modifier-mot-de-passe", isAdmin, async function (req, res) {
         );
     }
 
+    /*
+    Vérification entre ancien mot de passe rentré par l'utilisateur et l'ancien mot de passe selon la bdd
+    */
     if (hashed == rows[0].password) {
+
+      // Vérification si l'utilsiateur a fait une erreur ou non
       if (nouveau_motdepasse === confirm_motdepasse) {
+        // Hashage du mot de passe afin de l'insérer dans la bdd
         const nouveau_hashed = sha256(nouveau_motdepasse);
-        const nouveau_hashed2 = sha256(nouveau_hashed);
+        //const nouveau_hashed2 = sha256(nouveau_hashed);
         //console.log(nouveau_hashed2);
 
+        
+        // UPDATE du mot de passe de l'utilisateur dans la bdd -> Ajout du nouveau mot de passe hashé
         await pool.query("UPDATE utilisateurs SET password = ? WHERE id = ?", [
           nouveau_hashed,
           userId,
         ]);
+
+        // Renvoie un message confirmant la modification du mot de passe
         return res
           .status(200)
           .send(
             "Mot de passe modifié avec succès ! <br><a href='/admin/profil'>Retourner au profil</a>",
           );
+
+
+      // Si le nouveau mot de passe et sa confirmation ne correspondent pas (erreur de frappe ou autre) -> on le précise à l'utilisateur
       } else {
         return res
           .status(400)
           .send(
             "Le nouveau mot de passe et sa confirmation ne correspondent pas. Veuillez réessayer. <br><a href='/admin/profil'>Retourner au profil</a>",
           );
+
+
+
       }
+
+      // L'utilisateur a rentré un mauvais mot de passe
     } else {
       return res
         .status(400)
@@ -1661,12 +1792,27 @@ app.post("/modifier-mot-de-passe", isAdmin, async function (req, res) {
           "Votre ancien mot de passe ne correspond pas. Veuillez réessayer. <br><a href='/admin/profil'>Retourner au profil</a>",
         );
     }
+
+  
+  // Il y a eu un problème sur la route
   } catch (err) {
     console.error("Erreur SQL ou Serveur :", err);
     res.status(500).send("Erreur lors de la modification du mot de passe");
   }
 });
 
+
+
+
+
+
+
+
+/*
+route POST pour supprimer une catégorie de la BDD
+Demande la confirmation avant l'envoi de l'appel /supprimer-categorie (fait dans le fichier ejs directement)
+récupère l'id de la catégorie concernée depuis l'URL pour ensuite la supprimer de la base de données
+*/
 app.post("/supprimer-categorie", isAdmin, async function (req, res) {
   try {
     const id_categorie = req.body.categorie_id;
@@ -1680,6 +1826,12 @@ app.post("/supprimer-categorie", isAdmin, async function (req, res) {
   }
 });
 
+
+/*
+route POST pour supprimer une réalisation de la BDD
+Demande confirmation avant d'envoyer l'appel /supprimer-realisation
+Récupère l'id de la réalisation concernée via l'URL puis la supprime de la base de donnée
+*/
 app.post("/supprimer-realisation", isAdmin, async function (req, res) {
   try {
     const id_realisation = req.body.realisation_id;
@@ -1693,6 +1845,12 @@ app.post("/supprimer-realisation", isAdmin, async function (req, res) {
   }
 });
 
+
+/*
+Route POST pour supprimer une machine de la BDD
+Demande la confirmation avant suppression (réalisé sur le EJS directement)
+Récupère l'id de la machine concernée dans l'URL et supprime grace à ce dernier
+*/
 app.post("/supprimer-machine", isAdmin, async function (req, res) {
   try {
     const id_machine = req.body.machine_id;
@@ -1706,6 +1864,12 @@ app.post("/supprimer-machine", isAdmin, async function (req, res) {
   }
 });
 
+
+/*
+Route POSTpour ajouter une catégorie de produit à la bdd
+récupère les paramètres "categorie" (nom de la catégorie) et "produit_associe" reçus dans l'URL (via le formulaire method=POST)
+Il n'est pas nécessaire de renseigner un produit associé pour que la fonction fonctionne. C'est additionnel
+*/
 app.post("/ajouter_categorie", isAdmin, async function (req, res) {
   try {
     const nom_categorie = req.body.nom_categorie;
@@ -1728,6 +1892,9 @@ app.post("/ajouter_categorie", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de l'ajout de la catégorie");
   }
 });
+
+
+
 
 /**
  * POST /ajouter_produit
@@ -1756,6 +1923,9 @@ app.post("/ajouter_produit",isAdmin,uploadProduits.single("image_produit"),async
     }
   },
 );
+
+
+
 
 /**
 POST /ajouter_machine
@@ -1815,6 +1985,8 @@ app.post("/ajouter_machine",isAdmin,uploadMachines.single("image_machine"),async
     }
   },
 );
+
+
 
 // Route POST pour enregistrer les modifications d'une machine (avec gestion de l'image)
 app.post("/modifier_infos_machine",isAdmin,uploadMachines.single("image_machine"),async function (req, res) {
@@ -1896,6 +2068,9 @@ app.post("/modifier_infos_machine",isAdmin,uploadMachines.single("image_machine"
     }
   },
 );
+
+
+
 
 /**
  POST /envoyer-devis
@@ -2070,9 +2245,12 @@ app.post("/modifier_infos_realisation",uploadProduits.array("fichiers", 1),async
   },
 );
 
+
+
 /**
 POST /envoyer-contact
 Envoie un email de contact avec les informations fournies.
+Utilise Nodemailer pour l'envoi => passage par une adresse mail définie dans le .env => envoi à l'adresse mail définitive
  */
 app.post("/envoyer-contact", async function (req, res) {
   const { nom, entreprise, email, telephone, objet, message } = req.body;
@@ -2121,6 +2299,8 @@ app.post("/envoyer-contact", async function (req, res) {
     });
   }
 });
+
+
 
 /**
  * POST /connexion
@@ -2171,6 +2351,25 @@ app.post("/connexion", async function (req, res) {
   }
 });
 
+
+
+
+
+
+/* Fonction POST permettant de se connecter directement aux pages Admin
+Utile en production
+Afin d'afficher ce bouton, voici le code à insérer : 
+
+<form method="POST" action="/connexionrapide">
+  <button class="connexion-rapide" type="submit">Connexion Rapide</button>
+</form>
+
+
+---
+À SUPPRIMER JUSTE AVANT LA MISE EN LIGNE SUR LE SERVEUR
+---
+
+*/
 app.post("/connexionrapide", async function (req, res) {
   try {
     req.session.userID = 1;
@@ -2185,7 +2384,7 @@ app.post("/connexionrapide", async function (req, res) {
 
 
 
-
+// Renvoie la page 404 si aucune des routes au dessus n'a récupéré l'appel
 
 app.use((req, res) => {
   res.status(404).render("404");
