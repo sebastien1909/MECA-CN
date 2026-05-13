@@ -1,15 +1,16 @@
 /* Global */
 
-.tri{
-    display:flex;
-    flex-wrap:nowrap;
-    gap:24px;
-    align-items:center;
-    padding:24px 100px 24px;
-    background-color:#F2F4F6;
-    overflow-x:auto;
-    white-space:nowrap;
-    -webkit-overflow-scrolling:touch;
+.tri {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 24px;
+    align-items: center;
+    /* On réduit le padding du bas (passé de 24px à 12px) */
+    padding: 24px 100px 12px; 
+    background-color: #F2F4F6;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     scrollbar-color: #003f87 #e6e8ef;
 }
@@ -427,16 +428,16 @@
 .realisation-card a[href*="/modif"] {
     position: absolute;
     z-index: 1000;
-    width: 56px;
-    height: 56px;
+    width: 47px;
+    height: 47px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
     transform: translate(50%, -50%);
-    top: 16px;
-    right: 16px;
+    top: 3px;
+    right: 3px;
 }
 
 .realisation-card a[href*="/modif"]:hover {
@@ -446,8 +447,8 @@
 }
 
 .realisation-card a[href*="/modif"] img {
-    width: 54px;
-    height: 54px;
+    width: 46px;
+    height: 46px;
     opacity: 0.8;
 }
 
@@ -474,4 +475,16 @@
         width: 48px;
         height: 48px;
     }
+}
+
+
+
+.tri-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 24px;
+    align-items: center;
+    /* On ajoute 20px de padding en bas pour éloigner la scrollbar */
+    padding-bottom: 20px; 
+    width: 100%;
 }

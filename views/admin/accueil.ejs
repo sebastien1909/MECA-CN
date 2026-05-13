@@ -28,13 +28,6 @@
     Page offres d'emploi
 </a>
 
-<a href="/ajoutarticle">
-    Page d'ajout d'articles
-</a>
-
-<a href="/admin/actu">
-    Page listing actus
-</a>
 
 
 
@@ -43,12 +36,12 @@
     <div class="landing_content">
         <h1>L'excellence de<br>l'usinage de précision</h1>
         <p class="landing-baseline">
-            Partenaire de confiance pour vos projets aéronautiques, médicaux et industriels.
+            Partenaire de confiance pour vos projets automobiles, médicaux et industriels.
             Nous transformons vos plans les plus complexes en réalités millimétrées.
         </p>
         <div class="CTA-holder">
-            <a href="/devis" class="landing_btn primary">
-                Demander un devis
+            <a href="/admin/offres" class="landing_btn primary">
+                Voir les offres d'emploi
                 <img src="/img/icons/arrow_light.png" alt="Flèche vers la droite" class="mobile-icon phone-only center-icon">
             </a>
             <a href="/admin/realisations" class="landing_btn secondary mobile-hidden">Voir nos réalisations</a>
@@ -136,27 +129,27 @@
         <p>Partenaire privilégié des industries de pointe, notre atelier d'usinage assure la fabrication de pièces mécaniques sur-mesure en petite et moyenne série. De la maintenance industrielle à l'innovation médicale, nous garatissons une qualité certifiée et un respect rigoureux de vos délais de production.</p>
         <div class="categorie-container">
             <div class="categorie-card">
-                <img src="/img/icons/medical.svg" alt="Icône Aéronautique">
+                <img src="/img/icons/medical.svg" alt="Icône Médical">
                 <h3>Médical</h3>
                 <p>Précision micrométrique et traçabilité totale pour vos instruments et dispositifs chirurgicaux.</p>
             </div>
             <div class="categorie-card">
-                <img src="/img/icons/maintenance.svg" alt="Icône Médical">
+                <img src="/img/icons/maintenance.svg" alt="Icône Maintenance et production">
                 <h3>Maintenance & <br> Production</h3>
                 <p>Réactivité maximale pour vos pièces d'usure, outillages et maintenance de lignes de production.</p>
             </div>
             <div class="categorie-card">
-                <img src="/img/icons/automobile.svg" alt="Icône Industrie">
+                <img src="/img/icons/automobile.svg" alt="Icône Industrie automobile">
                 <h3>Industrie automobile</h3>
                 <p>Performance et durabilité pour vos prototypes techniques et composants mécaniques critiques.</p>
             </div>
             <div class="categorie-card">
-                <img src="/img/icons/agroalimentaire.svg" alt="Icône Industrie">
+                <img src="/img/icons/agroalimentaire.svg" alt="Icône Agroalimentaire">
                 <h3>Agroalimentaire</h3>
                 <p>Conformité sanitaire stricte avec l'usinage de matériaux certifiés (Inox, plastiques techniques).</p>
             </div>
             <div class="categorie-card">
-                <img src="/img/icons/electronique.svg" alt="Icône Industrie">
+                <img src="/img/icons/electronique.svg" alt="Icône Électronique de pointe">
                 <h3>Électronique de pointe</h3>
                 <p>Intégration parfaite pour vos boîtiers et dissipateurs aux tolérances extrêmement serrées.</p>
             </div>
@@ -293,19 +286,65 @@
 
 
     <div class="pc-only">
-        <div class="machine-showcase">
-            <div class="machine-section">
-                <div class="machine-left-side">
-                    <h2>Nos réalisations</h2>
-                    <p>Découvrez nos projets les plus exigeants pour l'aéronautique, le médical et l'industrie. Chaque réalisation illustre notre capacité à transformer des pièces techniques en solutions fiables et durables.</p>
-                    <button class="landing_btn know-more-btn" onclick="window.location.href='/admin/realisations'">Voir nos réalisations</button>
-                </div>
-                <div class="machine-right-side">
-                    <img src="/img/placeholders/usinage2.jpg" alt="Exemple de réalisation">
-                </div>
+        <div class="machine-showcase machine-section">
+            <div class="machine-left-side">
+                <h2>Nos réalisations</h2>
+                <p>Découvrez nos projets les plus exigeants pour l'automobile, le médical, l'industrie, et autre. Chaque réalisation illustre notre capacité à transformer des pièces techniques en solutions fiables et durables.</p>
+                <button class="landing_btn know-more-btn" onclick="window.location.href='/admin/realisations'">Voir nos réalisations</button>
+            </div>
+            <div class="machine-right-side">
+                <img src="/img/placeholders/usinage2.jpg" alt="Exemple de réalisation">
             </div>
         </div>
     </div>
+</section>
+
+
+
+<section class="newletter-section">
+  <div>
+    <div class="newsletter-pc-content">
+      <div class="newsletter-left-part">
+        <h2 class="newsletter-h2">Restez informés</h2>
+        <p class="newsletter-text">
+          Inscrivez-vous pour recevoir nos dernières actualités technologiques et mises à jour du parc machines.
+        </p>
+        <div class="form-container">
+          <form action="/newsletter_add" method="POST">
+            <input type="mail" name="mail" id="mail" placeholder="Vodre addresse email" />
+            <button type="submit" class="submit-btn">
+              S'abonner
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="separateur-vertical"></div>
+
+      <div class="newsletter-right-part">
+        <h3 class="newsletter-h3">
+          Actualités & innovations
+        </h3>
+        <p class="newsletter-text">
+          Découvrez nos derniers projets, investissements machines, innovations...
+        </p>
+
+        <div class="actualites-link-container">
+            <a href="/admin/actu" class="actualites-link">
+                Voir toutes les actualités →
+            </a>
+
+            <a href="/ajoutarticle" class="actualites-link">
+                Ajouter un article
+            </a>
+        </div>
+        
+      </div>
+    </div>
+    
+
+  </div>
+
 </section>
 
 

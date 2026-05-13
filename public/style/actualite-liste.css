@@ -37,14 +37,14 @@
 .une-span {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
     background-color: #1a4fa3;
     color: #fff;
     font-size: 0.78rem;
     font-weight: 600;
     letter-spacing: 0.04em;
-    padding: 5px 12px;
-    border-radius: 20px;
+    padding: 0px 12px;
+    border-radius: 10px;
     width: fit-content;
 }
 
@@ -74,7 +74,8 @@
 /* Date */
 .une-container .left-side .date {
     font-size: 0.82rem;
-    color: #888;
+    font-weight:bold;
+    color: #a8a8a8;
     margin: 4px 0 8px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -168,19 +169,14 @@
 /* Ligne date + catégorie */
 .actu-presentation .date {
     font-size: 0.75rem;
-    color: #888;
+    font-weight:bold;
+    color: #a8a8a8;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     display: flex;
     align-items: center;
     gap: 10px;
     margin: 0;
-}
-
-/* Badge catégorie (ex: QUALITÉ) — généré via JS ou via classe additionnelle si nécessaire */
-.actu-presentation .date::after {
-    /* Si le badge catégorie est inséré séparément dans le HTML, supprimez ce pseudo-élément */
-    content: none;
 }
 
 /* Titre de la carte */
@@ -219,6 +215,7 @@
     transition: color 0.2s ease, gap 0.2s ease;
     width: fit-content;
     margin-top: 4px;
+
 }
 
 .suite:hover {
@@ -226,21 +223,6 @@
     gap: 8px;
 }
 
-/* =============================================
-   BADGE QUALITÉ (si inclus dans le HTML)
-   ============================================= */
-
-.badge-categorie {
-    display: inline-block;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #1a4fa3;
-    background-color: #e8effa;
-    padding: 2px 8px;
-    border-radius: 4px;
-}
 
 /* =============================================
    BLOC NEWSLETTER
@@ -431,18 +413,22 @@
     font-weight: 600;
     cursor: pointer;
     padding: 0;
+    padding-bottom:5px;
     margin-top: 4px;
     text-decoration: none;
     background-image: linear-gradient(#1a4fa3, #1a4fa3);
-    background-size: 0% 1.5px;
+    background-size: 0% 2px;
     background-repeat: no-repeat;
     background-position: left bottom;
     transition: background-size 0.3s ease, color 0.2s ease;
+
+    position:absolute;
+    bottom:-35px;
 }
 
 .suite:hover {
     color: #163f85;
-    background-size: 100% 1.5px;
+    background-size: 100% 2px;
 }
 
 .une-container,
@@ -474,5 +460,21 @@
     padding: 0;
 }
 
+.une-container .supprimer-article{
+    background:none;
+    border:none;
+    position:absolute;
+    top:18px;
+    right:45px;
+    margin:0;
+    padding:0;
+}
 
+.une-container .supprimer-icon{
+    opacity:0.8;
+    transition:0.1s;
+}
+.une-container .supprimer-icon:hover{
+    opacity:1
+}
 

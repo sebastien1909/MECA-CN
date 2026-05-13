@@ -43,7 +43,7 @@
   <div class="landing_content">
     <h1>L'excellence de<br />l'usinage de précision</h1>
     <p class="landing-baseline">
-      Partenaire de confiance pour vos projets aéronautiques, médicaux et
+      Partenaire de confiance pour vos projets automobiles, médicaux et
       industriels. Nous transformons vos plans les plus complexes en réalités
       millimétrées.
     </p>
@@ -149,14 +149,14 @@
     <h2>Innover et usiner pour tous les secteurs</h2>
     <p>
       Partenaire privilégié des industries de pointe, notre atelier d'usinage
-      assure la fabrication de pièces mécaniques sur-mesure en petite et moyenne
-      série. De la maintenance industrielle à l'innovation médicale, nous
-      garatissons une qualité certifiée et un respect rigoureux de vos délais de
+      assure la fabrication de pièces mécaniques prototype et moyenne série. 
+      De la maintenance industrielle à l'innovation médicale, nous
+      garantissons une qualité certifiée et un respect rigoureux de vos délais de
       production.
     </p>
     <div class="categorie-container">
       <div class="categorie-card">
-        <img src="/img/icons/medical.svg" alt="Icône Aéronautique" />
+        <img src="/img/icons/medical.svg" alt="Icône Médical" />
         <h3>Médical</h3>
         <p>
           Précision micrométrique et traçabilité totale pour vos instruments et
@@ -164,7 +164,7 @@
         </p>
       </div>
       <div class="categorie-card">
-        <img src="/img/icons/maintenance.svg" alt="Icône Médical" />
+        <img src="/img/icons/maintenance.svg" alt="Icône Maintenance et production" />
         <h3>
           Maintenance & <br />
           Production
@@ -175,7 +175,7 @@
         </p>
       </div>
       <div class="categorie-card">
-        <img src="/img/icons/automobile.svg" alt="Icône Industrie" />
+        <img src="/img/icons/automobile.svg" alt="Icône Industrie automobile" />
         <h3>Industrie automobile</h3>
         <p>
           Performance et durabilité pour vos prototypes techniques et composants
@@ -183,7 +183,7 @@
         </p>
       </div>
       <div class="categorie-card">
-        <img src="/img/icons/agroalimentaire.svg" alt="Icône Industrie" />
+        <img src="/img/icons/agroalimentaire.svg" alt="Icône Industrie agroalimentaire" />
         <h3>Agroalimentaire</h3>
         <p>
           Conformité sanitaire stricte avec l'usinage de matériaux certifiés
@@ -191,7 +191,7 @@
         </p>
       </div>
       <div class="categorie-card">
-        <img src="/img/icons/electronique.svg" alt="Icône Industrie" />
+        <img src="/img/icons/electronique.svg" alt="Icône Électronique de pointe" />
         <h3>Électronique de pointe</h3>
         <p>
           Intégration parfaite pour vos boîtiers et dissipateurs aux tolérances
@@ -324,13 +324,12 @@
   </div>
 
   <div class="pc-only">
-    <div class="machine-showcase">
-      <div class="machine-section">
+    <div class="machine-showcase machine-section">
         <div class="machine-left-side">
           <h2>Nos réalisations</h2>
           <p>
-            Découvrez nos projets les plus exigeants pour l'aéronautique, le
-            médical et l'industrie. Chaque réalisation illustre notre capacité à
+            Découvrez nos projets les plus exigeants pour l'automobile, le
+            médical, l'industrie agroalimentaire, et autre. Chaque réalisation illustre notre capacité à
             transformer des pièces techniques en solutions fiables et durables.
           </p>
           <button
@@ -347,8 +346,48 @@
           />
         </div>
       </div>
-    </div>
   </div>
+</section>
+
+
+
+<section class="newletter-section">
+  <div>
+    <div class="newsletter-pc-content">
+      <div class="newsletter-left-part">
+        <h2 class="newsletter-h2">Restez informés</h2>
+        <p class="newsletter-text">
+          Inscrivez-vous pour recevoir nos dernières actualités technologiques et mises à jour du parc machines.
+        </p>
+        <div class="form-container">
+          <form action="/newsletter_add" method="POST">
+            <input type="mail" name="mail" id="mail" placeholder="Vodre addresse email" />
+            <button type="submit" class="submit-btn">
+              S'abonner
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="separateur-vertical"></div>
+
+      <div class="newsletter-right-part">
+        <h3 class="newsletter-h3">
+          Actualités & innovations
+        </h3>
+        <p class="newsletter-text">
+          Découvrez nos derniers projets, investissements machines, innovations...
+        </p>
+
+        <a href="/actualites" class="actualites-link">
+          Voir toutes les actualités →
+        </a>
+      </div>
+    </div>
+    
+
+  </div>
+
 </section>
 
 <script>

@@ -344,7 +344,7 @@
         padding: 80px 40px;
         background: #f5f7fb;
         max-width: 1200px;
-        margin: 40px auto 0;
+        margin: 40px auto 50px;
         border-radius: 28px;
         box-shadow: 0 25px 60px rgba(20,31,75,0.08);
     }
@@ -1322,3 +1322,109 @@
 }
 
 
+
+/* Container principal de la section */
+.newletter-section {
+    padding: 60px 10%;
+    background-color: #f9f9f9; /* Fond très léger pour détacher la section */
+    font-family: sans-serif;
+}
+
+/* Layout pour la version PC */
+.newsletter-pc-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.newsletter-left-part, 
+.newsletter-right-part {
+    flex: 1;
+}
+
+/* Titres */
+.newsletter-h2, .newsletter-h3 {
+    color: #001a3d; /* Bleu très foncé proche de ton image */
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.newsletter-h3 {
+    font-size: 1.4rem;
+}
+
+/* Textes */
+.newsletter-text {
+    color: #4a4a4a;
+    line-height: 1.5;
+    margin-bottom: 25px;
+    max-width: 500px;
+}
+
+/* Formulaire */
+form {
+    display: flex;
+    gap: 10px;
+}
+
+#mail {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.submit-btn {
+    background-color: #2b4c99; /* Bleu institutionnel */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #1e3670;
+}
+
+/* Séparateur vertical */
+.separateur-vertical {
+    width: 1px;
+    height: 120px;
+    background-color: #ddd;
+}
+
+.actualites-link-container{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+/* Lien actualités */
+.actualites-link {
+    display: inline-block;
+    color: #2b4c99;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.actualites-link:hover {
+    text-decoration: underline;
+}
+
+/* Masquer sur mobile si besoin (à adapter selon tes media queries) */
+@media (max-width: 768px) {
+    .newsletter-pc-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .separateur-vertical {
+        width: 80%;
+        height: 1px;
+        margin: 20px auto;
+    }
+}

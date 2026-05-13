@@ -17,7 +17,7 @@
                     <%= une.baseline %>
                 </p>
                 <p class="date">
-                    <%= new Date(une.date_publication).toLocaleDateString('fr-FR') %>
+                    Publié le <%= new Date(une.date_publication).toLocaleDateString('fr-FR') %>
                 </p>
 
                 <form method="POST" action="/article">
@@ -56,7 +56,7 @@
             <% for (const element of actus){ %>
                 <div class="actu-presentation">
                     <img src="<%= element.img_presentation %>" class="img-presentation">
-                    <p class="date"><%= new Date(element.date_publication).toLocaleDateString('fr-FR') %></p>
+                    <p class="date">Publié le <%= new Date(element.date_publication).toLocaleDateString('fr-FR') %></p>
                     <h3>
                         <%= element.titre %>
                     </h3>
