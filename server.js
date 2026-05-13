@@ -871,6 +871,7 @@ app.get("/admin/offres", isAdmin, async function (req, res) {
     res.render("admin/offres", {
       page_css1: "offres.css",
       page_css2: "headeradmin.css",
+      page_css4:"revealsecondary.css",
       offres: offresResultat,
       categories: categories,
       categorieChoisie: categorieChoisie || "all",
