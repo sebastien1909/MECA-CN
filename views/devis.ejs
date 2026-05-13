@@ -38,7 +38,7 @@
             </div>
             <div class="form-group">
               <label>Nom de l'entreprise</label>
-              <input type="text" name="entreprise" placeholder="Société" />
+              <input type="text" name="entreprise" placeholder="Société" required />
             </div>
           </div>
           <div class="form-row">
@@ -401,6 +401,21 @@
       </form>
     </div>
   </section>
+
+
+
+
+  <div class="sending-overlay" id="sending-overlay" aria-hidden="true">
+    <div class="sending-card">
+      <div class="sending-spinner"></div>
+      <p class="sending-title">Envoi en cours...</p>
+      <p class="sending-subtitle">Merci de patienter, votre demande est en cours d'envoi.</p>
+    </div>
+  </div>
+
+
+
+
 </main>
 
 <script>
@@ -481,14 +496,17 @@
       }
 
       // Validation des dimensions avant envoi
-      document
-        .getElementById("multistep-form")
-        .addEventListener("submit", function (e) {
-          updateHiddenDimensions();
-          if (!validateDimensions()) {
-            e.preventDefault();
-          }
-        });
+      document.getElementById("multistep-form").addEventListener("submit", function (e) {
+        updateHiddenDimensions();
+        if (!validateDimensions()) {
+          e.preventDefault();
+          return;
+        }
+        // Afficher l'overlay de chargement
+        const overlay = document.getElementById("sending-overlay");
+        overlay.classList.add("visible");
+        overlay.setAttribute("aria-hidden", "false");
+      });
 
       // --- VARIABLES GLOBALES CALENDRIER ---
       var today = new Date(),
