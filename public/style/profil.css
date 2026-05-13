@@ -127,3 +127,32 @@ form a {
         width: 100%; /* Bouton plus facile à cliquer sur mobile */
     }
 }
+
+
+.deconnexion {
+    
+    width:12%;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f1f5f9; /* Gris très léger, sobre */
+    color: #475569; /* Texte gris ardoise */
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 10px;
+    border: 2px solid #f0e2e2;
+    transition: all 0.2s ease-in-out;
+}
+
+.deconnexion:hover {
+    background-color: #fee2e2; /* Fond rouge très pâle au survol */
+    color: #b91c1c; /* Texte rouge plus marqué */
+    border-color: #fecaca;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(185, 28, 28, 0.08);
+}
+
+.deconnexion:active {
+    transform: translateY(0);
+    background-color: #fca5a5;
+}

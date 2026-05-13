@@ -1,0 +1,145 @@
+<%# Récupération mot de passe — MECA-CN %>
+<%- include('header') %>
+
+<main class="connexion-page recup-page">
+    <img class="landing_img" src="/img/placeholders/usinage1.png" alt="Image d'accueil">
+
+    <!-- ===== HERO gauche ===== -->
+    <section class="connexion-hero">
+        <div class="hero-content">
+            <h1>Mot de passe</h1>
+            <h1><span>oublié ?</span></h1>
+            <p class="hero-text">
+                Pas de panique. Renseignez l'adresse mail associée à votre compte administrateur,
+                et vous recevrez un code temporaire pour réinitialiser votre mot de passe en toute sécurité.
+            </p>
+        </div>
+    </section>
+
+    <!-- ===== CARTE droite — Formulaire exclusif par étape ===== -->
+    <section class="connexion-card recup-card">
+
+        <% if (typeof token !== 'undefined' && token) { %>
+            <!-- ÉTAPE 3 : Nouveau mot de passe (S'affiche uniquement si le code était bon) -->
+            <div id="step-newpwd" class="recup-step">
+                <div class="card-head">
+                    <p>Choisissez votre</p>
+                    <h2>Nouveau mot de passe</h2>
+                </div>
+
+                <% if (typeof pwdError !== 'undefined' && pwdError) { %>
+                    <div class="connexion-error"><%= pwdError %></div>
+                <% } %>
+
+                <form action="/recup_mdp/nouveau_mdp" method="POST" class="connexion-form" id="form-newpwd">
+                    <input type="hidden" name="token" value="<%= token %>">
+
+                    <div class="connexion-group">
+                        <label for="password">Nouveau mot de passe *</label>
+                        <input type="password" id="password" name="password"
+                               placeholder="••••••••" required minlength="8"
+                               autocomplete="new-password" autofocus>
+                    </div>
+
+                    <div class="connexion-group">
+                        <label for="password_confirm">Confirmer le mot de passe *</label>
+                        <input type="password" id="password_confirm" name="password_confirm"
+                               placeholder="••••••••" required minlength="8"
+                               autocomplete="new-password">
+                    </div>
+
+                    <div id="pwd-match-error" class="connexion-error hidden">
+                        Les mots de passe ne correspondent pas.
+                    </div>
+
+                    <button type="submit" class="connexion-submit">Réinitialiser</button>
+                </form>
+            </div>
+
+        <% } else if (typeof showCodeStep !== 'undefined' && showCodeStep) { %>
+            <!-- ÉTAPE 2 : Saisie du code (S'affiche après l'envoi de l'email) -->
+            <div id="step-code" class="recup-step">
+                <div class="card-head">
+                    <p>Vérification du</p>
+                    <h2>Code reçu</h2>
+                </div>
+
+                <p class="recup-info">
+                    Si cette adresse est associée à un compte, un code à 6 chiffres
+                    vous a été envoyé.
+                </p>
+
+                <% if (typeof codeError !== 'undefined' && codeError) { %>
+                    <div class="connexion-error"><%= codeError %></div>
+                <% } %>
+
+                <form action="/recup_mdp/verif_code" method="POST" class="connexion-form">
+                    <input type="hidden" name="mail" value="<%= typeof mailSent !== 'undefined' ? mailSent : '' %>">
+                    <div class="connexion-group">
+                        <label for="code">Code de vérification *</label>
+                        <input type="text" id="code" name="code"
+                               placeholder="123456"
+                               maxlength="6"
+                               inputmode="numeric"
+                               pattern="\d{6}"
+                               required
+                               autocomplete="one-time-code"
+                               autofocus>
+                    </div>
+                    <button type="submit" class="connexion-submit">Vérifier le code</button>
+                </form>
+
+                <p class="recup-back">
+                    <a href="/oubli_mdp">← Recommencer</a>
+                </p>
+            </div>
+
+        <% } else { %>
+            <!-- ÉTAPE 1 : Saisie de l'e-mail (Étape par défaut) -->
+            <div id="step-email" class="recup-step">
+                <div class="card-head">
+                    <p>Réinitialisation du</p>
+                    <h2>Mot de passe</h2>
+                </div>
+
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <div class="connexion-error"><%= error %></div>
+                <% } %>
+
+                <form action="/recup_mdp/envoi_code" method="POST" class="connexion-form" id="form-email">
+                    <div class="connexion-group">
+                        <label for="mail">Adresse e-mail *</label>
+                        <input type="email" id="mail" name="mail"
+                               placeholder="votre@adresse.fr" required
+                               autocomplete="email" autofocus>
+                    </div>
+                    <button type="submit" class="connexion-submit" id="btn-email">
+                        Envoyer le code
+                    </button>
+                </form>
+            </div>
+        <% } %>
+
+    </section>
+</main>
+
+<script>
+    // Validation côté client pour la correspondance des mots de passe
+    const formNewPwd = document.getElementById('form-newpwd');
+    if (formNewPwd) {
+        formNewPwd.addEventListener('submit', function (e) {
+            const pwd  = document.getElementById('password').value;
+            const conf = document.getElementById('password_confirm').value;
+            const err  = document.getElementById('pwd-match-error');
+            
+            if (pwd !== conf) {
+                e.preventDefault();
+                err.classList.remove('hidden');
+            } else {
+                err.classList.add('hidden');
+            }
+        });
+    }
+</script>
+
+<%- include('footer') %>

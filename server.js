@@ -964,7 +964,7 @@ app.get("/actualite/:id", async function(req,res){
   })
 })
 
-app.get("/admin/actu", async function(req,res){
+app.get("/admin/actu", isAdmin, async function(req,res){
   const [actualites] = await pool.query("SELECT * FROM actualite ORDER BY date_publication DESC LIMIT 99999 OFFSET 1");
   //console.log(actualites);
   const [une] = await pool.query("SELECT * FROM actualite ORDER BY date_publication DESC LIMIT 1");
@@ -977,6 +977,17 @@ app.get("/admin/actu", async function(req,res){
     une: actu_une,
     actus:actualites
   })
+})
+
+app.get("/oubli_mdp", async function(req,res){
+  try{
+    res.render("recuperation_mdp", {
+      page_css1:"headerclient.css",
+      page_css2:"recuperation.css"
+    })
+  } catch(err){
+
+  }
 })
 
 
@@ -1084,11 +1095,11 @@ app.post("/api/articles", isAdmin, uploadActu.single("presentation"), async func
 
 /*
 route POST ajoutant l'adresse mail de la personne à la table de newslette
-Vérifie si l'addresse est déjà présente dans la bdd ou non, ou bien si elle est "active" ou "innactive"
+Vérifie si l'adresse est déjà présente dans la bdd ou non, ou bien si elle est "active" ou "innactive"
 */
 app.post("/newsletter_add", async function(req,res){
   try{
-    // Récupération de l'addresse mail et de la date (date -> pour statistiques)
+    // Récupération de l'adresse mail et de la date (date -> pour statistiques)
     const email = req.body.mail
     const date = new Date()
     // console.log(email);
@@ -1097,7 +1108,7 @@ app.post("/newsletter_add", async function(req,res){
     const [rows] = await pool.query("SELECT * FROM abonnement WHERE email = ?", [email])
     // console.log(rows)
 
-    // S'il y a déjà une addresse mail ↓
+    // S'il y a déjà une adresse mail ↓
     if (rows.length > 0){
       const abonnement = rows[0];
       if (abonnement.actif){
@@ -1642,7 +1653,7 @@ app.post("/modifier-id", isAdmin, async function (req, res) {
 
 
 /*
-route POST pour modifier l'addresse email de l'utilisateur
+route POST pour modifier l'adresse email de l'utilisateur
 vérifie si l'ancien email = le nouveau pour éviter d'update la bdd inutilement
 */
 app.post("/modifier-email", isAdmin, async function (req, res) {
@@ -2087,6 +2098,7 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
         },
       });
 
+
       const attachments = req.files.map((file) => ({
         filename: file.originalname,
         path: file.path,
@@ -2384,10 +2396,332 @@ app.post("/connexionrapide", async function (req, res) {
 
 
 
+
+
+app.post('/recup_mdp/envoi_code', async (req, res) => {
+    const { mail } = req.body;
+    //console.log(mail);
+    try {
+
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
+        });
+
+        // 1. Chercher l'utilisateur
+        const [rows] = await pool.query(
+            'SELECT id FROM utilisateurs WHERE mail = ? LIMIT 1',
+            [mail]
+        );
+
+        if (rows.length > 0) {
+            // 2. Générer un code à 6 chiffres et un token unique
+            const code  = Math.floor(100000 + Math.random() * 900000).toString();
+            const token = crypto.randomBytes(32).toString('hex');
+
+            // Expiration dans 15 minutes
+            const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
+                .toISOString()
+                .slice(0, 19)
+                .replace('T', ' ');
+
+            // 3. Invalider les anciens tokens pour ce mail
+            await pool.query(
+                'UPDATE password_reset_tokens SET used = 1 WHERE mail = ? AND used = 0',
+                [mail]
+            );
+
+            // 4. Insérer le nouveau token
+            await pool.query(
+                `INSERT INTO password_reset_tokens (mail, token, code, expires_at)
+                 VALUES (?, ?, ?, ?)`,
+                [mail, token, code, expiresAt]
+            );
+
+            // 5. Envoyer le mail stylisé
+            await transporter.sendMail({
+                from:    `"MECA-CN" <${process.env.MAIL_FROM}>`,
+                to:      mail,
+                subject: 'Réinitialisation de votre mot de passe — MECA-CN',
+                html:    buildResetEmail(code),
+            });
+        }
+
+        // Dans tous les cas (mail trouvé ou non) → étape 2
+        res.render('recuperation_mdp', {
+            showCodeStep: true,
+            mailSent:     mail,
+            page_css1:"headerclient.css",
+            page_css2:"recuperation.css"
+        });
+
+    } catch (err) {
+        console.error('[recup_mdp] envoi_code :', err);
+        res.render('recuperation_mdp', {
+            error: 'Une erreur est survenue. Veuillez réessayer.',
+        });
+    }
+});
+
+
+
+
+/* ─────────────────────────────────────────────────────────────────────────
+   POST /recup_mdp/verif_code
+   Vérifie le code saisi par l'utilisateur
+───────────────────────────────────────────────────────────────────────── */
+app.post('/recup_mdp/verif_code', async (req, res) => {
+    const { mail, code } = req.body;
+
+    try {
+        const [rows] = await pool.query(
+            `SELECT token FROM password_reset_tokens
+             WHERE mail = ? AND code = ? AND used = 0
+             ORDER BY created_at DESC LIMIT 1`,
+            [mail, code]
+        );
+        // console.log(rows)
+
+        if (rows.length === 0) {
+            // Code invalide ou expiré → retour étape 2 avec erreur
+            return res.render('recuperation_mdp', {
+                showCodeStep: true,
+                mailSent:     mail,
+                codeError:    'Code invalide ou expiré. Vérifiez votre e-mail ou recommencez.',
+                page_css1:"headerclient.css",
+                page_css2:"recuperation.css"
+            });
+        }
+
+        // Code valide → afficher l'étape 3 (nouveau mot de passe)
+        res.render('recuperation_mdp', {
+            token: rows[0].token,
+            page_css1:"headerclient.css",
+            page_css2:"recuperation.css"
+        });
+
+    } catch (err) {
+        console.error('[recup_mdp] verif_code :', err);
+        res.render('recuperation_mdp', {
+            showCodeStep: true,
+            mailSent:     mail,
+            codeError:    'Une erreur est survenue. Veuillez réessayer.',
+            page_css1:"headerclient.css",
+            page_css2:"recuperation.css"
+        });
+    }
+});
+
+
+
+/* ─────────────────────────────────────────────────────────────────────────
+   POST /recup_mdp/nouveau_mdp
+   Réinitialise réellement le mot de passe
+───────────────────────────────────────────────────────────────────────── */
+app.post('/recup_mdp/nouveau_mdp', async (req, res) => {
+    const { token, password, password_confirm } = req.body;
+
+    // Vérification côté serveur (ne pas se fier uniquement au JS client)
+    if (!password || password !== password_confirm) {
+        return res.render('recuperation_mdp', {
+            token,
+            pwdError: 'Les mots de passe ne correspondent pas.',
+            page_css1:"headerclient.css",
+            page_css2:"recuperation.css"
+        });
+    }
+
+    if (password.length < 8) {
+        return res.render('recuperation_mdp', {
+            token,
+            pwdError: 'Le mot de passe doit contenir au moins 8 caractères.',
+            page_css1:"headerclient.css",
+            page_css2:"recuperation.css"
+        });
+    }
+
+    try {
+        // 1. Vérifier que le token est toujours valide
+        const [rows] = await pool.query(
+            `SELECT mail FROM password_reset_tokens
+             WHERE token = ? AND used = 0
+             LIMIT 1`,
+            [token]
+        );
+
+        console.log(rows)
+
+        if (rows.length === 0) {
+            return res.render('recuperation_mdp', {
+                error: 'Ce lien de réinitialisation est invalide ou expiré. Recommencez.',
+                page_css1:"headerclient.css",
+                page_css2:"recuperation.css"
+            });
+        }
+
+        const { mail } = rows[0];
+
+        // 2. Hasher le nouveau mot de passe
+        const hash = await sha256(password);
+
+        // 3. Mettre à jour le mot de passe dans la table admins
+        // Adaptez le nom de la colonne à votre schéma
+        await pool.query(
+            'UPDATE utilisateurs SET password = ? WHERE mail = ?',
+            [hash, mail]
+        );
+
+        // 4. Invalider le token (et tous les autres tokens de ce mail)
+        await pool.query(
+            'UPDATE password_reset_tokens SET used = 1 WHERE mail = ?',
+            [mail]
+        );
+
+        // 5. Rediriger vers la connexion avec un message de succès
+        res.redirect('/connexion?mdp_reset=1');
+
+    } catch (err) {
+        console.error('[recup_mdp] nouveau_mdp :', err);
+        res.render('recuperation_mdp', {
+            token,
+            pwdError: 'Une erreur est survenue. Veuillez réessayer.',
+            page_css1:"headerclient.css",
+            page_css2:"recuperation.css"
+        });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Formate le mail pour reset le password
+
+function buildResetEmail(code) {
+    return `
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Réinitialisation de mot de passe — MECA-CN</title>
+</head>
+<body style="margin:0;padding:0;background:#f0f4fa;font-family:'Segoe UI',Arial,sans-serif;">
+
+  <!-- Wrapper -->
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4fa;padding:40px 0;">
+    <tr>
+      <td align="center">
+
+        <!-- Carte principale -->
+        <table width="560" cellpadding="0" cellspacing="0"
+               style="background:#ffffff;border-radius:24px;
+                      box-shadow:0 8px 40px rgba(15,23,42,0.10);
+                      overflow:hidden;max-width:90vw;">
+
+          <!-- En-tête bleu -->
+          <tr>
+            <td style="background:#0f4bb7;padding:36px 40px;text-align:center;">
+              <p style="margin:0 0 6px;color:rgba(255,255,255,0.75);
+                        font-size:12px;letter-spacing:0.18em;
+                        text-transform:uppercase;font-weight:700;">
+                MECA-CN · Usinage de précision
+              </p>
+              <h1 style="margin:0;color:#ffffff;font-size:26px;font-weight:800;
+                         letter-spacing:-0.02em;">
+                Réinitialisation<br>de mot de passe
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Corps -->
+          <tr>
+            <td style="padding:36px 40px 28px;">
+
+              <p style="margin:0 0 20px;color:#334155;font-size:15px;line-height:1.7;">
+                Nous avons reçu une demande de réinitialisation du mot de passe
+                pour votre compte administrateur MECA-CN.
+                Utilisez le code ci-dessous pour continuer.
+              </p>
+
+              <!-- Bloc code -->
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding:20px 0 28px;">
+                    <div style="display:inline-block;background:#eef3fb;
+                                border-radius:16px;padding:24px 40px;">
+                      <p style="margin:0 0 6px;color:#64748b;font-size:12px;
+                                letter-spacing:0.15em;text-transform:uppercase;
+                                font-weight:700;">
+                        Votre code
+                      </p>
+                      <p style="margin:0;color:#0f4bb7;font-size:42px;
+                                font-weight:900;letter-spacing:0.25em;
+                                font-family:'Courier New',monospace;">
+                        ${code}
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0 0 12px;color:#334155;font-size:14px;line-height:1.7;">
+                Ce code est valable <strong>15 minutes</strong>.
+                Si vous n'êtes pas à l'origine de cette demande, ignorez simplement cet e-mail —
+                votre mot de passe restera inchangé.
+              </p>
+
+              <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;">
+
+              <p style="margin:0;color:#94a3b8;font-size:12px;text-align:center;
+                        line-height:1.6;">
+                MECA-CN · Usinage de précision<br>
+                Route de Camiers, 62630 Widehem — France
+              </p>
+
+            </td>
+          </tr>
+
+        </table>
+        <!-- /Carte -->
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
+  `;
+}
+
+
+
+
+
+
 // Renvoie la page 404 si aucune des routes au dessus n'a récupéré l'appel
 
 app.use((req, res) => {
   res.status(404).render("404");
 });
+/*
+VERSION OFFICIELLE
 
 app.listen(3000);
+*/
+
+//  VERSION TEST MOBILE
+const PORT = 3000
+app.listen(PORT)
