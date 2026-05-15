@@ -8,6 +8,9 @@ body{
     font-family: "Manrope", sans-serif;
     background-color: #f8f9fb;
     color:black;
+}
+
+.pagewrapper{
     overflow-x:hidden;
 }
 
@@ -38,13 +41,11 @@ h1 span{
 
 .reveal {
     opacity: 0.1;
-    transform: translateY(25px);
     transition: all 1.2s ease;
 }
 
 .reveal.active {
     opacity: 1;
-    transform: translateY(0);
 }
 
 

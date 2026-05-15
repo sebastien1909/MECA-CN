@@ -205,6 +205,8 @@
     width:100%;
     display:flex;
     flex-direction:column;
+    align-items:center;
+    justify-content:center;
     gap:50px;
     background-color:rgba(0, 63, 135, 0.1);
 }
@@ -519,7 +521,7 @@
 
     .timeline-event.left .timeline-marker,
     .timeline-event.right .timeline-marker {
-        left: 18px;
+        left: 6px;
     }
 
     .timeline-card {

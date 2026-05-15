@@ -274,3 +274,39 @@
 }
 
 
+input[type=file]::file-selector-button {
+  margin-right: 20px;
+  border: none;
+  background: #084cdf;
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s ease-in-out;
+}
+
+input[type=file]::file-selector-button:hover {
+  background: #0d45a5;
+}
+
+
+.baseline-input{
+    width:100%;
+    padding:16px 20px;
+    border-radius:14px;
+    border: 1px solid black;
+    background:rgb(241, 246, 255);
+    color:#151515;
+    font-size:16px;
+    outline:none;
+    transition:0.2s
+}
+
+.baseline-input:focus{
+    border-color: #0D4A9A;
+    box-shadow: 0 0 0 4px rgba(13,74,154,0.15);
+}
+#titre:focus{
+    border-color: #0D4A9A;
+    box-shadow: 0 0 0 4px rgba(13,74,154,0.15);
+}

@@ -169,17 +169,10 @@ Page de présentation de l'entreprise. Rend la vue adaptée selon le rôle.
  */
 app.get("/presentation", async function (req, res) {
   try {
-    if (req.session.role === "admin") {
-      res.redirect("admin/presentation", {
-        page_css1: "presentation.css",
-        page_css2: "headeradmin.css",
-      });
-    } else {
       res.render("presentation", {
         page_css1: "headerclient.css",
         page_css2: "presentation.css",
-      });
-    }
+  });
   } catch (err) {
     console.error(err);
     res.status(500).send("Erreur serveur");
