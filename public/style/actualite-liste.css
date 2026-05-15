@@ -478,3 +478,12 @@
     opacity:1
 }
 
+
+
+
+.article-separateur{
+    height:2px;
+    width:80%;
+    background-color:black;
+    margin:20px 10% 20px 0;
+}

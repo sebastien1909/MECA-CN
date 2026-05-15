@@ -51,7 +51,7 @@ const storageMachines = multer.diskStorage({
 });
 const uploadMachines = multer({ storage: storageMachines });
 
-// --- CONFIGURATION MULTER POUR LES ACTUS --- 
+// --- CONFIGURATION MULTER POUR LES IMAGES DES ACTUS --- 
 const storageActu = multer.diskStorage({
   destination: (req, file, cb) =>{
     cb(null, "public/img/actus");
@@ -66,12 +66,26 @@ const uploadActu = multer({ storage: storageActu})
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// --- CONFIGURATION MULTER POUR LES IMAGES TEMPORAIRES
+const storageTemp = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads"); // dossier /uploads à la racine
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, "tmp_" + Date.now() + ext);
+  },
+});
+const uploadTemp = multer({ storage: storageTemp });
+
+
 
 // Setting d'express
 // ==> sert à rendre les views
 const app = express();
 app.set("view engine", "ejs");
 
+app.use('/uploads', express.static('uploads'));
 app.use(express.urlencoded({extended:true}))
 app.use(express.static("public"));
 app.use(express.json())
@@ -1013,65 +1027,126 @@ app.get("/oubli_mdp", async function(req,res){
 
 app.post("/supprimerArticle", isAdmin, async function(req, res) {
     const idNews = req.body.id;
-
     try {
-        // Récupérer l'article avant de le supprimer de la BDD
-        const [rows] = await pool.query("SELECT img_presentation FROM actualite WHERE id = ?", [idNews]);
-        
-        if (rows.length > 0 && rows[0].img_presentation) {
-            const img_path = rows[0].img_presentation;
+        // Récupération de l'article
+        const [rows] = await pool.query(
+            "SELECT img_presentation, contenu FROM actualite WHERE id = ?",
+            [idNews]
+        );
+        if (rows.length === 0) {
+            return res.status(404).send("Article introuvable.");
+        }
+        const article = rows[0];
 
-            // Construire le chemin absolu
-            // Si img_path est "/img/actus/photo.jpg", on le joint proprement
-            const fullPath = path.join(__dirname, 'public', img_path);
+        // =========================
+        // SUPPRESSION IMAGE PRINCIPALE
+        // =========================
 
-            // Supprimer le fichier
-            if (fs.existsSync(fullPath)) {
-                fs.unlinkSync(fullPath);
-                // console.log("Fichier supprimé :", fullPath);
+        if (article.img_presentation) {
+            const presentationPath = path.join(
+                __dirname,
+                "public",
+                article.img_presentation
+            );
+            if (fs.existsSync(presentationPath)) {
+                fs.unlinkSync(presentationPath);
             }
         }
 
-        // Supprimer dans la bdd
-        await pool.query("DELETE FROM actualite WHERE id = ?", [idNews]);
+        // =========================
+        // EXTRACTION DES IMAGES INLINE
+        // =========================
 
+        const regex = /<img[^>]+src="([^"]+)"/g;
+        let match;
+        while ((match = regex.exec(article.contenu)) !== null) {
+            const imageSrc = match[1];
+            // On évite les liens externes
+            if (!imageSrc.startsWith("/img/actus/")) continue;
+            const imagePath = path.join(
+                __dirname,
+                "public",
+                imageSrc
+            );
+
+            if (fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath);
+                // console.log("Image supprimée :", imagePath);
+            }
+        }
+
+        // =========================
+        // SUPPRESSION SQL
+        // =========================
+
+        await pool.query(
+            "DELETE FROM actualite WHERE id = ?",
+            [idNews]
+        );
         res.redirect("/admin/actu");
-
     } catch (err) {
-        console.error("Erreur lors de la suppression :", err);
-        res.status(500).send("Erreur lors de la suppression de l'article.");
+        console.error("Erreur suppression article :", err);
+        res.status(500).send(
+            "Erreur lors de la suppression de l'article."
+        );
     }
 });
 
 
 
+// Route : upload temporaire d'une image inline
+app.post("/api/upload-temp", isAdmin, uploadTemp.single("image"), function(req,res){
+  if (!req.file){
+    return res.status(400).json({
+      success:false,
+      message:"Aucun fichier reçu",
+    });
+  };
+  // On renvoie l'URL publique de l'image temporaire
+  res.json({
+    success:true,
+    url:"/uploads/" + req.file.filename
+  })
+})
+
 
 app.post("/api/articles", isAdmin, uploadActu.single("presentation"), async function(req, res) {
-  /*
-  titre = titre de l'article
-  contenu = contenu de l'article (récupéré sous forme de HTML (
-    "<h1> ... </h1>
-     <p> ... </p> 
-     ..."
-    ))
-
-  presentation = image de presentation (image principale)
-  baseline = courte description 
-
-  Le tout est envoyé dans la BDD (table actualites)
-
-  date_publication et redacteur créés dans l'appel à l'API
-  */
-
   const { titre, baseline, contenu } = req.body;
   const presentation = req.file ? "/img/actus/" + req.file.filename : null;
 
-  // Validation serveur
   if (!titre || !contenu || !presentation || !baseline) {
     return res.status(400).json({ success: false, message: 'Tous les champs sont obligatoires.' });
   }
 
   try {
+    // --- Déplacement des images temporaires inline ---
+    // On cherche toutes les src="/uploads/tmp_..." dans le contenu HTML
+    let contenuFinal = contenu;
+    const regex = /src="\/uploads\/(tmp_[^"]+)"/g;
+    let match;
+    const deplacements = [];
+
+    while ((match = regex.exec(contenu)) !== null) {
+      const filename = match[1];
+      const src = path.join("uploads", filename);
+      const dest = path.join("public", "img", "actus", filename);
+
+      // On programme le déplacement (on le fera après si tout est OK)
+      deplacements.push({ src, dest, filename });
+    }
+
+    // On effectue les déplacements et on met à jour les URLs dans le contenu
+    for (const { src, dest, filename } of deplacements) {
+      if (fs.existsSync(src)) {
+        fs.renameSync(src, dest);
+      }
+      contenuFinal = contenuFinal.replace(
+        `/uploads/${filename}`,
+        `/img/actus/${filename}`
+      );
+    }
+    // --- Fin déplacement ---
+
     const date = new Date();
     const redacteur_id = req.session.userID;
     const [redacteurs] = await pool.query(
@@ -1082,7 +1157,7 @@ app.post("/api/articles", isAdmin, uploadActu.single("presentation"), async func
     await pool.query(`
       INSERT INTO actualite (contenu, date_publication, redacteur, titre, baseline, img_presentation)
       VALUES (?, ?, ?, ?, ?, ?)`,
-      [contenu, date, redacteur, titre, baseline, presentation]
+      [contenuFinal, date, redacteur, titre, baseline, presentation]
     );
 
     res.json({ success: true });
@@ -2316,7 +2391,7 @@ app.post("/envoyer-contact", async function (req, res) {
 
 
 /**
- * POST /connexion
+* POST /connexion
 Authentifie un utilisateur en comparant les identifiants au hash stocké.
 Remplit la session et redirige selon le rôle.
  */
@@ -2470,10 +2545,10 @@ app.post('/recup_mdp/envoi_code', async (req, res) => {
 
 
 
-/* ─────────────────────────────────────────────────────────────────────────
+/*
    POST /recup_mdp/verif_code
    Vérifie le code saisi par l'utilisateur
-───────────────────────────────────────────────────────────────────────── */
+*/
 app.post('/recup_mdp/verif_code', async (req, res) => {
     const { mail, code } = req.body;
 
@@ -2518,10 +2593,10 @@ app.post('/recup_mdp/verif_code', async (req, res) => {
 
 
 
-/* ─────────────────────────────────────────────────────────────────────────
+/*
    POST /recup_mdp/nouveau_mdp
    Réinitialise réellement le mot de passe
-───────────────────────────────────────────────────────────────────────── */
+*/
 app.post('/recup_mdp/nouveau_mdp', async (req, res) => {
     const { token, password, password_confirm } = req.body;
 
@@ -2717,12 +2792,7 @@ function buildResetEmail(code) {
 app.use((req, res) => {
   res.status(404).render("404");
 });
-/*
-VERSION OFFICIELLE
 
-app.listen(3000);
-*/
 
-//  VERSION TEST MOBILE
-const PORT = 3000
-app.listen(PORT)
+
+app.listen(3000)

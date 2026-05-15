@@ -18,9 +18,9 @@
     width: 100%;
     padding: 16px 20px;
     border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.08);
-    background: #151515;
-    color: white;
+    border: 1px solid rgb(0, 0, 0);
+    background: rgb(241, 246, 255);
+    color: #151515;
     font-size: 16px;
     outline: none;
     transition: 0.2s;
@@ -43,10 +43,10 @@
     padding: 24px;
 
     border-radius: 18px;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgb(0, 0, 0);
 
-    background: #151515;
-    color: white;
+    background: rgb(241, 246, 255);
+    color: #151515;
 
     font-size: 16px;
     line-height: 1.7;
@@ -63,7 +63,7 @@
 }
 
 #editor::placeholder{
-    color: rgba(255,255,255,0.3);
+    color: rgba(0, 0, 0, 0.3);
 }
 
 /* =========================
@@ -249,3 +249,28 @@
     }
 
 }
+
+
+.article-separateur{
+    height:2px;
+    width:80%;
+    background-color:black;
+    margin:20px 10% 20px 10%;
+}
+
+.article-image {
+    display: block !important ;
+    /* On définit la taille maximale de la "boîte" */
+    max-width: 350px !important ;     /* Ajuste selon tes préférences */
+    max-height: 350px !important ;    /* Ajuste selon tes préférences */
+    
+    /* Le secret pour ne pas couper : */
+    width: 100% !important ;          /* Prend la place dispo dans la limite du max-width */
+    height: auto !important ;         /* Recalcule la hauteur proportionnellement */
+    object-fit: scale-down !important ; /* Si l'image est plus petite que la boîte, elle ne s'étire pas */
+    
+    margin: 1.8rem 0 !important ;
+    border-radius: 4px !important ;
+}
+
+

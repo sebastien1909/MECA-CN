@@ -373,3 +373,30 @@ button.partager:hover,
         padding: 1.2rem 1.2rem 2.5rem;
     }
 }
+
+
+.article-separateur{
+    height:2px;
+    width:80%;
+    background-color:black;
+    margin:56px 10% 56px 10%;
+}
+
+.mail-input{
+    margin-bottom:10px;
+}
+
+.article-image {
+    display: block !important ;
+    /* On définit la taille maximale de la "boîte" */
+    max-width: 350px !important ;     /* Ajuste selon tes préférences */
+    max-height: 350px !important ;    /* Ajuste selon tes préférences */
+    
+    /* Le secret pour ne pas couper : */
+    width: 100% !important ;          /* Prend la place dispo dans la limite du max-width */
+    height: auto !important ;         /* Recalcule la hauteur proportionnellement */
+    object-fit: scale-down !important ; /* Si l'image est plus petite que la boîte, elle ne s'étire pas */
+    
+    margin: 1.8rem 0 !important ;
+    border-radius: 4px !important ;
+}
