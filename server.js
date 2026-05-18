@@ -1044,7 +1044,13 @@ app.get("/oubli_mdp", async function(req,res){
 // app.post
 
 
-
+/*
+Route POST permettant la suppression d'un article d'actualités
+Récupère l'id de l'URL
+-> supprime l'image principale de l'article du disque de stockage
+-> Recherche toutes les images présentent dans l'article en lui-même, et les supprimes elles-aussi du stockage
+-> Une fois les images supprimées, suppression de l'article de la bdd et renvoit de la page de listing d'actualité
+*/
 
 app.post("/supprimerArticle", isAdmin, async function(req, res) {
     const idNews = req.body.id;
@@ -1116,6 +1122,11 @@ app.post("/supprimerArticle", isAdmin, async function(req, res) {
 
 
 // Route : upload temporaire d'une image inline
+/*
+Sert pour la réalisation d'article
+-> lorsue l'utilisateur insère une image dans le CMS d'article, cette dernière est stockée temporairement dans le dossier /uploads/ 
+(via une config multer à retrouver en haut du server.js)
+*/
 app.post("/api/upload-temp", isAdmin, uploadTemp.single("image"), function(req,res){
   if (!req.file){
     return res.status(400).json({
@@ -1131,6 +1142,12 @@ app.post("/api/upload-temp", isAdmin, uploadTemp.single("image"), function(req,r
 })
 
 
+/*
+Route POST permettant (au click de validation sur la page CMS) d'ajouter l'article dans la bdd
+Récupère le contenu
+Trouve les images associées à ce contenu dans le dossier /uploads/ et les transfère vers le dossiers actus/ (/public/img/actus/)
+insère les données (dont le contenu) dans la bdd
+*/
 app.post("/api/articles", isAdmin, uploadActu.single("presentation"), async function(req, res) {
   const { titre, baseline, contenu } = req.body;
   const presentation = req.file ? "/img/actus/" + req.file.filename : null;
@@ -1430,8 +1447,6 @@ app.post("/ajouteroffre", async function(req,res){
       competences, avantage, avantageEnable, recrutement, recrutementEnable, complementaire, infosEnable, formattedDate, methode, methodeEnable, categorie
   ]);
   
-
-
  res.redirect("/ajoutoffre")
 })
 
