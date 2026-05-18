@@ -2,6 +2,30 @@
 <%# Contact page %>
 <%- include("header") %>
 
+<!-- Modal Captcha -->
+<div class="captcha-modal-overlay" id="captcha-modal" aria-hidden="true">
+  <div class="captcha-modal" role="dialog" aria-modal="true" aria-labelledby="captcha-modal-title">
+    <h3 id="captcha-modal-title">Vérification anti-robot</h3>
+    <p>Répondez à cette question pour confirmer votre envoi.</p>
+    <div class="captcha-question">
+      <span id="captcha-question-text"></span> = ?
+    </div>
+    <input
+      type="number"
+      id="captcha-input"
+      placeholder="Votre réponse"
+      autocomplete="off"
+    />
+    <p class="captcha-error" id="captcha-error" aria-live="polite"></p>
+    <div class="captcha-modal-actions">
+      <button type="button" id="cancel-captcha">Annuler</button>
+      <button type="button" id="confirm-captcha" class="btn-captcha-confirm">
+        Envoyer
+      </button>
+    </div>
+  </div>
+</div>
+
 
 <section class="title-holder">
 
@@ -92,33 +116,33 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="nom">Nom complet *</label>
-                    <input type="text" id="nom" name="nom" placeholder="Jean Dupont" required>
+                    <input type="text" id="nom" name="nom" placeholder="Jean Dupont" value="<%= locals.nom || '' %>" required>
                 </div>
                 <div class="form-group">
                     <label for="entreprise">Nom de l'entreprise *</label>
-                    <input type="text" id="entreprise" name="entreprise" placeholder="MECA-CN" required>
+                    <input type="text" id="entreprise" name="entreprise" placeholder="MECA-CN" value="<%= locals.entreprise || '' %>" required>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="email">Adresse email *</label>
-                    <input type="email" id="email" name="email" placeholder="contact@exemple.com" required>
+                    <input type="email" id="email" name="email" placeholder="contact@exemple.com" value="<%= locals.email || '' %>" required>
                 </div>
                 <div class="form-group">
                     <label for="telephone">Téléphone</label>
-                    <input type="tel" id="telephone" name="telephone" placeholder="+33 6 12 34 56 78">
+                    <input type="tel" id="telephone" name="telephone" placeholder="+33 6 12 34 56 78" value="<%= locals.telephone || '' %>">
                 </div>
             </div>
 
             <div class="form-group full-width">
                 <label for="objet">Objet du mail *</label>
-                <input type="text" id="objet" name="objet" placeholder="Demande de devis / Informations" required>
+                <input type="text" id="objet" name="objet" placeholder="Demande de devis / Informations" value="<%= locals.objet || '' %>" required>
             </div>
 
             <div class="form-group full-width">
                 <label for="message">Contenu du mail *</label>
-                <textarea id="message" name="message" rows="8" placeholder="Décrivez votre besoin, précisez les quantités, dimensions, matériaux, etc." required></textarea>
+                <textarea id="message" name="message" rows="8" placeholder="Décrivez votre besoin, précisez les quantités, dimensions, matériaux, etc." required><%= locals.message || '' %></textarea>
             </div>
 
             <button type="submit" class="submit-button">Envoyer</button>
@@ -126,5 +150,71 @@
     </div>
 </section>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var captchaQuestion = "<%= captchaQuestion %>";
+    var captchaModal = document.getElementById("captcha-modal");
+    var captchaInput = document.getElementById("captcha-input");
+    var captchaError = document.getElementById("captcha-error");
+    var confirmCaptchaBtn = document.getElementById("confirm-captcha");
+    var cancelCaptchaBtn = document.getElementById("cancel-captcha");
+    var contactForm = document.querySelector(".contact-form");
+
+    if (document.getElementById("captcha-question-text")) {
+      document.getElementById("captcha-question-text").textContent = captchaQuestion;
+    }
+
+    function openCaptchaModal() {
+      captchaInput.value = "";
+      captchaError.textContent = "";
+      captchaModal.classList.add("visible");
+      captchaModal.setAttribute("aria-hidden", "false");
+      captchaInput.focus();
+    }
+
+    function closeCaptchaModal() {
+      captchaModal.classList.remove("visible");
+      captchaModal.setAttribute("aria-hidden", "true");
+    }
+
+    // Intercepte le submit
+    contactForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      openCaptchaModal();
+    });
+
+    // Confirmer dans la modal
+    confirmCaptchaBtn.addEventListener("click", function () {
+      if (captchaInput.value.trim() === "") {
+        captchaError.textContent = "Veuillez entrer une réponse.";
+        captchaInput.focus();
+        return;
+      }
+
+      var hiddenInput = document.getElementById("captcha-answer-hidden");
+      if (!hiddenInput) {
+        hiddenInput = document.createElement("input");
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "captcha_answer";
+        hiddenInput.id = "captcha-answer-hidden";
+        contactForm.appendChild(hiddenInput);
+      }
+      hiddenInput.value = captchaInput.value.trim();
+
+      closeCaptchaModal();
+      contactForm.submit();
+    });
+
+    // Valider avec Entrée
+    captchaInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") confirmCaptchaBtn.click();
+    });
+
+    cancelCaptchaBtn.addEventListener("click", closeCaptchaModal);
+    captchaModal.addEventListener("click", function (e) {
+      if (e.target === captchaModal) closeCaptchaModal();
+    });
+  });
+</script>
 
 <%- include('footer') %>

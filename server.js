@@ -373,7 +373,7 @@ app.get("/devis", async function (req, res) {
     const op = ops[Math.floor(Math.random() * ops.length)];
 
     // Stocker la réponse en session (jamais exposée au client)
-    req.session.captchaAnswer = op.answer;
+    req.session.devisCaptchaAnswer = op.answer;
 
     res.render("devis", {
       page_css1: "headerclient.css",
@@ -394,11 +394,25 @@ Page de contact et formulaire pour envoyer un message à l'entreprise.
  */
 app.get("/contact", async function (req, res) {
   try {
+    // Générer une question math aléatoire pour le contact
+    const a = Math.floor(Math.random() * 10) + 1;
+    const b = Math.floor(Math.random() * 10) + 1;
+    const ops = [
+      { label: `${a} + ${b}`, answer: a + b },
+      { label: `${a} × ${b}`, answer: a * b },
+      { label: `${a + b} - ${b}`, answer: a },
+    ];
+    const op = ops[Math.floor(Math.random() * ops.length)];
+
+    // Stocker la réponse en session (pour le contact)
+    req.session.contactCaptchaAnswer = op.answer;
+
     res.render("contact", {
       page_css1: "headerclient.css",
       page_css2: "contact.css",
       success: null,
       error: null,
+      captchaQuestion: op.label,
     });
   } catch (err) {
     console.error(err);
@@ -2176,9 +2190,9 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
 
       // Captcha
       const userAnswer = parseInt(req.body.captcha_answer, 10);
-      const expectedAnswer = req.session.captchaAnswer;
+      const expectedAnswer = req.session.devisCaptchaAnswer;
 
-      req.session.captchaAnswer = null;
+      req.session.devisCaptchaAnswer = null;
 
       if (!expectedAnswer || isNaN(userAnswer) || userAnswer !== expectedAnswer) {
 
@@ -2377,9 +2391,40 @@ Utilise Nodemailer pour l'envoi => passage par une adresse mail définie dans le
 app.post("/envoyer-contact", async function (req, res) {
   const { nom, entreprise, email, telephone, objet, message } = req.body;
 
-  //console.log(message);
-
   try {
+    // Vérification du captcha pour la page contact
+    const userAnswer = parseInt(req.body.captcha_answer, 10);
+    const expectedAnswer = req.session.contactCaptchaAnswer;
+
+    req.session.contactCaptchaAnswer = null;
+
+    if (!expectedAnswer || isNaN(userAnswer) || userAnswer !== expectedAnswer) {
+      // Régénérer un captcha pour le réaffichage du formulaire
+      const a = Math.floor(Math.random() * 10) + 1;
+      const b = Math.floor(Math.random() * 10) + 1;
+      const ops = [
+        { label: `${a} + ${b}`, answer: a + b },
+        { label: `${a} × ${b}`, answer: a * b },
+        { label: `${a + b} - ${b}`, answer: a },
+      ];
+      const op = ops[Math.floor(Math.random() * ops.length)];
+      req.session.contactCaptchaAnswer = op.answer;
+
+      return res.render("contact", {
+        page_css1: "headerclient.css",
+        page_css2: "contact.css",
+        success: null,
+        error: "Réponse au captcha incorrecte. Veuillez réessayer.",
+        captchaQuestion: op.label,
+        nom,
+        entreprise,
+        email,
+        telephone,
+        objet,
+        message,
+      });
+    }
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -2406,18 +2451,50 @@ app.post("/envoyer-contact", async function (req, res) {
             `,
     });
 
+    // Générer un nouveau captcha pour le prochain envoi éventuel
+    const a = Math.floor(Math.random() * 10) + 1;
+    const b = Math.floor(Math.random() * 10) + 1;
+    const ops = [
+      { label: `${a} + ${b}`, answer: a + b },
+      { label: `${a} × ${b}`, answer: a * b },
+      { label: `${a + b} - ${b}`, answer: a },
+    ];
+    const op = ops[Math.floor(Math.random() * ops.length)];
+    req.session.contactCaptchaAnswer = op.answer;
+
     res.render("contact", {
       page_css1: "headerclient.css",
       page_css2: "contact.css",
       success: "Votre message a bien été envoyé !",
+      error: null,
+      captchaQuestion: op.label,
     });
   } catch (err) {
     console.error("Erreur Nodemailer :", err);
+
+    // Régénérer un captcha en cas d'erreur technique
+    const a = Math.floor(Math.random() * 10) + 1;
+    const b = Math.floor(Math.random() * 10) + 1;
+    const ops = [
+      { label: `${a} + ${b}`, answer: a + b },
+      { label: `${a} × ${b}`, answer: a * b },
+      { label: `${a + b} - ${b}`, answer: a },
+    ];
+    const op = ops[Math.floor(Math.random() * ops.length)];
+    req.session.contactCaptchaAnswer = op.answer;
+
     res.render("contact", {
       page_css1: "headerclient.css",
       page_css2: "contact.css",
-      error:
-        "Désolé, une erreur est survenue. Veuillez nous contacter par téléphone.",
+      success: null,
+      error: "Désolé, une erreur est survenue. Veuillez nous contacter par téléphone.",
+      captchaQuestion: op.label,
+      nom,
+      entreprise,
+      email,
+      telephone,
+      objet,
+      message,
     });
   }
 });
