@@ -341,7 +341,7 @@
         display: flex;
         justify-content: space-around;
         padding: 10px 0;
-        z-index: 9999;
+        z-index: 998;
     }
 
     .nav-item {
@@ -395,7 +395,7 @@
 .machine-holder a[href*="/modif_machine"],
 .machine-holder-mobile a[href*="/modif_machine"] {
     position: absolute;
-    z-index: 1000;
+    z-index: 998;
     width: 56px;
     height: 56px;
     border-radius: 50%;

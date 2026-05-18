@@ -427,7 +427,7 @@
 
 .realisation-card a[href*="/modif"] {
     position: absolute;
-    z-index: 1000;
+    z-index: 998;
     width: 47px;
     height: 47px;
     border-radius: 50%;

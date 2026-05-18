@@ -20,7 +20,7 @@
         justify-content:space-between;
         position:sticky;
         top:0;
-        z-index:999;
+        z-index:998;
     }
 
     .separateur-navbar{
@@ -432,7 +432,7 @@
         justify-content:space-between;
         position:sticky;
         top:0;
-        z-index:999;
+        z-index:998;
     }
 
     .separateur-navbar{

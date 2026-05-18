@@ -207,7 +207,7 @@ tbody td:active {
     position: absolute;
     right: 0.5em;
     top: 0.5em;
-    z-index: 999;
+    z-index: 998;
     color: #fff;
     font-family: serif;
     cursor: pointer;

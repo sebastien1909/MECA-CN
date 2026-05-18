@@ -11,7 +11,7 @@
     background-color: #1a1a1a;
     border-top: 1px solid #333;
     padding: 8px 0;
-    z-index: 10;
+    z-index: 999;
     height: 80px;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 }
@@ -42,7 +42,7 @@
 }
 
 /* Responsive - Hide labels on smaller screens */
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     .bottom-nav {
         height: 70px;
     }
@@ -63,7 +63,7 @@
 
 
 /* Add padding to body to avoid content being hidden under the navbar */
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     body {
         padding-bottom: 70px;
     }
