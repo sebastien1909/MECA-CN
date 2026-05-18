@@ -488,3 +488,10 @@
     background-color:black;
     margin:20px 10% 20px 0;
 }
+
+
+mark{
+    background-color:#9bcdff;
+    color:rgb(0, 0, 0);
+    font-weight:bold;
+}

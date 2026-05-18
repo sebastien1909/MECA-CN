@@ -28,7 +28,7 @@
     <button class="cms-toolbar-btn" title="Surligné" data-cmd="surligne" style="background:#fff3a0">▬</button>
     <button class="cms-toolbar-btn" title="Normal" data-cmd="normal">N</button>
     <div class="cms-toolbar-sep"></div>
-    <button class="cms-toolbar-btn" title="Image" data-cmd="image">🖼</button>
+    <button class="cms-toolbar-btn" title="Image" data-cmd="image">🖼️</button>
     <button class="cms-toolbar-btn" title="Séparateur" data-cmd="separateur">—</button>
   </div>
 
@@ -339,6 +339,16 @@ function appliquerSlash(idx, cmds) {
   } else {
     slashBlocCible.after(nouveau);
   }
+
+  // Citation → ajouter automatiquement un bloc auteur juste après
+  if (cmd.valeur === 'citation') {
+    const auteur = creerBloc('auteur');
+    nouveau.after(auteur);
+    nouveau.focus();
+    placerCursorFin(nouveau);
+    return;
+  }
+
   nouveau.focus();
   placerCursorFin(nouveau);
 }
@@ -355,8 +365,43 @@ function appliquerInline(valeur) {
       const sel = window.getSelection();
       if (!sel.rangeCount || sel.isCollapsed) return;
       const range = sel.getRangeAt(0);
-      const mark = document.createElement('mark');
-      try { range.surroundContents(mark); } catch(e) {}
+
+      // Désurligner : si la sélection est entièrement dans un <mark>, on l'enlève
+      const ancetre = range.commonAncestorContainer;
+      const markParent = ancetre.nodeType === Node.TEXT_NODE
+        ? ancetre.parentElement?.closest('mark')
+        : ancetre.closest?.('mark');
+      if (markParent) {
+        // Remplacer le <mark> par son contenu texte brut
+        const texte = document.createTextNode(markParent.textContent);
+        markParent.replaceWith(texte);
+        // Replacer le curseur après le texte désurlignage
+        const r = document.createRange();
+        r.setStartAfter(texte);
+        r.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(r);
+        return;
+      }
+
+      // Surligner : extraire le fragment, l'entourer d'un <mark>
+      try {
+        const fragment = range.extractContents();
+        const mark = document.createElement('mark');
+        mark.appendChild(fragment);
+        range.insertNode(mark);
+
+        // Insérer un nœud texte ZERO-WIDTH après le mark pour briser l'héritage
+        const separateur = document.createTextNode('\u200B');
+        mark.after(separateur);
+
+        // Placer le curseur après ce nœud séparateur
+        const r = document.createRange();
+        r.setStartAfter(separateur);
+        r.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(r);
+      } catch(e) {}
     },
     normal: () => {
       document.execCommand('removeFormat');
@@ -495,9 +540,21 @@ document.querySelector('.cms-toolbar').addEventListener('click', (e) => {
     bloc.dataset.placeholder = ph;
     bloc.setAttribute('data-empty', bloc.textContent.trim() === '' ? 'true' : 'false');
     bloc.focus();
+    // Citation via toolbar → insérer un bloc auteur après si pas déjà là
+    if (cmd === 'citation') {
+      const suivant = bloc.nextElementSibling;
+      if (!suivant || suivant.dataset.type !== 'auteur') {
+        const auteur = creerBloc('auteur');
+        bloc.after(auteur);
+      }
+    }
   } else {
     const nouveau = creerBloc(cmd);
     editor.append(nouveau);
+    if (cmd === 'citation') {
+      const auteur = creerBloc('auteur');
+      editor.append(auteur);
+    }
     nouveau.focus();
   }
 });
@@ -590,7 +647,7 @@ function serializerInline(el) {
 
   el.childNodes.forEach(node => {
     if (node.nodeType === Node.TEXT_NODE) {
-      result += node.textContent;
+      result += node.textContent.replace(/\u200B/g, '');
       return;
     }
     if (node.nodeType !== Node.ELEMENT_NODE) return;
