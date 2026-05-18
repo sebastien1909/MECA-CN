@@ -38,7 +38,7 @@
 .nav-item span {
     font-size: 12px;
     font-weight: 500;
-    white-space: nowrap;
+    white-space:nowrap;
 }
 
 /* Responsive - Hide labels on smaller screens */
