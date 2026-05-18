@@ -1,35 +1,182 @@
 # MECA-CN
 
-Site vitrine de l'entreprise MECA-CN
+Site vitrine professionnel développé pour l'entreprise MECA-CN.
 
-## Description
+---
 
-Ce projet contient le site vitrine officiel de l'entreprise MECA-CN. Il s'agit d'une plateforme web moderne présentant les services et expertises de l'entreprise.
-L'objectif est de faciliter la phase de prospection, et de transformer les prospects obtenus en potentitels clients (système de demande de devis).
+## 📖 Description
 
-## Objectifs
+Ce projet contient le site web officiel de l'entreprise MECA-CN.  
+Il s'agit d'une plateforme moderne permettant de présenter :
+
+- l'entreprise,
+- ses services,
+- ses machines,
+- ses réalisations,
+- ses offres,
+- ainsi qu'un système de demande de devis.
+
+L'objectif principal est de faciliter la prospection et de convertir les visiteurs en potentiels clients.
+
+---
+
+## 🎯 Objectifs
 
 - Présenter l'entreprise MECA-CN
-- Mettre en avant les services proposés
-- Faciliter le contact avec les clients
-- Assurer une présence web professionnelle
+- Valoriser les services proposés
+- Faciliter la prise de contact
+- Renforcer la présence web de l'entreprise
+- Centraliser les demandes de devis
 
-## Stack Technologique
+---
 
-- **Langage principal** : CSS
-- **Architecture** : Site vitrine statique
-- **Version** : Repository public
+## 🛠️ Stack Technologique
 
-## Structure du Projet
+- Node.js
+- Express.js
+- EJS
+- MySQL
+- CSS
+- JavaScript
 
-MECA-CN/ ├── README.md ├── server.js ├── dumpBDD.sql ├── db.js ├── .env ├── public/ ├── uploads/ ├── views/ └──
+---
 
-Code
+## 📁 Structure du Projet
 
-## Dépendances
+```bash
+MECA-CN/
+├── public/
+├── uploads/
+├── views/
+├── .env
+├── db.js
+├── package.json
+└── server.js
+```
 
-## Crédits
+---
 
-Créé par : sebastien1909
-Créé le : 9 jours
-Dernier mise à jour : 2026-04-16
+## ✨ Fonctionnalités
+
+### Partie client
+- Consultation des services
+- Consultation du parc machine
+- Consultation des réalisations
+- Consultation des offres
+- Formulaire de contact
+- Demande de devis
+
+### Partie administrateur
+- Gestion des machines
+- Gestion des réalisations
+- Gestion des offres
+- Gestion des actualités
+- Upload d'images
+- Interface d'administration sécurisée
+
+---
+
+## ⚙️ Installation
+
+### 1. Cloner le projet
+
+```bash
+git clone https://github.com/votre-repo/meca-cn.git
+```
+
+### 2. Installer les dépendances
+
+```bash
+npm install
+```
+
+### 3. Créer le fichier `.env`
+
+Créer un fichier nommé `.env` à la racine du projet :
+
+```env
+# Configuration base de données
+DB_HOST=127.0.0.1
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=meca_cn
+
+# Configuration Nodemailer
+EMAIL_USER=votremail@gmail.com
+EMAIL_PASS=abcdefghijklmnop
+EMAIL_DEST=emaildestinataire@gmail.com
+
+# URL du site
+SITE_URL=http://localhost:3000
+```
+
+---
+
+## 📌 Variables d'environnement
+
+| Variable | Description |
+|---|---|
+| DB_HOST | Adresse de la base de données |
+| DB_USER | Utilisateur MySQL |
+| DB_PASSWORD | Mot de passe MySQL |
+| DB_NAME | Nom de la base |
+| EMAIL_USER | Adresse mail utilisée pour l'envoi |
+| EMAIL_PASS | Clé d'application Gmail |
+| EMAIL_DEST | Adresse de réception |
+| SITE_URL | URL du site |
+
+---
+
+## 🚀 Lancer le projet
+
+```bash
+npm start
+```
+
+Le site sera accessible à l'adresse :
+
+```txt
+http://localhost:3000
+```
+
+---
+
+## 📸 Aperçu
+
+Ajouter ici des captures d'écran du site.
+
+---
+
+## 📚 Tutoriels
+
+### Générer une clé d'application Gmail
+
+#### Étape 1
+Accéder à votre compte Google :
+
+https://myaccount.google.com/
+
+#### Étape 2
+Activer la validation en deux étapes.
+
+#### Étape 3
+Accéder à la section :
+Sécurité → Mots de passe des applications
+
+#### Étape 4
+Générer une clé pour Nodemailer.
+
+---
+
+## 👨‍💻 Auteur
+
+Créé par : Sébastien Confrère
+
+BUT MMI — Développement Web
+
+---
+
+## 📅 Informations
+
+- Date de création : Avril 2026
+- Dernière mise à jour : 16/04/2026

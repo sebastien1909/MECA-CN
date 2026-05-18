@@ -6,7 +6,7 @@
     gap: 24px;
     align-items: center;
     /* On réduit le padding du bas (passé de 24px à 12px) */
-    padding: 24px 100px 12px; 
+    padding: 24px 100px 24px; 
     background-color: #F2F4F6;
     overflow-x: auto;
     white-space: nowrap;

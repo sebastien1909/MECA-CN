@@ -1026,6 +1026,24 @@ app.get("/oubli_mdp", async function(req,res){
   }
 })
 
+app.get("/desabonnement", async function(req,res){
+  try{
+    const email = req.query.email || "";
+    res.render("desabonnement", {
+      page_css1: "headerclient.css",
+      page_css2:"contact.css",
+      email:email,
+  })
+  } catch(err){
+    console.error(err);
+    res.status(500).send("Erreur serveur");
+  }
+})
+
+
+
+
+
 
 
 
@@ -1157,8 +1175,7 @@ app.post("/api/articles", isAdmin, uploadActu.single("presentation"), async func
   }
 
   try {
-    // --- Déplacement des images temporaires inline ---
-    // On cherche toutes les src="/uploads/tmp_..." dans le contenu HTML
+    // ── Déplacement des images temporaires inline ────────────────────
     let contenuFinal = contenu;
     const regex = /src="\/uploads\/(tmp_[^"]+)"/g;
     let match;
@@ -1166,24 +1183,18 @@ app.post("/api/articles", isAdmin, uploadActu.single("presentation"), async func
 
     while ((match = regex.exec(contenu)) !== null) {
       const filename = match[1];
-      const src = path.join("uploads", filename);
-      const dest = path.join("public", "img", "actus", filename);
-
-      // On programme le déplacement (on le fera après si tout est OK)
-      deplacements.push({ src, dest, filename });
+      deplacements.push({
+        src:  path.join("uploads", filename),
+        dest: path.join("public", "img", "actus", filename),
+        filename,
+      });
     }
 
-    // On effectue les déplacements et on met à jour les URLs dans le contenu
     for (const { src, dest, filename } of deplacements) {
-      if (fs.existsSync(src)) {
-        fs.renameSync(src, dest);
-      }
-      contenuFinal = contenuFinal.replace(
-        `/uploads/${filename}`,
-        `/img/actus/${filename}`
-      );
+      if (fs.existsSync(src)) fs.renameSync(src, dest);
+      contenuFinal = contenuFinal.replace(`/uploads/${filename}`, `/img/actus/${filename}`);
     }
-    // --- Fin déplacement ---
+    // ────────────────────────────────────────────────────────────────
 
     const date = new Date();
     const redacteur_id = req.session.userID;
@@ -1198,6 +1209,103 @@ app.post("/api/articles", isAdmin, uploadActu.single("presentation"), async func
       [contenuFinal, date, redacteur, titre, baseline, presentation]
     );
 
+    // ── Notification newsletter ──────────────────────────────────────
+    const [abonnes] = await pool.query("SELECT email FROM abonnement WHERE actif = 1");
+
+    if (abonnes.length > 0) {
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+      const dateFormatee = date.toLocaleDateString("fr-FR", {
+        day: "numeric", month: "long", year: "numeric"
+      });
+
+      // URL absolue de l'image de présentation (pour qu'elle s'affiche dans le mail)
+      const imageUrl = `${process.env.SITE_URL}${presentation}`;
+
+
+      // Extrait le texte brut du HTML et le tronque
+      function extraireExtrait(html, maxChars = 300) {
+        const texteBrut = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+        return texteBrut.length > maxChars ? texteBrut.substring(0, maxChars) : texteBrut;
+      }
+
+      const extrait = extraireExtrait(contenuFinal);
+
+
+
+      // Écriture du mail
+      for (const abonne of abonnes) {
+        await transporter.sendMail({
+          from:    `"MECA-CN" <${process.env.EMAIL_USER}>`,
+          to:      abonne.email,
+          replyTo: process.env.EMAIL_USER,
+          subject: `Nouvel article : ${titre}`,
+          text:
+            `Nouvel article publié sur MECA-CN\n\n` +
+            `${titre}\n${baseline}\n\n` +
+            `Publié le ${dateFormatee} par ${redacteur}.\n\n` +
+            `Retrouvez cet article sur : ${process.env.SITE_URL}/actualites\n\n` +
+            `---\nVous recevez cet email car vous êtes abonné à la newsletter MECA-CN.\n` +
+            `Pour vous désabonner : ${process.env.SITE_URL}/desabonnement`,
+          html: `
+            <div style="font-family: Arial, sans-serif; color: #1f2937; background: #f4f6fb; padding: 20px;">
+              <div style="max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0;">
+
+                <!-- En-tête -->
+                <div style="background: #0f4bb7; color: #ffffff; padding: 28px 30px; text-align: center;">
+                  <p style="margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.75);">Nouvel article</p>
+                  <h1 style="margin: 0; font-size: 22px; line-height: 1.3;">${titre}</h1>
+                </div>
+
+                <!-- Corps -->
+                <div style="padding: 30px;">
+                  <p style="margin: 0 0 20px; font-size: 16px; color: #475569; font-style: italic;">
+                    ${baseline}
+                  </p>
+
+                  <p style="margin: 0 0 6px; font-size: 13px; color: #94a3b8;">
+                    Publié le ${dateFormatee} par <strong style="color: #475569;">${redacteur}</strong>
+                  </p>
+
+                  <!-- Extrait de l'article avec effet fade -->
+                  <div style="position: relative; margin: 20px 0 28px;">
+                    <p style="margin: 0; font-size: 15px; color: #334155; line-height: 1.75;">
+                      ${extrait}
+                    </p>
+                    <!-- Dégradé qui efface le texte vers le bas -->
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 80px; background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);"></div>
+                  </div>
+
+                  
+                    <a href="${process.env.SITE_URL}/actualites"
+                      style="display: inline-block; background: #0f4bb7; color: #ffffff; text-decoration: none; padding: 13px 28px; border-radius: 8px; font-weight: 700; font-size: 15px;"
+                    >
+                    Lire l'article →
+                  </a>
+                </div>
+
+                <!-- Pied de page -->
+                <div style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 18px 30px; text-align: center;">
+                  <p style="margin: 0; font-size: 12px; color: #94a3b8;">
+                    Vous recevez cet email car vous êtes abonné à la newsletter MECA-CN.<br/>
+                    <a href="${process.env.SITE_URL}/desabonnement?email=${encodeURIComponent(abonne.email)}" style="color: #64748b;">Se désabonner</a>
+                  </p>
+                </div>
+
+              </div>
+            </div>
+          `,
+        });
+      }
+    }
+
+
     res.json({ success: true });
   } catch (err) {
     console.error("Erreur SQL :", err);
@@ -1205,6 +1313,51 @@ app.post("/api/articles", isAdmin, uploadActu.single("presentation"), async func
   }
 });
 
+
+/*
+Route POST pour se désabonner de la newsletter
+*/
+app.post("/desabonnement", async function (req, res) {
+  try {
+    const email = req.body.email;
+
+    if (!email) {
+      return res.status(400).render("desabonnement", {
+        page_css1: "headerclient.css",
+        page_css2: "contact.css",
+        email: "",
+        error: "Adresse email manquante.",
+      });
+    }
+
+    const [rows] = await pool.query(
+      "SELECT * FROM abonnement WHERE email = ?", [email]
+    );
+
+    if (rows.length === 0 || !rows[0].actif) {
+      return res.render("desabonnement", {
+        page_css1: "headerclient.css",
+        page_css2: "contact.css",
+        email: email,
+        error: "Cette adresse n'est pas abonnée à la newsletter.",
+      });
+    }
+
+    await pool.query(
+      "UPDATE abonnement SET actif = false WHERE email = ?", [email]
+    );
+
+    res.render("desabonnement", {
+      page_css1: "headerclient.css",
+      page_css2: "contact.css",
+      email: email,
+      success: true,
+    });
+  } catch (err) {
+    console.error("Erreur désabonnement :", err);
+    res.status(500).send("Erreur serveur");
+  }
+});
 
 
 /*
