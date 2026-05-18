@@ -218,7 +218,7 @@
 }
 
 .info-holder {
-    padding-right: 48px;
+    padding:12px 48px;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px;
@@ -333,7 +333,7 @@
     grid-template-columns: 1fr 1.2fr;
     gap: 50px;
     align-items: start;
-    background-color: rgba(0, 63, 135, 0.3);
+    background-color: #e3e6ee
 }
 
 .location h2 {

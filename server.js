@@ -358,15 +358,29 @@ Page du formulaire de demande de devis. Récupère les dimensions max des machin
  */
 app.get("/devis", async function (req, res) {
   try {
-    // On récupère les dimensions max des machines
     const [dimensions] = await pool.query(
       "SELECT MAX(d_x) as max_x, MAX(d_y) as max_y, MAX(d_z) as max_z FROM machines",
     );
+
+    // Générer une question math aléatoire
+    const a = Math.floor(Math.random() * 10) + 1;
+    const b = Math.floor(Math.random() * 10) + 1;
+    const ops = [
+      { label: `${a} + ${b}`, answer: a + b },
+      { label: `${a} × ${b}`, answer: a * b },
+      { label: `${a + b} - ${b}`, answer: a },
+    ];
+    const op = ops[Math.floor(Math.random() * ops.length)];
+
+    // Stocker la réponse en session (jamais exposée au client)
+    req.session.captchaAnswer = op.answer;
+
     res.render("devis", {
       page_css1: "headerclient.css",
       page_css2: "devis.css",
       maxDimensions: dimensions[0],
       role: req.session.role,
+      captchaQuestion: op.label, // ex: "7 + 3"
     });
   } catch (err) {
     console.error(err);
@@ -2159,6 +2173,33 @@ Style du mail géré par le serveur
  */
 app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) => {
     try {
+
+      // Captcha
+      const userAnswer = parseInt(req.body.captcha_answer, 10);
+      const expectedAnswer = req.session.captchaAnswer;
+
+      req.session.captchaAnswer = null;
+
+      if (!expectedAnswer || isNaN(userAnswer) || userAnswer !== expectedAnswer) {
+
+        if (req.files && req.files.length > 0) {
+          req.files.forEach((file) => {
+            fs.unlink(file.path, (err) => {
+              if (err) console.error("Erreur lors de la suppression du fichier orphelin :", err);
+            });
+          });
+        }
+        
+        return res.render("confirmation_devis", {
+          success: false,
+          message: "Réponse au captcha incorrecte. Veuillez réessayer.",
+          page_css1: "headerclient.css",
+          page_css2: "devis.css",
+        });
+      }
+
+
+
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {

@@ -855,6 +855,14 @@ tbody td:hover, .selected { color: #fff; background-color: #0f4bb7; }
 
 
 
+
+
+
+
+
+
+
+
 /* compteur redirect */
 .redirect-countdown {
   margin-top: 12px;
@@ -864,4 +872,115 @@ tbody td:hover, .selected { color: #fff; background-color: #0f4bb7; }
 
 .redirect-countdown strong {
   color: #0f4bb7;
+}
+
+.captcha-modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0, 0, 0, 0.5);
+    z-index:1000;
+    align-items:center;
+    justify-content:center;
+}
+
+.captcha-modal-overlay.visible{
+    display:flex;
+
+}
+
+.captcha-modal{
+    background:#ffffff;
+    border-radius:16px;
+    padding:36px 32px;
+    max-width:400px;
+    width:90%;
+    text-align:center;
+    box-shadow:0 8px 40px rgba(0, 0, 0, 0.18);
+}
+
+.captcha-modal h3{
+    margin:0 0 8px;
+    font-size:1.2rem;
+    color:#1f2937;
+}
+
+.captcha-modal > p{
+    color:#64748b;
+    margin: 0 0 20px;
+    font-size: 0.95rem;
+}
+
+.captcha-question{
+    display:inline-block;
+    background:#f1f5fd;
+    border:2px solid #0f4bb7;
+    border-radius:12px;
+    padding:14px 28px;
+    font-size: 1.6rem;
+    font-weight:700;
+    color:#0f4bb7;
+    letter-spacing:2px;
+    margin-bottom:20px;
+}
+
+.captcha-modal input[type="number"]{
+    width:100%;
+    padding:12px 16px;
+    border:1.5px solid #e2e8f0;
+    border-radius:8px;
+    font-size:1.1rem;
+    text-align:center;
+    outline:none;
+    box-sizing:border-box;
+    transition:border-color 0.2s;
+}
+
+.captcha-modal input[type="number"]:focus{
+    border-color: #0f4bb7;
+
+}
+
+.captcha-error{
+    color:#e53e3e;
+    font-size:0.88rem;
+    min-height:20px;
+    margin:6px 0 0;
+}
+
+.captcha-modal-actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin-top:20px;
+}
+
+.captcha-modal-actions button{
+    padding:11px 26px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    font-size:0.95rem;
+    font-weight:600;
+    transition: opacity 0.2s;
+
+}
+
+#cancel-captcha{
+    background:#e2e8f0;
+    color:#1f2937;
+}
+
+#cancel-captcha:hover{
+    opacity:0.8;
+
+}
+
+.btn-captcha-confirm{
+    background:#0f4bb7;
+    color:#ffffff;
+}
+
+.btn-captcha-confirm:hover{
+    opacity:0.88;
 }
