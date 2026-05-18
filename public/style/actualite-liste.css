@@ -17,7 +17,7 @@
     display: flex;
     align-items: center;
     gap: 60px;
-    margin-bottom: 60px;
+    margin-bottom: 250px;
 }
 
 .une-container .left-side {
@@ -146,6 +146,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
+    row-gap: 160px;
     margin-bottom: 70px;
 }
 

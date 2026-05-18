@@ -27,14 +27,20 @@
         </h3>
 
         <% for (const element of autres){ %>
-            <div class="autre">
-                <img src="<%=element.img_presentation %>" class="autres-presentation">
-                <p class="date"><%= new Date(element.date_publication).toLocaleDateString('fr-FR') %></p>
-                <h4>
-                    <%= element.titre %>
-                </h4>
-            </div>
-            
+           
+            <a class="suite" href="#" onclick="document.getElementById('form-<%= element.id %>').submit()">
+                <form id="form-<%= element.id %>" method="POST" action="/article" style="display:none">
+                    <input name="id" value="<%= element.id %>">
+                </form>
+                <div class="autre">
+                    <img src="<%=element.img_presentation %>" class="autres-presentation">
+                    <p class="date"><%= new Date(element.date_publication).toLocaleDateString('fr-FR') %></p>
+                    <h4>
+                        <%= element.titre %>
+                    </h4>
+                    
+                </div>
+            </a>
 
         <% } %>
 
@@ -59,7 +65,7 @@
 </main>
 
 
-<%- include ("footer") %>
+<%- include("footer") %>
 
 <script>
 
