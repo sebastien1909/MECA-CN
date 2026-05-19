@@ -1484,6 +1484,14 @@ form {
         flex-direction: column;
         text-align: center;
     }
+
+    .newsletter-text{
+        padding:0 30px;
+    }
+
+    .mail-input{
+        width:95%;
+    }
     .separateur-vertical {
         width: 80%;
         height: 1px;

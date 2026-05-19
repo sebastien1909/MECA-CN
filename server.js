@@ -371,6 +371,8 @@ app.get("/devis", async function (req, res) {
       { label: `${a + b} - ${b}`, answer: a },
     ];
     const op = ops[Math.floor(Math.random() * ops.length)];
+    const devis_pre = "devis";
+    //console.log(req.session.role)
 
     // Stocker la réponse en session (jamais exposée au client)
     req.session.devisCaptchaAnswer = op.answer;
@@ -381,6 +383,8 @@ app.get("/devis", async function (req, res) {
       maxDimensions: dimensions[0],
       role: req.session.role,
       captchaQuestion: op.label, // ex: "7 + 3"
+      page_devis:devis_pre,
+      role:req.session.role,
     });
   } catch (err) {
     console.error(err);
@@ -403,6 +407,7 @@ app.get("/contact", async function (req, res) {
       { label: `${a + b} - ${b}`, answer: a },
     ];
     const op = ops[Math.floor(Math.random() * ops.length)];
+    const contact_pre = "contact";
 
     // Stocker la réponse en session (pour le contact)
     req.session.contactCaptchaAnswer = op.answer;
@@ -413,6 +418,8 @@ app.get("/contact", async function (req, res) {
       success: null,
       error: null,
       captchaQuestion: op.label,
+      page_contact:contact_pre,
+      role:req.session.role,
     });
   } catch (err) {
     console.error(err);

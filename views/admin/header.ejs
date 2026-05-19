@@ -68,8 +68,13 @@
                 </a>
             </div>
             <div class="header_right_side">
-                <a href="/devis"><button class="header_btn">Demander un devis</button></a>
-                <a href="/contact" class="mobile-hidden"><button class="header_btn">Nous contacter</button></a>
+                <% if (typeof page_devis == "undefined"){ %>
+                    <a href="/devis"><button class="header_btn">Demander un devis</button></a>
+                <% }  %>
+
+                <% if (typeof page_contact == "undefined"){ %>
+                    <a href="/contact" class="mobile-hidden"><button class="header_btn">Nous contacter</button></a>
+                <% } %>
                 <a href="/admin/profil"><img src="/img/icons/Profil.png" alt="Profil" class="profile-icon mobile-hidden"></a>
             </div>
 
