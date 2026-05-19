@@ -2120,7 +2120,17 @@ app.post("/supprimer-realisation", isAdmin, async function (req, res) {
   try {
     const id_realisation = req.body.realisation_id;
     // console.log("ID réalisation à supprimer :", id_realisation);
+    const [realisation] = await pool.query("SELECT * FROM produits WHERE id = ?", [id_realisation])
+    const produit = realisation[0];
+    const imagePath = path.join(__dirname,"public",produit.image)
+
+    if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+    }
+
     await pool.query("DELETE FROM produits WHERE id = ?", [id_realisation]);
+
+    
 
     return res.redirect("/admin/suppression");
   } catch (err) {
@@ -2139,6 +2149,14 @@ app.post("/supprimer-machine", isAdmin, async function (req, res) {
   try {
     const id_machine = req.body.machine_id;
     // console.log("ID machine à supprimer :", id_machine);
+
+    const [machine_list] = await pool.query("SELECT * FROM machines WHERE id_machine = ?", [id_machine]);
+    const machine = machine_list[0];
+    const imagePath = path.join(__dirname, "public", machine.image_machine);
+
+    if (fs.existsSync(imagePath)){
+      fs.unlinkSync(imagePath)
+    }
     await pool.query("DELETE FROM machines WHERE id_machine = ?", [id_machine]);
 
     return res.redirect("/admin/suppression");
