@@ -19,16 +19,8 @@
 </main>
 
 
-<!-- Section de tri 
-    - Récupération de chaque catégorie dans la bdd dans l'ordre décroissant (afin d'avoir le "autres" à la fin)
-    - Affichage de ces derniers sous forme de "scroll horizontal"
--->
 <section class="tri reveal">
     <div class="tri-item<%= (categorieChoisie === 'all' || !categorieChoisie) ? ' active' : '' %>" data-filter="all">Tous</div>
-    <!-- 
-    Pour chaques catégories de "categories"
-    "categories" est une liste [] exhaustive des catégories disponibles de produits
-    -->
     <% for (const categorie of categories) { %>
         <div class="tri-item<%= String(categorieChoisie) === String(categorie.id_cat) ? ' active' : '' %>" data-filter="<%= categorie.id_cat %>"><%= categorie.nom %></div>
     <% } %>
@@ -40,10 +32,9 @@
 
 
 <section class="realisations-content">
-    <!-- S'il y a un premier produit (et donc plus de produits) -->
     <% if (produit1) { %> 
 
-        <!-- Première card uniquement pour les ordinateurs -->
+
         <div class="realisations-firstrow pc-only reveal">
             <div class="realisation-card">
                 <img src="<%= produit1.image %>" alt="Image de réalisation">
@@ -53,7 +44,7 @@
                 </div>
             </div>
             
-            <!-- Section d'accès à la page machines -->
+
             <div class="first-row-infos reveal">
                 <img src="/img/icons/machine.png" alt="Icône de machine" class="machine-icone">
                 <h4>Information</h4>
@@ -66,7 +57,7 @@
             </div>
         </div>
 
-    <!-- S'il n'y a pas de réalisation dans la bdd-->
+
     <% } else { %>
         <div style="text-align: center; padding: 50px;">
             <p>Aucune réalisation n'est actuellement disponible dans cette catégorie.</p>
@@ -74,9 +65,6 @@
     <% } %>
 
 
-    <!-- Cards pour tout les produits 
-    (s'il n'y a pas de produits, le message l'indiquant est affichée via le "if" précédent) 
-    -->
     <div class="realisations-grid reveal">
         <% for (const element of produits) { %>
             <div class="realisation-card">
@@ -146,5 +134,5 @@
 </script>
 
 
-<!-- Inclue du footer (répété sur toutes les pages) -->
+
 <%- include('footer') %>

@@ -20,7 +20,7 @@
 
     <section class="machine-container pc-only">
 
-        <div class="filter-wrapper reveal-machine">
+        <div class="filter-wrapper">
             <button class="filter-btn active" data-filter="all">Tous</button>
             <button class="filter-btn" data-filter="fraisage">Fraisage</button>
             <button class="filter-btn" data-filter="tournage">Tournage</button>
@@ -28,7 +28,6 @@
 
         <div class="filter-group tournage-group ">
             <h4 class="section-title tournage-title">Tournage</h4>
-            <!-- Pour chaque machine de tournage -->
             <% for (const element of machinestourneuses) { %>
                 <section class="machine-holder reveal-machine">
 
@@ -36,16 +35,13 @@
                     <div class="first-column">
                         <div class="top-part">
                             <h2>
-                                <!-- On récupère le nom -->
                                 <%= element.nom_machine %>
                             </h2>
                             <p>
-                                <!--On récupère la description longue -->
                                 <%= element.description_longue %>
                             </p>
 
                             <div class="info1">
-                                <!--On récupère les infos sur les stats 1 et 2 -->
                                 <p> 
                                     <%= element.statistique1_nom %>
                                 </p>

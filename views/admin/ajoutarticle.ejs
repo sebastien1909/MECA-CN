@@ -2,7 +2,6 @@
 
 <div class="admin-container">
 
-  <!-- Méta -->
   <div class="admin-meta">
     <input type="text" id="titre" placeholder="Titre de l'article" required>
     <input class="baseline-input" type="text" id="baseline" placeholder="Baseline de l'article (courte description)" required>
@@ -13,7 +12,6 @@
     </div>
   </div>
 
-  <!-- Toolbar -->
   <div class="cms-toolbar">
     <button class="cms-toolbar-btn" title="Titre 1" data-cmd="titre1">H1</button>
     <button class="cms-toolbar-btn" title="Titre 2" data-cmd="titre2">H2</button>
@@ -32,22 +30,18 @@
     <button class="cms-toolbar-btn" title="Séparateur" data-cmd="separateur">—</button>
   </div>
 
-  <!-- Éditeur -->
   <div id="cms-editor" contenteditable="true" spellcheck="true"></div>
 
-  <!-- Actions -->
   <div class="cms-actions">
     <button class="cms-btn cms-btn-preview" id="preview-btn">Prévisualiser</button>
     <button class="cms-btn cms-btn-publish" id="save-btn">Publier</button>
   </div>
 
-  <!-- Prévisualisation -->
   <div id="preview-section">
     <h2>Prévisualisation :</h2>
     <div id="preview"></div>
   </div>
 
-  <!-- Inputs cachés -->
   <input type="file" id="image-picker" accept="image/*">
 </div>
 
