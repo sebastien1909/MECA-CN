@@ -510,7 +510,7 @@ app.get("/offre/:id", async function (req, res) {
       "SELECT * FROM offres WHERE offre_id = ?",
       [offre_id],
     );
-
+    // console.log(offre[0]);
     //console.log(offre[0]);
     res.render("offre", {
       offre: offre[0],
@@ -1457,6 +1457,7 @@ app.post("/consulter_offre", async function (req, res) {
       [id],
     );
     const offre = offres[0];
+    console.log(offre);
 
 
     // récupérationde "l'enabilité" des sections plus secondaires

@@ -81,7 +81,7 @@ MECA-CN/
 ### 1. Cloner le projet
 
 ```bash
-git clone https://github.com/votre-repo/meca-cn.git
+git clone https://github.com/sebastien1909/meca-cn.git
 ```
 
 ### 2. Installer les dépendances
@@ -180,3 +180,6 @@ BUT MMI — Développement Web
 
 - Date de création : Avril 2026
 - Dernière mise à jour : 16/04/2026
+
+
+

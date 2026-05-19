@@ -8,18 +8,12 @@
 }
 
 /* cartes */
-.mission-holder > div {
+.mission-holder > div:not(.confirmer_modif) {
     background: #F1F5FD;
     padding: 25px;
     border-radius: 15px;
-    /*border: 1px solid #1e293b; */
+    border: 0.75px solid #9bbdf4;
     transition: 0.1s ease;
-}
-
-.mission-holder > div:hover:not(.postuler) {
-    transform: translateY(-5px);
-    border-color: #3b82f6;
-    box-shadow: 0 10px 25px rgba(59,130,246,0.15);
 }
 
 .mission-holder h2 {
@@ -50,6 +44,8 @@
 }
 
 .confirmer_modif{
+    padding-left:30%;
+    padding-top:4%;
     background:none !important;
     box-shadow:none !important;
 }

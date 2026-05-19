@@ -14,35 +14,42 @@
 </section>
 
 <main>
-    <div class="mission reveal">
-        <h2>Vos missions</h2>
-        <p><%= offre.missions %> </p>
-    </div>
-    <div class="compétences reveal">
-        <h2>Compétences recherchées</h2>
-        <p> <%= offre.competences %></p>
-    </div>
 
-    <% if (avantageE == 1){ %>
+    <% if (offre.missions !== ""){ %>
+        <div class="mission reveal">
+            <h2>Vos missions</h2>
+            <p><%- offre.missions %> </p>
+        </div>
+    <% } %>
+
+    <% if (offre.competences !== ""){ %>
+        <div class="compétences reveal">
+            <h2>Compétences recherchées</h2>
+            <p> <%- offre.competences %></p>
+        </div>
+    <% } %>
+
+
+    <% if (avantageE == 1 && offre.avantages !== ""){ %>
         <div class="avantage reveal">
             <h2>Avantage</h2>
-            <p> <%= offre.avantages %></p>
+            <p> <%- offre.avantages %></p>
         </div>
     <% } %>
 
 
-    <% if (recrutementE == 1){ %>
+    <% if (recrutementE == 1 && offre.recrutement !== ""){ %>
         <div class="recrutement reveal">
             <h2>Processus de recrutement</h2>
-            <p> <%= offre.recrutement %> </p>
+            <p> <%- offre.recrutement %> </p>
         </div>
     <% } %>
 
 
-    <% if (infosE == 1 ){ %>
+    <% if (infosE == 1 && offre.infos_complementaires !== ""){ %>
         <div class="complementaire reveal">
             <h2>Informations complémentaires</h2>
-            <p> <%= offre.infos_complementaires %></p>
+            <p> <%- offre.infos_complementaires %></p>
         </div>
     <% } %>
     

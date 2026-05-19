@@ -84,7 +84,7 @@ main > div {
     background: #F1F5FD;
     padding: 25px;
     border-radius: 15px;
-    border: 1px solid #1e293b;
+    border: 0.75px solid #9bbdf4;
     transition: 0.1s ease;
 }
 
@@ -300,3 +300,28 @@ main p {
     overflow: visible !important;
     position: relative !important;
 }
+
+.recrutement p{
+    color:black !important;
+}
+
+
+.modifier{
+    padding: 15px 30px;
+    border-radius:8px;
+    border:1px solid #8ba6d4;
+    background:#1d4ed8;
+    color:white;
+    cursor:pointer;
+    transition: 0.2s;
+    min-width:100%;
+
+}
+
+.modifier:hover{
+    background:white;
+    color:black;
+    border-color:#1d4ed8;
+}
+
+

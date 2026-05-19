@@ -321,7 +321,7 @@
           </div>
           <p class="upload-restrictions">
             Les fichiers compressés (ZIP) ne sont pas acceptés. <br />Taille
-            maximale par fichier : 10 Mo. <br />Taille totale maximale : 100 Mo.
+            maximale par fichier : 20 Mo. <br />Taille totale maximale : 250 Mo.
           </p>
           <br />
           <div class="upload-files-preview" id="upload-files-preview">
@@ -640,8 +640,8 @@
     var filePreview = document.getElementById("upload-files-preview");
     var uploadButton = document.querySelector(".upload-button");
     var selectedFiles = [];
-    var MAX_FILE_SIZE = 10 * 1024 * 1024;
-    var MAX_TOTAL_SIZE = 100 * 1024 * 1024;
+    var MAX_FILE_SIZE = 20 * 1024 * 1024;
+    var MAX_TOTAL_SIZE = 250 * 1024 * 1024;
 
     function formatBytes(bytes) {
       if (bytes === 0) return "0 octet";
@@ -657,8 +657,8 @@
       files.forEach(function (file) {
         var ext = file.name.split(".").pop().toLowerCase();
         if (ext === "zip") { errors.push("Les fichiers ZIP ne sont pas autorisés : " + file.name); return; }
-        if (file.size > MAX_FILE_SIZE) { errors.push("Fichier trop volumineux (> 10 Mo) : " + file.name); return; }
-        if (totalSize + file.size > MAX_TOTAL_SIZE) { errors.push("La taille totale dépasse 100 Mo avec : " + file.name); return; }
+        if (file.size > MAX_FILE_SIZE) { errors.push("Fichier trop volumineux (> 20 Mo) : " + file.name); return; }
+        if (totalSize + file.size > MAX_TOTAL_SIZE) { errors.push("La taille totale dépasse 250 Mo avec : " + file.name); return; }
         totalSize += file.size;
         filtered.push(file);
       });
@@ -696,7 +696,7 @@
           return '<li><span class="file-name">' + file.name + '</span><span class="file-size">' + formatBytes(file.size) +
             '</span><button type="button" class="file-remove" data-index="' + index + '">Supprimer</button></li>';
         }).join("") +
-        "</ul><div class='upload-files-total'>Total : " + formatBytes(totalSize) + " / 100 Mo</div>";
+        "</ul><div class='upload-files-total'>Total : " + formatBytes(totalSize) + " / 250 Mo</div>";
     }
 
     var pendingRemoveIndex = null;
