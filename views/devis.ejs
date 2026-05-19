@@ -114,7 +114,23 @@
                 name="matiere"
                 placeholder="Ex: Acier, Alu..."
               />
+              <input type="hidden" name="matiere_fourniture" id="matiere-fourniture-hidden" value="" />
             </div>
+             <!-- Modale fourniture matière -->
+              <div class="matiere-modal-overlay" id="matiere-modal" aria-hidden="true">
+                <div class="matiere-modal" role="dialog" aria-modal="true" aria-labelledby="matiere-modal-title">
+                  <h3 id="matiere-modal-title">Fourniture de la matière</h3>
+                  <p>Concernant la matière <strong id="matiere-modal-nom"></strong>, qui la fournit ?</p>
+                  <div class="matiere-modal-actions">
+                    <button type="button" id="matiere-client">✔ Je la fournis moi-même</button>
+                    <button type="button" id="matiere-entreprise" class="btn-matiere-highlight">✔ MECA-CN la fournit</button>
+                  </div>
+                </div>
+              </div>
+
+
+
+
           </div>
           <div class="nav-btns mobile-only">
             <button type="button" class="btn-next" onclick="nextStep(3)">
@@ -226,13 +242,13 @@
             <table id="calendar">
               <thead>
                 <tr>
-                  <th>Dim</th>
                   <th>Lun</th>
                   <th>Mar</th>
                   <th>Mer</th>
                   <th>Jeu</th>
                   <th>Ven</th>
                   <th>Sam</th>
+                  <th>Dim</th>
                 </tr>
               </thead>
               <tbody>
@@ -560,7 +576,7 @@
     };
 
     Calendar.prototype.drawDays = function () {
-      var startDay = new Date(year, month, 1).getDay();
+      var startDay = (new Date(year, month, 1).getDay() + 6) % 7;
       var nDays = new Date(year, month + 1, 0).getDate();
       var n = startDay;
 
@@ -586,15 +602,28 @@
             this.drawHeader(selectedDay.getDate());
           }
         }
+        if (days[j].innerHTML !== "") {
+          var date = new Date(year, month, parseInt(days[j].innerHTML));
+          var dow = date.getDay();
+          if (dow === 0 || dow === 6) {
+            days[j].classList.add("weekend");
+          }
+        }
       }
     };
 
     Calendar.prototype.clickDay = function (o) {
       if (o.innerHTML === "") return;
 
-      var clickedDate = new Date(year, month, o.innerHTML);
+      var clickedDate = new Date(year, month, o.innerHTML); // ← déclaré EN PREMIER
       var todayMidnight = new Date();
       todayMidnight.setHours(0, 0, 0, 0);
+
+      var dayOfWeek = clickedDate.getDay(); // ← maintenant clickedDate existe
+      if (dayOfWeek === 0 || dayOfWeek === 6) {
+        showErrorModal("Jour non ouvrable", "Veuillez choisir un jour de semaine (lundi au vendredi).");
+        return;
+      }
 
       if (clickedDate < todayMidnight) {
         showErrorModal("Date invalide", "La date sélectionnée ne peut pas être antérieure à aujourd'hui. Veuillez choisir une date future.");
@@ -698,6 +727,37 @@
         }).join("") +
         "</ul><div class='upload-files-total'>Total : " + formatBytes(totalSize) + " / 250 Mo</div>";
     }
+
+
+
+
+    // ── MODALE FOURNITURE MATIÈRE ────────────────────────────────────
+    var matiereInput = document.querySelector('input[name="matiere"]');
+    var matiereModal = document.getElementById("matiere-modal");
+    var matiereFournitureHidden = document.getElementById("matiere-fourniture-hidden");
+
+    matiereInput.addEventListener("blur", function () {
+      var val = matiereInput.value.trim();
+      if (!val) return;
+      document.getElementById("matiere-modal-nom").textContent = val;
+      matiereModal.classList.add("visible");
+      matiereModal.setAttribute("aria-hidden", "false");
+    });
+
+    document.getElementById("matiere-client").addEventListener("click", function () {
+      matiereFournitureHidden.value = "client";
+      matiereModal.classList.remove("visible");
+      matiereModal.setAttribute("aria-hidden", "true");
+    });
+
+    document.getElementById("matiere-entreprise").addEventListener("click", function () {
+      matiereFournitureHidden.value = "entreprise";
+      matiereModal.classList.remove("visible");
+      matiereModal.setAttribute("aria-hidden", "true");
+    });
+
+
+
 
     var pendingRemoveIndex = null;
     var confirmModal = document.getElementById("confirm-modal");

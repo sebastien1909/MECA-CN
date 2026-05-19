@@ -1,14 +1,14 @@
-/* ==========================================================================
-   GLOBAL & RESET
-   ========================================================================== */
-
 .devis-page {
     background: #f4f7fb;
     color: #172033;
 }
 
-.pc-only { display: block !important; }
-.mobile-only { display: none !important; }
+.pc-only { 
+    display: block !important; 
+}
+.mobile-only { 
+    display: none !important; 
+}
 
 /* ==========================================================================
    HERO SECTION (DESKTOP)
@@ -89,7 +89,7 @@
 }
 
 /* ==========================================================================
-   FORM ELEMENTS (INPUTS, LABELS)
+   Éléments du formulaire
    ========================================================================== */
 .form-row {
     display: grid;
@@ -442,15 +442,39 @@ textarea {
     transition: transform 0.5s;
 }
 
-.pre-button { left: 0.5em; }
-.next-button { right: 0.5em; }
+.pre-button { 
+    left: 0.5em; 
+}
+.next-button { 
+    right: 0.5em; 
+}
 
-.head-info { margin: 0; width: auto; }
-.head-day { margin: 0; font-size: 8em; line-height: 1; }
-.head-month { margin: 0; margin-top: 0.25em; font-size: 2em; line-height: 1; }
+.head-info { 
+    margin: 0; 
+    width: auto; 
+}
+.head-day { 
+    margin: 0; 
+    font-size: 8em; 
+    line-height: 1; 
+}
+.head-month { 
+    margin: 0; 
+    margin-top: 0.25em; 
+    font-size: 2em; 
+    line-height: 1; 
+}
 
-#calendar { width: 90%; margin: 0 auto; border-spacing: 2px; }
-thead tr { color: #0f4bb7; font-weight: 700; text-transform: uppercase; }
+#calendar { 
+    width: 90%; 
+    margin: 0 auto; 
+    border-spacing: 2px; 
+}
+thead tr { 
+    color: #0f4bb7; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+}
 tbody td {
     width: 14%;
     border-radius: 50%;
@@ -459,9 +483,19 @@ tbody td {
     padding: 10px 0;
 }
 
-tbody td:hover, .selected { color: #fff; background-color: #0f4bb7; }
-#today { background-color: #e66b6b; color: #fff; border-radius: 50%; }
-#disabled { color: #c9c9c9; cursor: default; }
+tbody td:hover, .selected { 
+    color: #fff; 
+    background-color: #0f4bb7; 
+}
+#today { 
+    background-color: #e66b6b; 
+    color: #fff; 
+    border-radius: 50%; 
+}
+#disabled { 
+    color: #c9c9c9; 
+    cursor: default; 
+}
 
 
 .devis-submit, .btn-next {
@@ -523,10 +557,16 @@ tbody td:hover, .selected { color: #fff; background-color: #0f4bb7; }
 
 
 @media (max-width: 900px) {
-    .pc-only { display: none !important; }
-    .mobile-only { display: block !important; }
+    .pc-only { 
+        display: none !important;
+    }
+    .mobile-only {
+        display: block !important; 
+    }
 
-    .devis-hero { display: none; }
+    .devis-hero { 
+        display: none; 
+    }
 
     .devis-form-section {
         padding: 20px 15px 60px;
@@ -581,16 +621,16 @@ tbody td:hover, .selected { color: #fff; background-color: #0f4bb7; }
         transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* --- Barre de progression (Mobile) --- */
+    /* --- Barre de progression (pour Mobile) --- */
     .stepper-container {
-        padding: 30px 20px 10px; /* Conserve les 20px de marge sur les côtés */
+        padding: 30px 20px 10px; 
     }
 
     .progress-bar {
         height: 6px;
         background: #e2e8f0;
         border-radius: 10px;
-        margin-bottom: 12px; /* Espacement avec le texte en dessous */
+        margin-bottom: 12px; 
         overflow: hidden;
     }
 
@@ -601,7 +641,6 @@ tbody td:hover, .selected { color: #fff; background-color: #0f4bb7; }
         font-size: 0.85rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        /* On s'assure que le texte respecte le padding du container */
         margin: 0; 
     }
 
@@ -632,7 +671,7 @@ tbody td:hover, .selected { color: #fff; background-color: #0f4bb7; }
 }
 
 /* ==========================================================================
-   CONFIRMATION PAGE STYLES
+   STYLE DE LA PAGE DE CONFIRMATION
    ========================================================================== */
 .confirmation-page {
     background: #f4f7fb;
@@ -972,4 +1011,54 @@ tbody td:hover, .selected { color: #fff; background-color: #0f4bb7; }
 
 .btn-captcha-confirm:hover{
     opacity:0.88;
+}
+
+
+
+
+.matiere-modal-overlay {
+  display: none; 
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  align-items: center; 
+  justify-content: center;
+}
+.matiere-modal-overlay.visible { display: flex; }
+.matiere-modal {
+  background: #fff; 
+  border-radius: 12px;
+  padding: 28px; 
+  max-width: 420px; 
+  width: 90%;
+  text-align: center;
+}
+.matiere-modal-actions {
+  display: flex; gap: 12px; 
+  margin-top: 20px; 
+  justify-content: center;
+}
+.matiere-modal-actions button {
+  padding: 10px 18px; 
+  border-radius: 8px;
+  border: 2px solid #0f4bb7; 
+  cursor: pointer;
+  background: #fff; 
+  color: #0f4bb7; 
+  font-weight: 600;
+}
+.btn-matiere-highlight {
+  background: #0f4bb7 !important; 
+  color: #fff !important;
+}
+
+
+
+
+
+
+#calendar td.weekend {
+  color: #cbd5e1;
+  cursor: not-allowed;
+  pointer-events: none;
 }

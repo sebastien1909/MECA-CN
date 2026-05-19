@@ -2404,12 +2404,18 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
         path: file.path,
       }));
 
+      const fournitureLabel = req.body.matiere_fourniture === "client"
+        ? "Fournie par le client"
+        : req.body.matiere_fourniture === "entreprise"
+        ? "Fournie par MECA-CN"
+        : "Non précisé";
+
       await transporter.sendMail({
         from: `"Site Web MECA-CN" <${process.env.EMAIL_USER}>`,
         to: process.env.EMAIL_DEST || "contact@meca-cn.com",
         replyTo: req.body.email, // Permet de répondre directement au client
         subject: `Nouveau Devis - ${req.body.entreprise || req.body.nom}`,
-        text: `Nouvelle demande de devis\n\nClient: ${req.body.nom} (${req.body.entreprise})\nEmail: ${req.body.email}\nProduit: ${req.body.produit} (${req.body.quantite} pièces)\nMatière: ${req.body.matiere || "Non précisé"}\nDimensions: ${req.body.dim_x} x ${req.body.dim_y} x ${req.body.dim_z} mm\nDélais souhaités : ${req.body.date_livraison}\nDescription: ${req.body.description || "Aucune"}\nFichiers joints: ${req.files.length ? req.files.map((file) => file.originalname).join(", ") : "Aucun"}\n`,
+        text: `Nouvelle demande de devis\n\nClient: ${req.body.nom} (${req.body.entreprise})\nEmail: ${req.body.email}\nProduit: ${req.body.produit} (${req.body.quantite} pièces)\nMatière: ${req.body.matiere || "Non précisé"} — ${fournitureLabel}\nDimensions: ${req.body.dim_x} x ${req.body.dim_y} x ${req.body.dim_z} mm\nDélais souhaités : ${req.body.date_livraison}\nDescription: ${req.body.description || "Aucune"}\nFichiers joints: ${req.files.length ? req.files.map((file) => file.originalname).join(", ") : "Aucun"}\n`,
         html: `
                 <div style="font-family: Arial, sans-serif; color: #1f2937; background: #f4f6fb; padding: 20px;">
                     <div style="max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0;">
@@ -2433,8 +2439,13 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
                                         <td style="padding: 12px 0; font-weight: 700;">${req.body.produit || "Non précisé"}</td>
                                     </tr>
                                     <tr style="border-top: 1px solid #e2e8f0;">
-                                        <td style="padding: 12px 0; color: #64748b;">Matière</td>
-                                        <td style="padding: 12px 0; font-weight: 700;">${req.body.matiere || "Non précisé"}</td>
+                                      <td style="padding: 12px 0; color: #64748b;">Matière</td>
+                                      <td style="padding: 12px 0; font-weight: 700;">
+                                        ${req.body.matiere || "Non précisé"}
+                                        <span style="display: inline-block; margin-left: 8px; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; background: ${req.body.matiere_fourniture === 'client' ? '#dbeafe' : '#dbeafe'}; color: ${req.body.matiere_fourniture === 'client' ? '#1d4ed8' : '#1d4ed8'};">
+                                          ${fournitureLabel}
+                                        </span>
+                                      </td>
                                     </tr>
                                     <tr style="border-top: 1px solid #e2e8f0;">
                                         <td style="padding: 12px 0; color: #64748b;">Quantité</td>
