@@ -201,8 +201,8 @@
 
 .pourquoi {
     margin: 0 0 200px 0;
-    padding: 24px 24px 72px;
     width:100%;
+    padding-bottom:15px;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -214,7 +214,9 @@
 .pourquoi h2 {
     font-size: 2.1rem;
     color: #071d3d;
-    margin-bottom: 32px;
+    margin-bottom: 16px;
+    margin-left:15px;
+    margin-right:35px;
 }
 
 .info-holder {
@@ -474,14 +476,6 @@
 }
 
 @media screen and (max-width: 640px) {
-    .presentation-top,
-    .histoire-container,
-    .adaptabilite-holder,
-    .pourquoi,
-    .ecologie,
-    .devis{
-        padding: 0 18px 24px;
-    }
 
     .histoire-container {
         margin: 0 auto 80px;

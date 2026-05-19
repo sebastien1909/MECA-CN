@@ -1,16 +1,6 @@
 /* ==========================================================================
    GLOBAL & RESET
    ========================================================================== */
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    padding: 0;
-    line-height: 1.5;
-    font-family: "Inter", Arial, Helvetica, sans-serif;
-}
 
 .devis-page {
     background: #f4f7fb;
@@ -125,7 +115,6 @@ label {
 }
 
 input, textarea {
-    width: 100%;
     border: 1px solid #d7dce7;
     border-radius: 20px;
     padding: 18px 20px;
