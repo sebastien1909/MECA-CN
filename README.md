@@ -62,7 +62,7 @@ MECA-CN/
 - Consultation des services
 - Consultation du parc machine
 - Consultation des réalisations
-- Consultation des offres
+- Consultation des offres d'emploi
 - Formulaire de contact
 - Demande de devis
 
@@ -114,6 +114,8 @@ SITE_URL=http://localhost:3000
 
 ## 📌 Variables d'environnement
 
+*ci-dessous les variables à insérer dans le fichier .env*
+
 | Variable | Description |
 |---|---|
 | DB_HOST | Adresse de la base de données |
@@ -124,6 +126,20 @@ SITE_URL=http://localhost:3000
 | EMAIL_PASS | Clé d'application Gmail |
 | EMAIL_DEST | Adresse de réception |
 | SITE_URL | URL du site |
+
+---
+
+## ⛔ Informations sensibles
+
+Certaines données doivent impérativement rester privées, notamment :
+
+- La clé d’accès Gmail
+- Le mot de passe MySQL
+- Les variables présentes dans le fichier `.env`
+
+Par défaut, le fichier `.env` est ignoré par Git grâce au `.gitignore` et n’est donc pas envoyé sur GitHub.
+
+⚠️ Si la règle `.env` est supprimée du `.gitignore`, le fichier pourra être publié en ligne avec l’ensemble des informations sensibles qu’il contient.
 
 ---
 
@@ -172,14 +188,14 @@ Générer une clé pour Nodemailer.
 
 Créé par : Sébastien Confrère
 
-BUT MMI — Développement Web
+BUT MMI | Développement Web
 
 ---
 
 ## 📅 Informations
 
 - Date de création : Avril 2026
-- Dernière mise à jour : 16/04/2026
+- Dernière mise à jour : 19/05/2026
 
 
 

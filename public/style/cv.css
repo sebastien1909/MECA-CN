@@ -347,3 +347,114 @@
 .retour-arriere{
     margin:15px !important;
 }
+
+
+.upload-size-bar-track{
+    height:6px;
+    background:#e2e8f0;
+    border-radius:99px;
+    margin-bottom:6px;
+    overflow:hidden;
+}
+
+.upload-size-bar-fill{
+    height:100%;
+    border-radius:99px;
+    transition:width 0.3s ease, background 0.3s ease;
+}
+
+
+
+
+
+
+.confirm-modal-overlay{
+    position:fixed;
+    inset:0;
+    background-color:rgba(15,23,42,0.6);
+    backdrop-filter:blur(4px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:998;
+
+    opacity:0;
+    pointer-events: none;
+    transition:opacity 0.3s ease;
+}
+
+.confirm-modal-overlay[aria-hidden="false"]{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.confirm-modal{
+    background:#ffffff;
+    padding:32px;
+    border-radius:24px;
+    width:100%;
+    max-width:400px;
+    box-shadow:0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    text-align:center;
+    box-sizing:border-box;
+
+    transform: scale(0.95);
+    transition: transition 0.3s ease;
+}
+
+.confirm-modal-overlay[aria-hidden="false"] .confirm-modal{
+    transform: scale(1);
+}
+
+.confirm-modal h3{
+    margin: 0 012px 0;
+    color:#0f172a;
+    font-size:1.3rem;
+    font-weight:700;
+    letter-spacing:-0.01em;
+}
+
+.confirm-modal p{
+    margin: 0 0 28px 0;
+    color:#64748b;
+    font-size: 0.95rem;
+    line-height:1.5;
+}
+
+.confirm-modal-actions{
+    display:flex;
+    gap:12px;
+}
+
+.confirm-modal-actions button{
+    flex:1;
+    padding:12px 20px;
+    border-radius:15px;
+    font-size:0.9rem;
+    font-weight:700;
+    cursor:pointer;
+    transition: all 0.2s ease;
+    border:none;
+}
+
+.btn-modal-cancel{
+    background:#f1f5f9;
+    color:#475569;
+}
+
+.btn-modal-cancel:hover{
+    background:#e2e8f0;
+    color:#334155;
+}
+
+.btn-modal-confirm{
+    background:#ef4444;
+    color:#ffffff;
+}
+
+
+.btn-modal-confirm:hover{
+    background:#dc2626;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+

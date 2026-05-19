@@ -80,6 +80,22 @@ const uploadTemp = multer({ storage: storageTemp });
 
 
 
+// CONFIG MULTER POUR LES CV
+const storageCV = multer.diskStorage({
+  destination: (req, file, cb) =>{
+    cb(null, "uploads");
+  },
+  filename: (req,file, cb) =>{
+    const ext = path.extname(file.originalname);
+    cb(null, "tmp_" + Date.now() + ext)
+  }
+})
+const uploadCV = multer({ storage: storageCV})
+
+
+
+
+
 // Setting d'express
 // ==> sert à rendre les views
 const app = express();
@@ -1064,9 +1080,175 @@ app.get("/desabonnement", async function(req,res){
 
 
 
-
-
 // app.post
+
+
+
+
+/* 
+Route POST /envoyer_cv
+*/
+ 
+app.post("/envoyer_cv", uploadCV.array("fichiers", 5), async function(req, res) {
+    try {
+      const { mail, name, message } = req.body;
+ 
+      // ── Validation basique ──
+      if (!mail || !name) {
+        // Nettoyage des fichiers orphelins
+        if (req.files && req.files.length > 0) {
+          req.files.forEach((file) => {
+            fs.unlink(file.path, (err) => {
+              if (err) console.error("Erreur suppression fichier orphelin :", err);
+            });
+          });
+        }
+ 
+        return res.render("confirmation_cv", {
+          success: false,
+          message: "Veuillez renseigner votre adresse email et votre nom.",
+          page_css1: "headerclient.css",
+          page_css2: "confirmation_cv.css",
+        });
+      }
+ 
+      // ── Transport Nodemailer ─────────────────────────────────────
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+ 
+      // ── Pièces jointes ───────────────────────────────────────────
+      const attachments = req.files.map((file) => ({
+        filename: file.originalname,
+        path: file.path,
+      }));
+ 
+      // ── Offre concernée (si tu veux la tracer) ───────────────────
+      // L'offre_id peut être passée en champ caché dans le formulaire :
+      // <input type="hidden" name="offre_id" value="<%= offre.offre_id %>" />
+      const offreId = req.body.offre_id || "Non précisé";
+      const [list_offre_name] = await pool.query("SELECT intitule FROM offres WHERE offre_id = ?", [offreId])
+      const offreIntitule = list_offre_name[0].intitule;
+      // console.log(list_offre_name);
+      // console.log(offreIntitule);
+ 
+      // ── Envoi du mail ──
+      await transporter.sendMail({
+        from: `"Site Web MECA-CN" <${process.env.EMAIL_USER}>`,
+        to: process.env.EMAIL_DEST || "contact@meca-cn.com",
+        replyTo: mail,                              // répondre directement au candidat
+        subject: `Nouvelle candidature — ${name}`,
+        text: `
+          Nouvelle candidature reçue depuis le site.
+          
+          Candidat : ${name}
+          Email : ${mail}
+          Offre concernée : ${offreIntitule}
+          
+          Message / Lettre de motivation :
+          ${message || "Aucun message fourni."}
+          
+          Fichiers joints : ${req.files.length ? req.files.map((f) => f.originalname).join(", ") : "Aucun"}
+                  `.trim(),
+                  html: `
+          <div style="font-family: Arial, sans-serif; color: #1f2937; background: #f4f6fb; padding: 20px;">
+            <div style="max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0;">
+              
+              <div style="background: #0f4bb7; color: #ffffff; padding: 28px 30px; text-align: center;">
+                <h1 style="margin: 0; font-size: 24px; letter-spacing: 0.5px;">Nouvelle candidature</h1>
+                <p style="margin: 8px 0 0; color: rgba(255,255,255,0.85);">Reçue depuis le formulaire de candidature du site.</p>
+              </div>
+          
+              <div style="padding: 30px;">
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+                  <tbody>
+                    <tr>
+                      <td style="padding: 12px 0; color: #64748b; width: 180px;">Candidat</td>
+                      <td style="padding: 12px 0; font-weight: 700;">${name}</td>
+                    </tr>
+                    <tr style="border-top: 1px solid #e2e8f0;">
+                      <td style="padding: 12px 0; color: #64748b;">Email</td>
+                      <td style="padding: 12px 0; font-weight: 700;">${mail}</td>
+                    </tr>
+                    <tr style="border-top: 1px solid #e2e8f0;">
+                      <td style="padding: 12px 0; color: #64748b;">Offre concernée</td>
+                      <td style="padding: 12px 0; font-weight: 700;">${offreIntitule}</td>
+                    </tr>
+                  </tbody>
+                </table>
+          
+                <div style="margin-bottom: 24px;">
+                  <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f4bb7;">Message / Lettre de motivation</h2>
+                  <p style="margin: 0; color: #475569; white-space: pre-line;">${
+                    message ? message.replace(/</g, "&lt;").replace(/>/g, "&gt;") : "Aucun message fourni."
+                  }</p>
+                </div>
+          
+                <div style="margin-bottom: 24px;">
+                  <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f4bb7;">Fichiers joints</h2>
+        ${
+          req.files.length
+            ? `<ul style="margin: 0; padding-left: 20px; color: #475569;">
+                ${req.files
+                  .map(
+                    (file) =>
+                      `<li style="margin-bottom: 8px;">${file.originalname} (${Math.round(file.size / 1024)} Ko)</li>`
+                  )
+                  .join("")}
+               </ul>`
+            : '<p style="margin: 0; color: #475569;">Aucun fichier joint.</p>'
+        }
+      </div>
+ 
+      <p style="margin: 0; color: #94a3b8; font-size: 13px;">
+        Cette candidature a été générée depuis le formulaire du site MECA-CN.
+      </p>
+    </div>
+  </div>
+</div>
+        `,
+        attachments,
+      });
+ 
+      // ── Suppression des fichiers temporaires ─────────────────────
+      req.files.forEach((file) => {
+        fs.unlink(file.path, (err) => {
+          if (err) console.error("Erreur suppression fichier temporaire :", err);
+        });
+      });
+ 
+      // ── Succès ───────────────────────────────────────────────────
+      res.render("confirmation_cv", {
+        success: true,
+        message: "Votre candidature a été envoyée avec succès !",
+        page_css1: "headerclient.css",
+        page_css2: "confirmation_cv.css",
+      });
+    } catch (err) {
+      console.error("Erreur Nodemailer (CV) :", err);
+ 
+      // Nettoyage en cas d'erreur
+      if (req.files && req.files.length > 0) {
+        req.files.forEach((file) => {
+          fs.unlink(file.path, (errUnlink) => {
+            if (errUnlink) console.error("Erreur suppression fichier :", errUnlink);
+          });
+        });
+      }
+ 
+      res.render("confirmation_cv", {
+        success: false,
+        message: "Désolé, une erreur technique est survenue. Veuillez réessayer.",
+        page_css1: "headerclient.css",
+        page_css2: "confirmation_cv.css",
+      });
+    }
+  }
+);
 
 
 /*
@@ -2706,6 +2888,8 @@ app.post("/envoyer-contact", async function (req, res) {
 
 
 
+
+
 /**
 * POST /connexion
 Authentifie un utilisateur en comparant les identifiants au hash stocké.
@@ -2985,17 +3169,6 @@ app.post('/recup_mdp/nouveau_mdp', async (req, res) => {
         });
     }
 });
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -8,12 +8,18 @@
             <div class="confirmation-content">
                 <% if (success) { %> 
                     <div class="success-icon">✓</div>
-                    <h2>Demande de devis envoyée avec succès</h2>
-                    <p>Nous avons bien reçu votre demande et nous vous contacterons dans les plus brefs délais.</p>
+                    <h2>Votre CV a bien été envoyé</h2>
+                    <p>
+                        Notre équipe étudiera votre candidature dans les meilleurs délais.
+                    </p>
+
+                    <p>
+                        Sans retour sous 2 semaines, votre candidature pourra être considérée comme non retenue.
+                    </p>
                     <p class="redirect-countdown">Redirection vers l'accueil dans <strong><span id="countdown">5</span>s</strong>…</p>
                 <% } else { %>
                     <div class="error-icon">✗</div>
-                    <h2>Erreur lors de l'envoi</h2>
+                    <h2>L’envoi de votre CV a échoué. Veuillez réessayer dans quelques instants.</h2>
                     <p><%= message %></p>
                     <a href="/devis" class="btn-retry">Réessayer</a>
                 <% } %>
