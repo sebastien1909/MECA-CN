@@ -2426,6 +2426,9 @@ app.post("/ajouter_machine",isAdmin,uploadMachines.single("image_machine"),async
         d_x,
         d_y,
         d_z,
+        diametre_max,
+        longueur_max,
+        alesage,
         type,
         annee_entree,
       } = req.body;
@@ -2434,24 +2437,37 @@ app.post("/ajouter_machine",isAdmin,uploadMachines.single("image_machine"),async
         ? "/img/machines/" + req.file.filename
         : null;
 
-      const insertQuery = `INSERT INTO machines (nom_machine, description_courte, description_longue, statistique1_nom, statistique1_donnee, statistique2_nom, statistique2_donnee, avantage_titre, avantage_description, d_x, d_y, d_z, type, annee_entree, image_machine) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      const insertQuery = `
+      INSERT INTO machines (
+          nom_machine, description_courte, description_longue,
+          statistique1_nom, statistique1_donnee,
+          statistique2_nom, statistique2_donnee,
+          avantage_titre, avantage_description,
+          d_x, d_y, d_z,
+          diametre_max, longueur_max, alesage,
+          type, annee_entree, image_machine
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
 
       const values = [
-        nom_machine || null,
-        description_courte || null,
-        description_longue || null,
-        statistique1_nom || null,
-        statistique1_donnee || null,
-        statistique2_nom || null,
-        statistique2_donnee || null,
-        avantage_titre || null,
-        avantage_description || null,
-        d_x || null,
-        d_y || null,
-        d_z || null,
-        type || null,
-        annee_entree || null,
-        imageMachine,
+          nom_machine     || null,
+          description_courte  || null,
+          description_longue  || null,
+          statistique1_nom    || null,
+          statistique1_donnee || null,
+          statistique2_nom    || null,
+          statistique2_donnee || null,
+          avantage_titre      || null,
+          avantage_description || null,
+          d_x          || null,
+          d_y          || null,
+          d_z          || null,
+          diametre_max || null,   // ← nouveau
+          longueur_max || null,   // ← nouveau
+          alesage      || null,   // ← nouveau
+          type         || null,
+          annee_entree || null,
+          imageMachine,
       ];
 
       await pool.query(insertQuery, values);
@@ -2610,7 +2626,7 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
         to: process.env.EMAIL_DEST || "contact@meca-cn.com",
         replyTo: req.body.email, // Permet de répondre directement au client
         subject: `Nouveau Devis - ${req.body.entreprise || req.body.nom}`,
-        text: `Nouvelle demande de devis\n\nClient: ${req.body.nom} (${req.body.entreprise})\nEmail: ${req.body.email}\nProduit: ${req.body.produit} (${req.body.quantite} pièces)\nMatière: ${req.body.matiere || "Non précisé"} — ${fournitureLabel}\nDimensions: ${req.body.dim_x} x ${req.body.dim_y} x ${req.body.dim_z} mm\nDélais souhaités : ${req.body.date_livraison}\nDescription: ${req.body.description || "Aucune"}\nFichiers joints: ${req.files.length ? req.files.map((file) => file.originalname).join(", ") : "Aucun"}\n`,
+        text: `Nouvelle demande de devis\n\nClient: ${req.body.nom} (${req.body.entreprise})\nEmail: ${req.body.email}\nProduit: ${req.body.produit} Procédé souhaité: ${req.body.type_usinage || "Non précisé"}\n(${req.body.quantite} pièces)\nMatière: ${req.body.matiere || "Non précisé"} — ${fournitureLabel}\nDimensions: ${req.body.dim_x} x ${req.body.dim_y} x ${req.body.dim_z} mm\nDélais souhaités : ${req.body.date_livraison}\nDescription: ${req.body.description || "Aucune"}\nFichiers joints: ${req.files.length ? req.files.map((file) => file.originalname).join(", ") : "Aucun"}\n`,
         html: `
                 <div style="font-family: Arial, sans-serif; color: #1f2937; background: #f4f6fb; padding: 20px;">
                     <div style="max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0;">
@@ -2632,6 +2648,10 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
                                     <tr style="border-top: 1px solid #e2e8f0;">
                                         <td style="padding: 12px 0; color: #64748b;">Produit</td>
                                         <td style="padding: 12px 0; font-weight: 700;">${req.body.produit || "Non précisé"}</td>
+                                    </tr>
+                                    <tr style="border-top: 1px solid #e2e8f0;">
+                                        <td style="padding: 12px 0; color: #64748b;">Procédé souhaité</td>
+                                        <td style="padding: 12px 0; font-weight: 700;">${req.body.type_usinage || "Non précisé"}</td>
                                     </tr>
                                     <tr style="border-top: 1px solid #e2e8f0;">
                                       <td style="padding: 12px 0; color: #64748b;">Matière</td>
@@ -2693,7 +2713,7 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
         success: false,
         message: "Désolé, une erreur technique est survenue.",
         page_css1: "headerclient.css",
-        page_css2: "devis.css.css",
+        page_css2: "devis.css",
       });
     }
   },

@@ -130,27 +130,49 @@
                 
 
                 <div class="form-group">
-                    <label>Dimension X (mm)</label>
-                    <input type="number" step="0.01" name="d_x" value="<%= machine.d_x %>">
-                </div>
-
-                <div class="form-group">
-                    <label>Dimension Y (mm)</label>
-                    <input type="number" step="0.01" name="d_y" value="<%= machine.d_y %>">
-                </div>
-
-                <div class="form-group">
-                    <label>Dimension Z (mm)</label>
-                    <input type="number" step="0.01" name="d_z" value="<%= machine.d_z %>">
-                </div>
-
-                <div class="form-group">
                     <label>Type</label>
-                    <select name="type">
-                        <option value="tournage" <%= machine.type === 'tournage' ? 'selected' : '' %>>Tournage</option>
+                    <select name="type" id="type-select">
                         <option value="fraisage" <%= machine.type === 'fraisage' ? 'selected' : '' %>>Fraisage</option>
+                        <option value="tournage" <%= machine.type === 'tournage' ? 'selected' : '' %>>Tournage</option>
+                        <option value="les_deux" <%= machine.type === 'les_deux' ? 'selected' : '' %>>Fraisage + Tournage </option>
                     </select>
                 </div>
+                        <!-- Dimensions fraisage -->
+                        <div id="dims-fraisage">
+                            <div class="form-group">
+                                <label>Dimension X (mm)</label>
+                                <input type="number" step="0.01" name="d_x" value="<%= machine.d_x %>">
+                            </div>
+                            <div class="form-group">
+                                <label>Dimension Y (mm)</label>
+                                <input type="number" step="0.01" name="d_y" value="<%= machine.d_y %>">
+                            </div>
+                            <div class="form-group">
+                                <label>Dimension Z (mm)</label>
+                                <input type="number" step="0.01" name="d_z" value="<%= machine.d_z %>">
+                            </div>
+                        </div>
+
+                        <!-- Dimensions tournage -->
+                        <div id="dims-tournage" style="display:none;">
+                            <div class="form-group">
+                                <label>Diamètre max (mm)</label>
+                                <input type="number" step="0.01" name="diametre_max" value="<%= machine.diametre_max %>">
+                            </div>
+                            <div class="form-group">
+                                <label>Longueur max (mm)</label>
+                                <input type="number" step="0.01" name="longueur_max" value="<%= machine.longueur_max %>">
+                            </div>
+                            <div class="form-group">
+                                <label>Alésage de broche (mm)</label>
+                                <input type="number" step="0.01" name="alesage" value="<%= machine.alesage %>">
+                            </div>
+                        </div>
+
+
+
+
+
 
                 <div class="form-group">
                     <label>Année d'entrée</label>
@@ -210,6 +232,18 @@
         const previewImage = document.getElementById('preview-image'); // small upload preview
         const previewCardImage = document.getElementById('preview-image-card'); // desktop preview
         const previewMobileImage = document.getElementById('preview-mobile-image'); // mobile preview
+        const typeSelect = document.getElementById('type-select');
+        const dimsFraisage = document.getElementById('dims-fraisage');
+        const dimsTournage = document.getElementById('dims-tournage');
+
+        function toggleDims() {
+            const type = typeSelect.value;
+            dimsFraisage.style.display = (type === 'fraisage' || type === 'les_deux') ? 'block' : 'none';
+            dimsTournage.style.display = (type === 'tournage' || type === 'les_deux') ? 'block' : 'none';
+        }
+
+        typeSelect.addEventListener('change', toggleDims);
+        toggleDims(); // appel initial
 
         if (uploadButton) uploadButton.addEventListener('click', () => fileInput && fileInput.click());
 

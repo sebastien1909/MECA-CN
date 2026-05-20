@@ -62,7 +62,7 @@
               <input type="text" name="nom" placeholder="Votre nom" required />
             </div>
             <div class="form-group">
-              <label>Nom de l'entreprise</label>
+              <label>Nom de l'entreprise *</label>
               <input type="text" name="entreprise" placeholder="Société" required />
             </div>
           </div>
@@ -77,8 +77,8 @@
               />
             </div>
             <div class="form-group">
-              <label>Téléphone</label>
-              <input type="tel" name="telephone" placeholder="06 .. .. .. .." />
+              <label>Téléphone *</label>
+              <input type="tel" name="telephone" placeholder="06 .. .. .. .." required/>
             </div>
           </div>
           <div class="nav-btns mobile-only">
@@ -160,15 +160,17 @@
             />
           </div>
 
-          <div class="form-group" style="margin-bottom:24px">
-            <label>Type d'usinage (optionnel)</label>
-            <select name="type_usinage" id="type_usinage" placeholder="Veuillez sélectionner le type d'usinage pour votre pièce">
-              <option>Fraisage</option>
-              <option>Tournage</option>
-              <option>Les deux</option>
-              <option>Ne sait pas</option>
+
+          <div class="form-group" style="margin-bottom : 24px;">
+            <label>Procédé souhaité </label>
+            <em style="font-weight:400; color:#64748B; margin:-5px; font-size:0.8rem;">(optionnel)</em> 
+            <select name="type_usinage" id="type_usinage" class="procece-form">
+              <option claue="" selected>Je ne sais pas</option>
+              <option value="fraisage">Fraisage</option>
+              <option value="tournage">Tournage</option>
+              <option value="les_deux">Les deux</option>
             </select>
-          </div>
+         </div>
 
           <div class="form-row" style="margin-bottom: 24px">
             <div class="form-group">

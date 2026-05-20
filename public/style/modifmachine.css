@@ -441,7 +441,17 @@ main::before {
   display: -webkit-box;
   line-clamp:2;
   -webkit-box-orient:vertical;
-  
 }
 
 
+.form-group input[type="number"]{
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #e6e9ef;
+    background: #fbfbfc;
+    font-size: 14px;
+    color: #0b1724;
+    outline: none;
+    box-sizing: border-box;
+    width: 100%;
+}

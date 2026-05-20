@@ -118,7 +118,9 @@ main::before {
 }
 
 /* Champs de saisie */
-.form-group { margin-bottom: 20px; }
+.form-group { 
+    margin-bottom: 20px; 
+}
 
 .form-group label {
     display: block;

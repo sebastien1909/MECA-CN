@@ -804,20 +804,21 @@ tbody td:hover, .selected {
 .input-unit-group {
     display: flex;
     align-items: stretch;
-    border: 1px solid #ccc;
+    border: none;
     border-radius: 4px;
     overflow: hidden;
 }
 
 .input-unit-group input {
-    border: none !important;
     flex: 1;
+    border-radius:10px 0 0 10px;
 }
 
 .unit-selector {
     background: #f4f4f4;
-    border: none;
-    border-left: 1px solid #ccc;
+    border: 1px solid #D8DCE6;
+    border-left:none;
+    border-radius:0 20% 20% 0;
     padding: 0 8px;
     cursor: pointer;
     font-size: 0.9em;
@@ -1054,6 +1055,13 @@ tbody td:hover, .selected {
 
 
 
+.procece-form {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fdfdfd;
+}
 
 
 
