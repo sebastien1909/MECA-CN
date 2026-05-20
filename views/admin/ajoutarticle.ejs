@@ -28,6 +28,9 @@
     <div class="cms-toolbar-sep"></div>
     <button class="cms-toolbar-btn" title="Image" data-cmd="image">🖼️</button>
     <button class="cms-toolbar-btn" title="Séparateur" data-cmd="separateur">—</button>
+    <div class="cms-toolbar-sep"></div>
+    <button class="cms-toolbar-btn" title="Liste à puces" data-cmd="liste-puces">• —</button>
+    <button class="cms-toolbar-btn" title="Liste numérotée" data-cmd="liste-numerotee">1.</button>
   </div>
 
   <div id="cms-editor" contenteditable="true" spellcheck="true"></div>
@@ -59,6 +62,8 @@ const COMMANDES = [
   { label: 'Auteur (citation)', valeur: 'auteur',     icone: '✍', placeholder: '— Nom de l\'auteur' },
   { label: 'Image',             valeur: 'image',      icone: '🖼', placeholder: null },
   { label: 'Séparateur',        valeur: 'separateur', icone: '—', placeholder: null },
+  { label: 'Liste à puces',    valeur: 'liste-puces',     icone: '•—', placeholder: 'Élément de liste…' },
+{ label: 'Liste numérotée',  valeur: 'liste-numerotee', icone: '1.', placeholder: 'Élément de liste…' },
 ];
 
 const INLINES = [
@@ -111,24 +116,38 @@ function creerBloc(type) {
   // Touche Entrée → nouveau paragraphe
   div.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      const nouveau = creerBloc('paragraphe');
-      div.after(nouveau);
-      nouveau.focus();
-    }
-    // Backspace sur bloc vide → supprime et remonte
-    if (e.key === 'Backspace' && div.textContent.trim() === '') {
-      e.preventDefault();
-      const blocs = [...editor.querySelectorAll('.cms-bloc, .cms-bloc-image')];
-      const idx = blocs.indexOf(div);
-      if (idx > 0) {
-        const prev = blocs[idx - 1];
-        div.remove();
-        if (prev.contentEditable !== 'false') {
-          prev.focus();
-          placerCursorFin(prev);
+        e.preventDefault();
+        // Pour les listes : Entrée sur un item vide = sortir de la liste
+        if ((type === 'liste-puces' || type === 'liste-numerotee') && div.textContent.trim() === '') {
+            const nouveau = creerBloc('paragraphe');
+            div.replaceWith(nouveau);
+            nouveau.focus();
+            return;
         }
-      }
+        // Pour les listes : Entrée sur un item non vide = nouvel item de même type
+        if (type === 'liste-puces' || type === 'liste-numerotee') {
+            const nouveau = creerBloc(type);
+            div.after(nouveau);
+            nouveau.focus();
+            return;
+        }
+        // Comportement par défaut : nouveau paragraphe
+        const nouveau = creerBloc('paragraphe');
+        div.after(nouveau);
+        nouveau.focus();
+    }
+    if (e.key === 'Backspace' && div.textContent.trim() === '') {
+        e.preventDefault();
+        const blocs = [...editor.querySelectorAll('.cms-bloc, .cms-bloc-image')];
+        const idx = blocs.indexOf(div);
+        if (idx > 0) {
+            const prev = blocs[idx - 1];
+            div.remove();
+            if (prev.contentEditable !== 'false') {
+                prev.focus();
+                placerCursorFin(prev);
+            }
+        }
     }
   });
 
@@ -536,7 +555,6 @@ document.querySelector('.cms-toolbar').addEventListener('click', (e) => {
     bloc.dataset.placeholder = ph;
     bloc.setAttribute('data-empty', bloc.textContent.trim() === '' ? 'true' : 'false');
     bloc.focus();
-    // Citation via toolbar → insérer un bloc auteur après si pas déjà là
     if (cmd === 'citation') {
       const suivant = bloc.nextElementSibling;
       if (!suivant || suivant.dataset.type !== 'auteur') {
@@ -545,13 +563,31 @@ document.querySelector('.cms-toolbar').addEventListener('click', (e) => {
       }
     }
   } else {
-    const nouveau = creerBloc(cmd);
-    editor.append(nouveau);
-    if (cmd === 'citation') {
-      const auteur = creerBloc('auteur');
-      editor.append(auteur);
+    // ← C'est ici le correctif : vérifier si le dernier bloc est vide
+    const dernierBloc = editor.lastElementChild;
+    if (dernierBloc && dernierBloc.classList.contains('cms-bloc') && dernierBloc.textContent.trim() === '') {
+      // Réutiliser le bloc vide existant plutôt qu'en créer un nouveau
+      dernierBloc.dataset.type = cmd;
+      const ph = PLACEHOLDER_BY_TYPE[cmd] ?? 'Écrivez ici…';
+      dernierBloc.dataset.placeholder = ph;
+      dernierBloc.setAttribute('data-empty', 'true');
+      dernierBloc.focus();
+      if (cmd === 'citation') {
+        const suivant = dernierBloc.nextElementSibling;
+        if (!suivant || suivant.dataset.type !== 'auteur') {
+          const auteur = creerBloc('auteur');
+          dernierBloc.after(auteur);
+        }
+      }
+    } else {
+      const nouveau = creerBloc(cmd);
+      editor.append(nouveau);
+      if (cmd === 'citation') {
+        const auteur = creerBloc('auteur');
+        editor.append(auteur);
+      }
+      nouveau.focus();
     }
-    nouveau.focus();
   }
 });
 
@@ -624,11 +660,13 @@ function serialiser() {
     if (contenu.trim() === '') return;
 
     const cmd = {
-      titre1:     '/titre1',
-      titre2:     '/titre2',
-      paragraphe: '/paragraphe',
-      citation:   '/citation',
-      auteur:     '/auteur',
+      titre1:          '/titre1',
+      titre2:          '/titre2',
+      paragraphe:      '/paragraphe',
+      citation:        '/citation',
+      auteur:          '/auteur',
+      'liste-puces':   '/liste-puces',
+      'liste-numerotee': '/liste-numerotee',
     }[type] ?? '/paragraphe';
 
     lignes.push(cmd);
@@ -673,7 +711,7 @@ function serializerInline(el) {
 //  PARSING (identique à l'original) → HTML
 // ============================================================
 function parseCMS(text) {
-  const BLOCS   = ['/titre1', '/titre2', '/paragraphe', '/citation', '/auteur', '/separateur', '/image'];
+  const BLOCS   = ['/titre1', '/titre2', '/paragraphe', '/citation', '/auteur', '/separateur', '/image', '/liste-puces', '/liste-numerotee'];
   const INLINES = ['/gras', '/italique', '/souligne', '/surligne', '/normal'];
   const toutes  = [...BLOCS, ...INLINES];
 
@@ -686,13 +724,16 @@ function parseCMS(text) {
   let html = '', blocCourant = null, contenuBloc = '', inlineCourant = null;
 
   const tagBloc = {
-    '/titre1':    { open: '<h1 class="article-titre1">',           close: '</h1>' },
-    '/titre2':    { open: '<h2 class="article-titre2">',           close: '</h2>' },
-    '/paragraphe':{ open: '<p class="article-paragraphe">',        close: '</p>' },
-    '/citation':  { open: '<blockquote class="article-citation">', close: '</blockquote>' },
-    '/image':     { open: '<img class="article-image" src="',      close: '" alt="">' },
-    '/separateur':{ open: '<div class="article-separateur">',      close: '</div>' },
+    '/titre1':         { open: '<h1 class="article-titre1">',           close: '</h1>' },
+    '/titre2':         { open: '<h2 class="article-titre2">',           close: '</h2>' },
+    '/paragraphe':     { open: '<p class="article-paragraphe">',        close: '</p>' },
+    '/citation':       { open: '<blockquote class="article-citation">', close: '</blockquote>' },
+    '/image':          { open: '<img class="article-image" src="',      close: '" alt="">' },
+    '/separateur':     { open: '<div class="article-separateur">',      close: '</div>' },
+    '/liste-puces':    { open: '<li class="article-liste-puces">',      close: '</li>' },
+    '/liste-numerotee':{ open: '<li class="article-liste-numerotee">',  close: '</li>' },
   };
+
   const tagInline = {
     '/gras':     { open: '<strong>', close: '</strong>' },
     '/italique': { open: '<em>',     close: '</em>' },
@@ -704,40 +745,89 @@ function parseCMS(text) {
   function fermerInline() {
     if (inlineCourant) { contenuBloc += tagInline[inlineCourant].close; inlineCourant = null; }
   }
+
   function fermerBloc() {
     fermerInline();
     if (!blocCourant) return;
+
     if (blocCourant === '/separateur') {
+      const lastUl = html.lastIndexOf('<ul class="article-liste-wrapper">');
+      const lastOl = html.lastIndexOf('<ol class="article-liste-wrapper">');
+      const lastUlClose = html.lastIndexOf('</ul>');
+      const lastOlClose = html.lastIndexOf('</ol>');
+      if (lastUl > lastUlClose) html += '</ul>';
+      if (lastOl > lastOlClose) html += '</ol>';
       html += tagBloc['/separateur'].open + tagBloc['/separateur'].close;
+
     } else if (blocCourant === '__auteur_dans_citation__') {
       html += '<footer class="article-citation-auteur">' + contenuBloc + '</footer></blockquote>';
+
     } else if (blocCourant === '/auteur') {
       html += '<p class="article-citation-auteur">' + contenuBloc + '</p>';
+
     } else if (blocCourant === '/image') {
       html += tagBloc[blocCourant].open + contenuBloc.trim() + tagBloc[blocCourant].close;
+
+    } else if (blocCourant === '/liste-puces' || blocCourant === '/liste-numerotee') {
+      const tag = blocCourant === '/liste-puces' ? 'ul' : 'ol';
+      const lastOpen  = html.lastIndexOf(`<${tag} class="article-liste-wrapper">`);
+      const lastClose = html.lastIndexOf(`</${tag}>`);
+      if (lastOpen !== -1 && lastOpen > lastClose) {
+        // Liste du même type déjà ouverte → on ajoute juste le <li>
+        html += tagBloc[blocCourant].open + contenuBloc + tagBloc[blocCourant].close;
+      } else {
+        // Fermer une liste d'un autre type si besoin
+        const lastUl = html.lastIndexOf('<ul class="article-liste-wrapper">');
+        const lastOl = html.lastIndexOf('<ol class="article-liste-wrapper">');
+        const lastUlClose = html.lastIndexOf('</ul>');
+        const lastOlClose = html.lastIndexOf('</ol>');
+        if (lastUl > lastUlClose) html += '</ul>';
+        if (lastOl > lastOlClose) html += '</ol>';
+        // Ouvrir la nouvelle liste et ajouter le <li>
+        html += `<${tag} class="article-liste-wrapper">`;
+        html += tagBloc[blocCourant].open + contenuBloc + tagBloc[blocCourant].close;
+      }
+
     } else {
+      // Bloc normal : fermer une liste ouverte si on change de type
+      const lastUl = html.lastIndexOf('<ul class="article-liste-wrapper">');
+      const lastOl = html.lastIndexOf('<ol class="article-liste-wrapper">');
+      const lastUlClose = html.lastIndexOf('</ul>');
+      const lastOlClose = html.lastIndexOf('</ol>');
+      if (lastUl > lastUlClose) html += '</ul>';
+      if (lastOl > lastOlClose) html += '</ol>';
       html += tagBloc[blocCourant].open + contenuBloc + tagBloc[blocCourant].close;
     }
-    blocCourant = null; contenuBloc = '';
+
+    blocCourant = null;
+    contenuBloc = '';
   }
 
   parts.forEach(part => {
     const pl = part.toLowerCase().trim();
+
     if (pl === '/separateur') {
       fermerBloc();
       html += tagBloc['/separateur'].open + tagBloc['/separateur'].close;
+
     } else if (pl === '/auteur') {
       fermerBloc();
       if (html.endsWith('</blockquote>')) {
         html = html.slice(0, -'</blockquote>'.length);
         blocCourant = '__auteur_dans_citation__';
-      } else { blocCourant = '/auteur'; }
+      } else {
+        blocCourant = '/auteur';
+      }
+
     } else if (tagBloc[pl] !== undefined) {
-      fermerBloc(); blocCourant = pl;
+      fermerBloc();
+      blocCourant = pl;
+
     } else if (tagInline[pl] !== undefined) {
       if (!blocCourant) blocCourant = '/paragraphe';
       fermerInline();
       if (pl !== '/normal') { inlineCourant = pl; contenuBloc += tagInline[pl].open; }
+
     } else {
       const texte = part.replace(/^\n+/, '').replace(/\n+$/, '').replace(/\n/g, ' ');
       if (!texte) return;
@@ -746,7 +836,17 @@ function parseCMS(text) {
     }
   });
 
+  // Fermer le dernier bloc en cours
   fermerBloc();
+
+  // Fermer une éventuelle liste encore ouverte en fin de contenu
+  const lastUl = html.lastIndexOf('<ul class="article-liste-wrapper">');
+  const lastOl = html.lastIndexOf('<ol class="article-liste-wrapper">');
+  const lastUlClose = html.lastIndexOf('</ul>');
+  const lastOlClose = html.lastIndexOf('</ol>');
+  if (lastUl > lastUlClose) html += '</ul>';
+  if (lastOl > lastOlClose) html += '</ol>';
+
   return html;
 }
 

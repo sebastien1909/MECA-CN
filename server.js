@@ -1112,7 +1112,7 @@ app.post("/envoyer_cv", uploadCV.array("fichiers", 5), async function(req, res) 
         });
       }
  
-      // ── Transport Nodemailer ─────────────────────────────────────
+      // ── Transport Nodemailer ──
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -1121,7 +1121,7 @@ app.post("/envoyer_cv", uploadCV.array("fichiers", 5), async function(req, res) 
         },
       });
  
-      // ── Pièces jointes ───────────────────────────────────────────
+      // ── Pièces jointes ──
       const attachments = req.files.map((file) => ({
         filename: file.originalname,
         path: file.path,
@@ -1214,14 +1214,14 @@ app.post("/envoyer_cv", uploadCV.array("fichiers", 5), async function(req, res) 
         attachments,
       });
  
-      // ── Suppression des fichiers temporaires ─────────────────────
+      // ── Suppression des fichiers temporaires ──
       req.files.forEach((file) => {
         fs.unlink(file.path, (err) => {
           if (err) console.error("Erreur suppression fichier temporaire :", err);
         });
       });
  
-      // ── Succès ───────────────────────────────────────────────────
+      // ── Succès ──
       res.render("confirmation_cv", {
         success: true,
         message: "Votre candidature a été envoyée avec succès !",
@@ -1272,9 +1272,9 @@ app.post("/supprimerArticle", isAdmin, async function(req, res) {
         }
         const article = rows[0];
 
-        // =========================
+        //
         // SUPPRESSION IMAGE PRINCIPALE
-        // =========================
+        //
 
         if (article.img_presentation) {
             const presentationPath = path.join(
@@ -1287,9 +1287,9 @@ app.post("/supprimerArticle", isAdmin, async function(req, res) {
             }
         }
 
-        // =========================
+        // 
         // EXTRACTION DES IMAGES INLINE
-        // =========================
+        // 
 
         const regex = /<img[^>]+src="([^"]+)"/g;
         let match;
@@ -1309,9 +1309,9 @@ app.post("/supprimerArticle", isAdmin, async function(req, res) {
             }
         }
 
-        // =========================
+        //
         // SUPPRESSION SQL
-        // =========================
+        //
 
         await pool.query(
             "DELETE FROM actualite WHERE id = ?",
