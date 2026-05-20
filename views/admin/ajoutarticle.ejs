@@ -51,842 +51,839 @@
 <%- include("footer") %>
 
 <script>
-// ============================================================
-//  CONFIG COMMANDES
-// ============================================================
-const COMMANDES = [
-  { label: 'Titre 1',           valeur: 'titre1',     icone: 'H1', placeholder: 'Titre principal' },
-  { label: 'Titre 2',           valeur: 'titre2',     icone: 'H2', placeholder: 'Sous-titre' },
-  { label: 'Paragraphe',        valeur: 'paragraphe', icone: '¶',  placeholder: 'Écrivez votre paragraphe…' },
-  { label: 'Citation',          valeur: 'citation',   icone: '"',  placeholder: 'Texte de la citation…' },
-  { label: 'Auteur (citation)', valeur: 'auteur',     icone: '✍', placeholder: '— Nom de l\'auteur' },
-  { label: 'Image',             valeur: 'image',      icone: '🖼', placeholder: null },
-  { label: 'Séparateur',        valeur: 'separateur', icone: '—', placeholder: null },
-  { label: 'Liste à puces',    valeur: 'liste-puces',     icone: '•—', placeholder: 'Élément de liste…' },
-{ label: 'Liste numérotée',  valeur: 'liste-numerotee', icone: '1.', placeholder: 'Élément de liste…' },
-];
 
-const INLINES = [
-  { label: 'Gras',     valeur: 'gras',     icone: 'G' },
-  { label: 'Italique', valeur: 'italique', icone: 'I' },
-  { label: 'Souligné', valeur: 'souligne', icone: 'S' },
-  { label: 'Surligné', valeur: 'surligne', icone: '▬' },
-  { label: 'Normal',   valeur: 'normal',   icone: 'N' },
-];
 
-const TOUTES = [...COMMANDES, ...INLINES];
+  //  CONFIG COMMANDES
+  const COMMANDES = [
+    { label: 'Titre 1',           valeur: 'titre1',     icone: 'H1', placeholder: 'Titre principal' },
+    { label: 'Titre 2',           valeur: 'titre2',     icone: 'H2', placeholder: 'Sous-titre' },
+    { label: 'Paragraphe',        valeur: 'paragraphe', icone: '¶',  placeholder: 'Écrivez votre paragraphe…' },
+    { label: 'Citation',          valeur: 'citation',   icone: '"',  placeholder: 'Texte de la citation…' },
+    { label: 'Auteur (citation)', valeur: 'auteur',     icone: '✍', placeholder: '— Nom de l\'auteur' },
+    { label: 'Image',             valeur: 'image',      icone: '🖼', placeholder: null },
+    { label: 'Séparateur',        valeur: 'separateur', icone: '—', placeholder: null },
+    { label: 'Liste à puces',    valeur: 'liste-puces',     icone: '•—', placeholder: 'Élément de liste…' },
+  { label: 'Liste numérotée',  valeur: 'liste-numerotee', icone: '1.', placeholder: 'Élément de liste…' },
+  ];
 
-const PLACEHOLDER_BY_TYPE = Object.fromEntries(
-  COMMANDES.filter(c => c.placeholder).map(c => [c.valeur, c.placeholder])
-);
+  const INLINES = [
+    { label: 'Gras',     valeur: 'gras',     icone: 'G' },
+    { label: 'Italique', valeur: 'italique', icone: 'I' },
+    { label: 'Souligné', valeur: 'souligne', icone: 'S' },
+    { label: 'Surligné', valeur: 'surligne', icone: '▬' },
+    { label: 'Normal',   valeur: 'normal',   icone: 'N' },
+  ];
 
-// ============================================================
-//  ÉLÉMENTS DOM
-// ============================================================
-const editor      = document.getElementById('cms-editor');
-const preview     = document.getElementById('preview');
-const imagePicker = document.getElementById('image-picker');
-const presInput   = document.getElementById('presentation');
-const presLabel   = document.getElementById('presentation-label');
+  const TOUTES = [...COMMANDES, ...INLINES];
 
-presInput.addEventListener('change', () => {
-  presLabel.textContent = presInput.files[0]?.name ?? 'Aucun fichier sélectionné';
-});
-
-// ============================================================
-//  CRÉATION DE BLOCS
-// ============================================================
-function creerBloc(type) {
-  if (type === 'separateur') {
-    const hr = document.createElement('div');
-    hr.className = 'cms-bloc';
-    hr.dataset.type = 'separateur';
-    hr.contentEditable = 'false';
-    return hr;
-  }
-
-  const div = document.createElement('div');
-  div.className = 'cms-bloc';
-  div.dataset.type = type;
-  div.contentEditable = 'true';
-  const ph = PLACEHOLDER_BY_TYPE[type] ?? 'Écrivez ici…';
-  div.dataset.placeholder = ph;
-  div.setAttribute('data-empty', 'true');
-
-  // Touche Entrée → nouveau paragraphe
-  div.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        // Pour les listes : Entrée sur un item vide = sortir de la liste
-        if ((type === 'liste-puces' || type === 'liste-numerotee') && div.textContent.trim() === '') {
-            const nouveau = creerBloc('paragraphe');
-            div.replaceWith(nouveau);
-            nouveau.focus();
-            return;
-        }
-        // Pour les listes : Entrée sur un item non vide = nouvel item de même type
-        if (type === 'liste-puces' || type === 'liste-numerotee') {
-            const nouveau = creerBloc(type);
-            div.after(nouveau);
-            nouveau.focus();
-            return;
-        }
-        // Comportement par défaut : nouveau paragraphe
-        const nouveau = creerBloc('paragraphe');
-        div.after(nouveau);
-        nouveau.focus();
-    }
-    if (e.key === 'Backspace' && div.textContent.trim() === '') {
-        e.preventDefault();
-        const blocs = [...editor.querySelectorAll('.cms-bloc, .cms-bloc-image')];
-        const idx = blocs.indexOf(div);
-        if (idx > 0) {
-            const prev = blocs[idx - 1];
-            div.remove();
-            if (prev.contentEditable !== 'false') {
-                prev.focus();
-                placerCursorFin(prev);
-            }
-        }
-    }
-  });
-
-  return div;
-}
-
-function creerBlocImage(url) {
-  const wrap = document.createElement('div');
-  wrap.className = 'cms-bloc-image';
-  wrap.dataset.type = 'image';
-  wrap.dataset.url = url;
-
-  const img = document.createElement('img');
-  img.src = url;
-  img.className = 'article-image';
-
-  const caption = document.createElement('div');
-  caption.className = 'cms-bloc-image-caption';
-  caption.textContent = url.split('/').pop();
-
-  const del = document.createElement('button');
-  del.textContent = '✕';
-  del.title = 'Supprimer l\'image';
-  del.style.cssText = 'border:none;background:none;color:#aaa;cursor:pointer;font-size:13px;padding:0 4px;';
-  del.addEventListener('click', () => {
-    const blocs = [...editor.querySelectorAll('.cms-bloc, .cms-bloc-image')];
-    const idx = blocs.indexOf(wrap);
-    wrap.remove();
-    const prev = blocs[idx - 1];
-    if (prev && prev.contentEditable !== 'false') {
-      prev.focus();
-      placerCursorFin(prev);
-    }
-  });
-
-  const row = document.createElement('div');
-  row.style.cssText = 'display:flex;align-items:center;gap:6px;';
-  row.append(caption, del);
-
-  wrap.append(img, row);
-  return wrap;
-}
-
-// ============================================================
-//  UTILS CURSEUR
-// ============================================================
-function placerCursorFin(el) {
-  const range = document.createRange();
-  const sel = window.getSelection();
-  range.selectNodeContents(el);
-  range.collapse(false);
-  sel.removeAllRanges();
-  sel.addRange(range);
-}
-
-function getBlocActif() {
-  const sel = window.getSelection();
-  if (!sel.rangeCount) return null;
-  let node = sel.getRangeAt(0).startContainer;
-  while (node && node !== editor) {
-    if (node.classList?.contains('cms-bloc') || node.classList?.contains('cms-bloc-image')) return node;
-    node = node.parentNode;
-  }
-  return null;
-}
-
-// ============================================================
-//  MENU SLASH
-// ============================================================
-let slashMenu = null;
-let slashBlocCible = null;
-let slashStart = 0; // position du '/' dans le texte du bloc
-
-function ouvrirSlashMenu(blocEl, filtre) {
-  slashBlocCible = blocEl;
-
-  const filtrees = TOUTES.filter(c =>
-    c.label.toLowerCase().includes(filtre.toLowerCase()) ||
-    c.valeur.toLowerCase().includes(filtre.toLowerCase())
+  const PLACEHOLDER_BY_TYPE = Object.fromEntries(
+    COMMANDES.filter(c => c.placeholder).map(c => [c.valeur, c.placeholder])
   );
 
-  fermerSlashMenu();
-  slashMenu = document.createElement('div');
-  slashMenu.id = 'cms-slash-menu';
 
-  if (filtrees.length === 0) {
-    const vide = document.createElement('div');
-    vide.className = 'cms-slash-empty';
-    vide.textContent = 'Aucun résultat';
-    slashMenu.append(vide);
-  } else {
-    filtrees.forEach((cmd, i) => {
-      const item = document.createElement('div');
-      item.className = 'cms-slash-item' + (i === 0 ? ' active' : '');
-      item.dataset.idx = i;
+  //  ÉLÉMENTS DOM
+  const editor      = document.getElementById('cms-editor');
+  const preview     = document.getElementById('preview');
+  const imagePicker = document.getElementById('image-picker');
+  const presInput   = document.getElementById('presentation');
+  const presLabel   = document.getElementById('presentation-label');
 
-      const badge = document.createElement('span');
-      badge.className = 'cms-slash-badge';
-      badge.textContent = cmd.icone;
+  presInput.addEventListener('change', () => {
+    presLabel.textContent = presInput.files[0]?.name ?? 'Aucun fichier sélectionné';
+  });
 
-      const lbl = document.createElement('span');
-      lbl.textContent = cmd.label;
 
-      item.append(badge, lbl);
-      item.addEventListener('mouseenter', () => setSlashActif(i));
-      item.addEventListener('click', () => appliquerSlash(i, filtrees));
-      slashMenu.append(item);
+  //  CRÉATION DE BLOCS
+  function creerBloc(type) {
+    if (type === 'separateur') {
+      const hr = document.createElement('div');
+      hr.className = 'cms-bloc';
+      hr.dataset.type = 'separateur';
+      hr.contentEditable = 'false';
+      return hr;
+    }
+
+    const div = document.createElement('div');
+    div.className = 'cms-bloc';
+    div.dataset.type = type;
+    div.contentEditable = 'true';
+    const ph = PLACEHOLDER_BY_TYPE[type] ?? 'Écrivez ici…';
+    div.dataset.placeholder = ph;
+    div.setAttribute('data-empty', 'true');
+
+    // Touche Entrée → nouveau paragraphe
+    div.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          // Pour les listes : Entrée sur un item vide = sortir de la liste
+          if ((type === 'liste-puces' || type === 'liste-numerotee') && div.textContent.trim() === '') {
+              const nouveau = creerBloc('paragraphe');
+              div.replaceWith(nouveau);
+              nouveau.focus();
+              return;
+          }
+          // Pour les listes : Entrée sur un item non vide = nouvel item de même type
+          if (type === 'liste-puces' || type === 'liste-numerotee') {
+              const nouveau = creerBloc(type);
+              div.after(nouveau);
+              nouveau.focus();
+              return;
+          }
+          // Comportement par défaut : nouveau paragraphe
+          const nouveau = creerBloc('paragraphe');
+          div.after(nouveau);
+          nouveau.focus();
+      }
+      if (e.key === 'Backspace' && div.textContent.trim() === '') {
+          e.preventDefault();
+          const blocs = [...editor.querySelectorAll('.cms-bloc, .cms-bloc-image')];
+          const idx = blocs.indexOf(div);
+          if (idx > 0) {
+              const prev = blocs[idx - 1];
+              div.remove();
+              if (prev.contentEditable !== 'false') {
+                  prev.focus();
+                  placerCursorFin(prev);
+              }
+          }
+      }
+    });
+
+    return div;
+  }
+
+  function creerBlocImage(url) {
+    const wrap = document.createElement('div');
+    wrap.className = 'cms-bloc-image';
+    wrap.dataset.type = 'image';
+    wrap.dataset.url = url;
+
+    const img = document.createElement('img');
+    img.src = url;
+    img.className = 'article-image';
+
+    const caption = document.createElement('div');
+    caption.className = 'cms-bloc-image-caption';
+    caption.textContent = url.split('/').pop();
+
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.title = 'Supprimer l\'image';
+    del.style.cssText = 'border:none;background:none;color:#aaa;cursor:pointer;font-size:13px;padding:0 4px;';
+    del.addEventListener('click', () => {
+      const blocs = [...editor.querySelectorAll('.cms-bloc, .cms-bloc-image')];
+      const idx = blocs.indexOf(wrap);
+      wrap.remove();
+      const prev = blocs[idx - 1];
+      if (prev && prev.contentEditable !== 'false') {
+        prev.focus();
+        placerCursorFin(prev);
+      }
+    });
+
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:6px;';
+    row.append(caption, del);
+
+    wrap.append(img, row);
+    return wrap;
+  }
+
+
+  //  UTILS CURSEUR
+  function placerCursorFin(el) {
+    const range = document.createRange();
+    const sel = window.getSelection();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  function getBlocActif() {
+    const sel = window.getSelection();
+    if (!sel.rangeCount) return null;
+    let node = sel.getRangeAt(0).startContainer;
+    while (node && node !== editor) {
+      if (node.classList?.contains('cms-bloc') || node.classList?.contains('cms-bloc-image')) return node;
+      node = node.parentNode;
+    }
+    return null;
+  }
+
+
+  //  MENU SLASH
+  let slashMenu = null;
+  let slashBlocCible = null;
+  let slashStart = 0; // position du '/' dans le texte du bloc
+
+  function ouvrirSlashMenu(blocEl, filtre) {
+    slashBlocCible = blocEl;
+
+    const filtrees = TOUTES.filter(c =>
+      c.label.toLowerCase().includes(filtre.toLowerCase()) ||
+      c.valeur.toLowerCase().includes(filtre.toLowerCase())
+    );
+
+    fermerSlashMenu();
+    slashMenu = document.createElement('div');
+    slashMenu.id = 'cms-slash-menu';
+
+    if (filtrees.length === 0) {
+      const vide = document.createElement('div');
+      vide.className = 'cms-slash-empty';
+      vide.textContent = 'Aucun résultat';
+      slashMenu.append(vide);
+    } else {
+      filtrees.forEach((cmd, i) => {
+        const item = document.createElement('div');
+        item.className = 'cms-slash-item' + (i === 0 ? ' active' : '');
+        item.dataset.idx = i;
+
+        const badge = document.createElement('span');
+        badge.className = 'cms-slash-badge';
+        badge.textContent = cmd.icone;
+
+        const lbl = document.createElement('span');
+        lbl.textContent = cmd.label;
+
+        item.append(badge, lbl);
+        item.addEventListener('mouseenter', () => setSlashActif(i));
+        item.addEventListener('click', () => appliquerSlash(i, filtrees));
+        slashMenu.append(item);
+      });
+    }
+
+    slashMenu._cmds = filtrees;
+    document.body.append(slashMenu);
+    positionnerSlashMenu();
+  }
+
+  function setSlashActif(idx) {
+    if (!slashMenu) return;
+    [...slashMenu.querySelectorAll('.cms-slash-item')].forEach((el, i) => {
+      el.classList.toggle('active', i === idx);
     });
   }
 
-  slashMenu._cmds = filtrees;
-  document.body.append(slashMenu);
-  positionnerSlashMenu();
-}
-
-function setSlashActif(idx) {
-  if (!slashMenu) return;
-  [...slashMenu.querySelectorAll('.cms-slash-item')].forEach((el, i) => {
-    el.classList.toggle('active', i === idx);
-  });
-}
-
-function getSlashActifIdx() {
-  if (!slashMenu) return -1;
-  const items = [...slashMenu.querySelectorAll('.cms-slash-item')];
-  return items.findIndex(el => el.classList.contains('active'));
-}
-
-function positionnerSlashMenu() {
-  const sel = window.getSelection();
-  if (!sel.rangeCount || !slashMenu) return;
-  const range = sel.getRangeAt(0).cloneRange();
-  range.collapse(true);
-  const rect = range.getBoundingClientRect();
-
-  const mH = slashMenu.offsetHeight || 220;
-  const spaceBelow = window.innerHeight - rect.bottom;
-  const top = spaceBelow < mH + 8
-    ? (rect.top + window.scrollY - mH - 4)
-    : (rect.bottom + window.scrollY + 4);
-
-  slashMenu.style.top  = top + 'px';
-  slashMenu.style.left = Math.min(rect.left, window.innerWidth - 240) + 'px';
-}
-
-function fermerSlashMenu() {
-  if (slashMenu) { slashMenu.remove(); slashMenu = null; }
-  slashBlocCible = null;
-}
-
-function appliquerSlash(idx, cmds) {
-  const cmd = (cmds ?? slashMenu?._cmds)?.[idx];
-  if (!cmd || !slashBlocCible) return;
-
-  // Effacer le texte slash tapé dans le bloc
-  const texteActuel = slashBlocCible.textContent;
-  const slashPos = texteActuel.lastIndexOf('/');
-  if (slashPos !== -1) {
-    slashBlocCible.textContent = texteActuel.slice(0, slashPos);
+  function getSlashActifIdx() {
+    if (!slashMenu) return -1;
+    const items = [...slashMenu.querySelectorAll('.cms-slash-item')];
+    return items.findIndex(el => el.classList.contains('active'));
   }
 
-  fermerSlashMenu();
+  function positionnerSlashMenu() {
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !slashMenu) return;
+    const range = sel.getRangeAt(0).cloneRange();
+    range.collapse(true);
+    const rect = range.getBoundingClientRect();
 
-  // Cas inline → execCommand
-  if (['gras','italique','souligne','surligne','normal'].includes(cmd.valeur)) {
-    slashBlocCible.focus();
-    placerCursorFin(slashBlocCible);
-    appliquerInline(cmd.valeur);
-    return;
+    const mH = slashMenu.offsetHeight || 220;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const top = spaceBelow < mH + 8
+      ? (rect.top + window.scrollY - mH - 4)
+      : (rect.bottom + window.scrollY + 4);
+
+    slashMenu.style.top  = top + 'px';
+    slashMenu.style.left = Math.min(rect.left, window.innerWidth - 240) + 'px';
   }
 
-  // Cas image
-  if (cmd.valeur === 'image') {
-    imagePicker.click();
-    return;
+  function fermerSlashMenu() {
+    if (slashMenu) { slashMenu.remove(); slashMenu = null; }
+    slashBlocCible = null;
   }
 
-  // Cas séparateur
-  if (cmd.valeur === 'separateur') {
-    const sep = creerBloc('separateur');
-    const suivant = creerBloc('paragraphe');
-    if (slashBlocCible.textContent.trim() === '') {
-      slashBlocCible.replaceWith(sep, suivant);
-    } else {
-      slashBlocCible.after(sep, suivant);
+  function appliquerSlash(idx, cmds) {
+    const cmd = (cmds ?? slashMenu?._cmds)?.[idx];
+    if (!cmd || !slashBlocCible) return;
+
+    // Effacer le texte slash tapé dans le bloc
+    const texteActuel = slashBlocCible.textContent;
+    const slashPos = texteActuel.lastIndexOf('/');
+    if (slashPos !== -1) {
+      slashBlocCible.textContent = texteActuel.slice(0, slashPos);
     }
-    suivant.focus();
-    return;
-  }
 
-  // Cas bloc normal
-  if (slashBlocCible.dataset.type === cmd.valeur && slashBlocCible.textContent.trim() === '') {
-    // Déjà le bon type → rien à faire, juste focus
-    slashBlocCible.focus();
-    placerCursorFin(slashBlocCible);
-    return;
-  }
+    fermerSlashMenu();
 
-  const nouveau = creerBloc(cmd.valeur);
-  if (slashBlocCible.textContent.trim() === '') {
-    slashBlocCible.replaceWith(nouveau);
-  } else {
-    slashBlocCible.after(nouveau);
-  }
+    // Cas inline → execCommand
+    if (['gras','italique','souligne','surligne','normal'].includes(cmd.valeur)) {
+      slashBlocCible.focus();
+      placerCursorFin(slashBlocCible);
+      appliquerInline(cmd.valeur);
+      return;
+    }
 
-  // Citation → ajouter automatiquement un bloc auteur juste après
-  if (cmd.valeur === 'citation') {
-    const auteur = creerBloc('auteur');
-    nouveau.after(auteur);
+    // Cas image
+    if (cmd.valeur === 'image') {
+      imagePicker.click();
+      return;
+    }
+
+    // Cas séparateur
+    if (cmd.valeur === 'separateur') {
+      const sep = creerBloc('separateur');
+      const suivant = creerBloc('paragraphe');
+      if (slashBlocCible.textContent.trim() === '') {
+        slashBlocCible.replaceWith(sep, suivant);
+      } else {
+        slashBlocCible.after(sep, suivant);
+      }
+      suivant.focus();
+      return;
+    }
+
+    // Cas bloc normal
+    if (slashBlocCible.dataset.type === cmd.valeur && slashBlocCible.textContent.trim() === '') {
+      // Déjà le bon type → rien à faire, juste focus
+      slashBlocCible.focus();
+      placerCursorFin(slashBlocCible);
+      return;
+    }
+
+    const nouveau = creerBloc(cmd.valeur);
+    if (slashBlocCible.textContent.trim() === '') {
+      slashBlocCible.replaceWith(nouveau);
+    } else {
+      slashBlocCible.after(nouveau);
+    }
+
+    // Citation → ajouter automatiquement un bloc auteur juste après
+    if (cmd.valeur === 'citation') {
+      const auteur = creerBloc('auteur');
+      nouveau.after(auteur);
+      nouveau.focus();
+      placerCursorFin(nouveau);
+      return;
+    }
+
     nouveau.focus();
     placerCursorFin(nouveau);
-    return;
   }
 
-  nouveau.focus();
-  placerCursorFin(nouveau);
-}
 
-// ============================================================
-//  INLINE FORMATTING
-// ============================================================
-function appliquerInline(valeur) {
-  const cmds = {
-    gras:     () => document.execCommand('bold'),
-    italique: () => document.execCommand('italic'),
-    souligne: () => document.execCommand('underline'),
-    surligne: () => {
-      const sel = window.getSelection();
-      if (!sel.rangeCount || sel.isCollapsed) return;
-      const range = sel.getRangeAt(0);
+  //  INLINE FORMATTING
+  function appliquerInline(valeur) {
+    const cmds = {
+      gras:     () => document.execCommand('bold'),
+      italique: () => document.execCommand('italic'),
+      souligne: () => document.execCommand('underline'),
+      surligne: () => {
+        const sel = window.getSelection();
+        if (!sel.rangeCount || sel.isCollapsed) return;
+        const range = sel.getRangeAt(0);
 
-      // Désurligner : si la sélection est entièrement dans un <mark>, on l'enlève
-      const ancetre = range.commonAncestorContainer;
-      const markParent = ancetre.nodeType === Node.TEXT_NODE
-        ? ancetre.parentElement?.closest('mark')
-        : ancetre.closest?.('mark');
-      if (markParent) {
-        // Remplacer le <mark> par son contenu texte brut
-        const texte = document.createTextNode(markParent.textContent);
-        markParent.replaceWith(texte);
-        // Replacer le curseur après le texte désurlignage
-        const r = document.createRange();
-        r.setStartAfter(texte);
-        r.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(r);
-        return;
+        // Désurligner : si la sélection est entièrement dans un <mark>, on l'enlève
+        const ancetre = range.commonAncestorContainer;
+        const markParent = ancetre.nodeType === Node.TEXT_NODE
+          ? ancetre.parentElement?.closest('mark')
+          : ancetre.closest?.('mark');
+        if (markParent) {
+          // Remplacer le <mark> par son contenu texte brut
+          const texte = document.createTextNode(markParent.textContent);
+          markParent.replaceWith(texte);
+          // Replacer le curseur après le texte désurlignage
+          const r = document.createRange();
+          r.setStartAfter(texte);
+          r.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(r);
+          return;
+        }
+
+        // Surligner : extraire le fragment, l'entourer d'un <mark>
+        try {
+          const fragment = range.extractContents();
+          const mark = document.createElement('mark');
+          mark.appendChild(fragment);
+          range.insertNode(mark);
+
+          // Insérer un nœud texte ZERO-WIDTH après le mark pour briser l'héritage
+          const separateur = document.createTextNode('\u200B');
+          mark.after(separateur);
+
+          // Placer le curseur après ce nœud séparateur
+          const r = document.createRange();
+          r.setStartAfter(separateur);
+          r.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(r);
+        } catch(e) {}
+      },
+      normal: () => {
+        document.execCommand('removeFormat');
       }
-
-      // Surligner : extraire le fragment, l'entourer d'un <mark>
-      try {
-        const fragment = range.extractContents();
-        const mark = document.createElement('mark');
-        mark.appendChild(fragment);
-        range.insertNode(mark);
-
-        // Insérer un nœud texte ZERO-WIDTH après le mark pour briser l'héritage
-        const separateur = document.createTextNode('\u200B');
-        mark.after(separateur);
-
-        // Placer le curseur après ce nœud séparateur
-        const r = document.createRange();
-        r.setStartAfter(separateur);
-        r.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(r);
-      } catch(e) {}
-    },
-    normal: () => {
-      document.execCommand('removeFormat');
-    }
-  };
-  cmds[valeur]?.();
-}
-
-// ============================================================
-//  EVENTS ÉDITEUR
-// ============================================================
-
-// Initialiser avec un bloc paragraphe vide
-(function init() {
-  if (editor.children.length === 0) {
-    editor.append(creerBloc('paragraphe'));
+    };
+    cmds[valeur]?.();
   }
-})();
 
-// ============================================================
-//  PLACEHOLDER — mis à jour via un seul listener délégué
-// ============================================================
-function estVide(el) {
-  // Un bloc est vide si son texte (hors BR fantôme) est blanc
-  const text = el.innerText ?? el.textContent ?? '';
-  return text.replace(/\u200B/g, '').trim() === '';
-}
 
-function majPlaceholders() {
-  editor.querySelectorAll('.cms-bloc[data-placeholder]').forEach(bloc => {
-    bloc.setAttribute('data-empty', estVide(bloc) ? 'true' : 'false');
+  //  EVENTS ÉDITEUR
+  // Initialiser avec un bloc paragraphe vide
+  (function init() {
+    if (editor.children.length === 0) {
+      editor.append(creerBloc('paragraphe'));
+    }
+  })();
+
+
+  //  PLACEHOLDER — mis à jour via un seul listener délégué
+  function estVide(el) {
+    // Un bloc est vide si son texte (hors BR fantôme) est blanc
+    const text = el.innerText ?? el.textContent ?? '';
+    return text.replace(/\u200B/g, '').trim() === '';
+  }
+
+  function majPlaceholders() {
+    editor.querySelectorAll('.cms-bloc[data-placeholder]').forEach(bloc => {
+      bloc.setAttribute('data-empty', estVide(bloc) ? 'true' : 'false');
+    });
+  }
+
+  editor.addEventListener('input',   majPlaceholders);
+  editor.addEventListener('focus',   majPlaceholders, true); // capture pour attraper les focus enfants
+  editor.addEventListener('blur',    majPlaceholders, true);
+  editor.addEventListener('keyup',   majPlaceholders);
+
+
+  editor.addEventListener('click', (e) => {
+    if (e.target === editor) {
+      const blocs = editor.querySelectorAll('[contenteditable="true"]');
+      if (blocs.length) {
+        const last = blocs[blocs.length - 1];
+        last.focus();
+        placerCursorFin(last);
+      }
+    }
   });
-}
-
-editor.addEventListener('input',   majPlaceholders);
-editor.addEventListener('focus',   majPlaceholders, true); // capture pour attraper les focus enfants
-editor.addEventListener('blur',    majPlaceholders, true);
-editor.addEventListener('keyup',   majPlaceholders);
-
-
-editor.addEventListener('click', (e) => {
-  if (e.target === editor) {
-    const blocs = editor.querySelectorAll('[contenteditable="true"]');
-    if (blocs.length) {
-      const last = blocs[blocs.length - 1];
-      last.focus();
-      placerCursorFin(last);
-    }
-  }
-});
 
 
 
-// Détection '/' pour le menu
-editor.addEventListener('input', (e) => {
-  const bloc = getBlocActif();
-  if (!bloc || bloc.dataset.type === 'separateur') return;
+  // Détection '/' pour le menu
+  editor.addEventListener('input', (e) => {
+    const bloc = getBlocActif();
+    if (!bloc || bloc.dataset.type === 'separateur') return;
 
-  const texte = bloc.textContent;
-  const sel = window.getSelection();
-  if (!sel.rangeCount) return;
+    const texte = bloc.textContent;
+    const sel = window.getSelection();
+    if (!sel.rangeCount) return;
 
-  const cursorOffset = sel.getRangeAt(0).startOffset;
-  const textAvant = texte.slice(0, cursorOffset);
+    const cursorOffset = sel.getRangeAt(0).startOffset;
+    const textAvant = texte.slice(0, cursorOffset);
 
-  // Chercher la dernière occurrence de '/' sans espace après
-  const slashMatch = textAvant.match(/\/(\w*)$/);
+    // Chercher la dernière occurrence de '/' sans espace après
+    const slashMatch = textAvant.match(/\/(\w*)$/);
 
-  if (slashMatch) {
-    const filtre = slashMatch[1];
-    ouvrirSlashMenu(bloc, filtre);
-  } else {
-    fermerSlashMenu();
-  }
-});
-
-// Navigation dans le menu slash
-editor.addEventListener('keydown', (e) => {
-  if (slashMenu) {
-    const items = [...slashMenu.querySelectorAll('.cms-slash-item')];
-    if (items.length === 0) { if (e.key === 'Escape') fermerSlashMenu(); return; }
-    const actif = getSlashActifIdx();
-
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setSlashActif((actif + 1) % items.length);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setSlashActif((actif - 1 + items.length) % items.length);
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      appliquerSlash(actif >= 0 ? actif : 0, slashMenu._cmds);
-    } else if (e.key === 'Escape') {
+    if (slashMatch) {
+      const filtre = slashMatch[1];
+      ouvrirSlashMenu(bloc, filtre);
+    } else {
       fermerSlashMenu();
     }
-    return;
-  }
-});
+  });
 
-// Fermer menu au clic extérieur
-document.addEventListener('click', (e) => {
-  if (slashMenu && !slashMenu.contains(e.target)) fermerSlashMenu();
-});
+  // Navigation dans le menu slash
+  editor.addEventListener('keydown', (e) => {
+    if (slashMenu) {
+      const items = [...slashMenu.querySelectorAll('.cms-slash-item')];
+      if (items.length === 0) { if (e.key === 'Escape') fermerSlashMenu(); return; }
+      const actif = getSlashActifIdx();
 
-// ============================================================
-//  TOOLBAR
-// ============================================================
-document.querySelector('.cms-toolbar').addEventListener('click', (e) => {
-  const btn = e.target.closest('[data-cmd]');
-  if (!btn) return;
-  const cmd = btn.dataset.cmd;
-
-  // Inline
-  if (['gras','italique','souligne','surligne','normal'].includes(cmd)) {
-    editor.focus();
-    appliquerInline(cmd);
-    return;
-  }
-  // Image
-  if (cmd === 'image') { imagePicker.click(); return; }
-
-  // Séparateur
-  if (cmd === 'separateur') {
-    const bloc = getBlocActif() ?? editor.lastElementChild;
-    if (!bloc) return;
-    const sep = creerBloc('separateur');
-    const suivant = creerBloc('paragraphe');
-    bloc.after(sep, suivant);
-    suivant.focus();
-    return;
-  }
-
-  // Bloc (titre1, titre2, paragraphe, citation, auteur)
-  const bloc = getBlocActif();
-  if (bloc && bloc.classList.contains('cms-bloc')) {
-    bloc.dataset.type = cmd;
-    const ph = PLACEHOLDER_BY_TYPE[cmd] ?? 'Écrivez ici…';
-    bloc.dataset.placeholder = ph;
-    bloc.setAttribute('data-empty', bloc.textContent.trim() === '' ? 'true' : 'false');
-    bloc.focus();
-    if (cmd === 'citation') {
-      const suivant = bloc.nextElementSibling;
-      if (!suivant || suivant.dataset.type !== 'auteur') {
-        const auteur = creerBloc('auteur');
-        bloc.after(auteur);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setSlashActif((actif + 1) % items.length);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setSlashActif((actif - 1 + items.length) % items.length);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        appliquerSlash(actif >= 0 ? actif : 0, slashMenu._cmds);
+      } else if (e.key === 'Escape') {
+        fermerSlashMenu();
       }
+      return;
     }
-  } else {
-    // ← C'est ici le correctif : vérifier si le dernier bloc est vide
-    const dernierBloc = editor.lastElementChild;
-    if (dernierBloc && dernierBloc.classList.contains('cms-bloc') && dernierBloc.textContent.trim() === '') {
-      // Réutiliser le bloc vide existant plutôt qu'en créer un nouveau
-      dernierBloc.dataset.type = cmd;
+  });
+
+  // Fermer menu au clic extérieur
+  document.addEventListener('click', (e) => {
+    if (slashMenu && !slashMenu.contains(e.target)) fermerSlashMenu();
+  });
+
+
+  //  TOOLBAR
+  document.querySelector('.cms-toolbar').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-cmd]');
+    if (!btn) return;
+    const cmd = btn.dataset.cmd;
+
+    // Inline
+    if (['gras','italique','souligne','surligne','normal'].includes(cmd)) {
+      editor.focus();
+      appliquerInline(cmd);
+      return;
+    }
+    // Image
+    if (cmd === 'image') { imagePicker.click(); return; }
+
+    // Séparateur
+    if (cmd === 'separateur') {
+      const bloc = getBlocActif() ?? editor.lastElementChild;
+      if (!bloc) return;
+      const sep = creerBloc('separateur');
+      const suivant = creerBloc('paragraphe');
+      bloc.after(sep, suivant);
+      suivant.focus();
+      return;
+    }
+
+    // Bloc (titre1, titre2, paragraphe, citation, auteur)
+    const bloc = getBlocActif();
+    if (bloc && bloc.classList.contains('cms-bloc')) {
+      bloc.dataset.type = cmd;
       const ph = PLACEHOLDER_BY_TYPE[cmd] ?? 'Écrivez ici…';
-      dernierBloc.dataset.placeholder = ph;
-      dernierBloc.setAttribute('data-empty', 'true');
-      dernierBloc.focus();
+      bloc.dataset.placeholder = ph;
+      bloc.setAttribute('data-empty', bloc.textContent.trim() === '' ? 'true' : 'false');
+      bloc.focus();
       if (cmd === 'citation') {
-        const suivant = dernierBloc.nextElementSibling;
+        const suivant = bloc.nextElementSibling;
         if (!suivant || suivant.dataset.type !== 'auteur') {
           const auteur = creerBloc('auteur');
-          dernierBloc.after(auteur);
+          bloc.after(auteur);
         }
       }
     } else {
-      const nouveau = creerBloc(cmd);
-      editor.append(nouveau);
-      if (cmd === 'citation') {
-        const auteur = creerBloc('auteur');
-        editor.append(auteur);
-      }
-      nouveau.focus();
-    }
-  }
-});
-
-// ============================================================
-//  UPLOAD IMAGE
-// ============================================================
-imagePicker.addEventListener('change', async () => {
-  const fichier = imagePicker.files[0];
-  if (!fichier) return;
-
-  const formData = new FormData();
-  formData.append('image', fichier);
-
-  try {
-    const res = await fetch('/api/upload-temp', { method: 'POST', body: formData });
-    const result = await res.json();
-
-    if (!result.success) {
-      alert("Erreur lors de l'upload : " + (result.message || ''));
-      return;
-    }
-
-    const url = result.url;
-    const blocImage = creerBlocImage(url);
-    const suivant = creerBloc('paragraphe');
-
-    const bloc = getBlocActif() ?? editor.lastElementChild;
-    if (bloc) {
-      bloc.after(blocImage, suivant);
-    } else {
-      editor.append(blocImage, suivant);
-    }
-    suivant.focus();
-
-  } catch (err) {
-    console.error(err);
-    alert("Erreur réseau lors de l'upload.");
-  }
-
-  imagePicker.value = '';
-});
-
-// ============================================================
-//  SÉRIALISATION → format texte original
-// ============================================================
-function serialiser() {
-  const lignes = [];
-
-  editor.childNodes.forEach(node => {
-    if (!node.classList) return;
-
-    // Image
-    if (node.classList.contains('cms-bloc-image')) {
-      lignes.push('/image');
-      lignes.push(node.dataset.url ?? '');
-      return;
-    }
-
-    if (!node.classList.contains('cms-bloc')) return;
-
-    const type = node.dataset.type;
-
-    if (type === 'separateur') {
-      lignes.push('/separateur');
-      return;
-    }
-
-    // Récupérer le texte avec les formatages inline reconstitués
-    const contenu = serializerInline(node);
-    if (contenu.trim() === '') return;
-
-    const cmd = {
-      titre1:          '/titre1',
-      titre2:          '/titre2',
-      paragraphe:      '/paragraphe',
-      citation:        '/citation',
-      auteur:          '/auteur',
-      'liste-puces':   '/liste-puces',
-      'liste-numerotee': '/liste-numerotee',
-    }[type] ?? '/paragraphe';
-
-    lignes.push(cmd);
-    lignes.push(contenu);
-  });
-
-  return lignes.join('\n');
-}
-
-function serializerInline(el) {
-  let result = '';
-
-  el.childNodes.forEach(node => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      result += node.textContent.replace(/\u200B/g, '');
-      return;
-    }
-    if (node.nodeType !== Node.ELEMENT_NODE) return;
-
-    const tag = node.tagName.toLowerCase();
-    const style = node.style || {};
-
-    if (tag === 'strong' || tag === 'b') {
-      result += '/gras' + serializerInline(node) + '/normal';
-    } else if (tag === 'em' || tag === 'i') {
-      result += '/italique' + serializerInline(node) + '/normal';
-    } else if (tag === 'u' || (tag === 'span' && node.style.textDecoration?.includes('underline'))) {
-      result += '/souligne' + serializerInline(node) + '/normal';
-    } else if (tag === 'mark') {
-      result += '/surligne' + serializerInline(node) + '/normal';
-    } else if (tag === 'br') {
-      result += ' ';
-    } else {
-      result += serializerInline(node);
-    }
-  });
-
-  return result;
-}
-
-// ============================================================
-//  PARSING (identique à l'original) → HTML
-// ============================================================
-function parseCMS(text) {
-  const BLOCS   = ['/titre1', '/titre2', '/paragraphe', '/citation', '/auteur', '/separateur', '/image', '/liste-puces', '/liste-numerotee'];
-  const INLINES = ['/gras', '/italique', '/souligne', '/surligne', '/normal'];
-  const toutes  = [...BLOCS, ...INLINES];
-
-  const splitRegex = new RegExp(
-    '(' + toutes.map(c => c.replace('/', '\\/')).join('|') + ')',
-    'gi'
-  );
-
-  const parts = text.split(splitRegex).filter(p => p !== undefined && p !== '');
-  let html = '', blocCourant = null, contenuBloc = '', inlineCourant = null;
-
-  const tagBloc = {
-    '/titre1':         { open: '<h1 class="article-titre1">',           close: '</h1>' },
-    '/titre2':         { open: '<h2 class="article-titre2">',           close: '</h2>' },
-    '/paragraphe':     { open: '<p class="article-paragraphe">',        close: '</p>' },
-    '/citation':       { open: '<blockquote class="article-citation">', close: '</blockquote>' },
-    '/image':          { open: '<img class="article-image" src="',      close: '" alt="">' },
-    '/separateur':     { open: '<div class="article-separateur">',      close: '</div>' },
-    '/liste-puces':    { open: '<li class="article-liste-puces">',      close: '</li>' },
-    '/liste-numerotee':{ open: '<li class="article-liste-numerotee">',  close: '</li>' },
-  };
-
-  const tagInline = {
-    '/gras':     { open: '<strong>', close: '</strong>' },
-    '/italique': { open: '<em>',     close: '</em>' },
-    '/souligne': { open: '<span style="text-decoration:underline">', close: '</span>' },
-    '/surligne': { open: '<mark>',   close: '</mark>' },
-    '/normal':   { open: '',         close: '' },
-  };
-
-  function fermerInline() {
-    if (inlineCourant) { contenuBloc += tagInline[inlineCourant].close; inlineCourant = null; }
-  }
-
-  function fermerBloc() {
-    fermerInline();
-    if (!blocCourant) return;
-
-    if (blocCourant === '/separateur') {
-      const lastUl = html.lastIndexOf('<ul class="article-liste-wrapper">');
-      const lastOl = html.lastIndexOf('<ol class="article-liste-wrapper">');
-      const lastUlClose = html.lastIndexOf('</ul>');
-      const lastOlClose = html.lastIndexOf('</ol>');
-      if (lastUl > lastUlClose) html += '</ul>';
-      if (lastOl > lastOlClose) html += '</ol>';
-      html += tagBloc['/separateur'].open + tagBloc['/separateur'].close;
-
-    } else if (blocCourant === '__auteur_dans_citation__') {
-      html += '<footer class="article-citation-auteur">' + contenuBloc + '</footer></blockquote>';
-
-    } else if (blocCourant === '/auteur') {
-      html += '<p class="article-citation-auteur">' + contenuBloc + '</p>';
-
-    } else if (blocCourant === '/image') {
-      html += tagBloc[blocCourant].open + contenuBloc.trim() + tagBloc[blocCourant].close;
-
-    } else if (blocCourant === '/liste-puces' || blocCourant === '/liste-numerotee') {
-      const tag = blocCourant === '/liste-puces' ? 'ul' : 'ol';
-      const lastOpen  = html.lastIndexOf(`<${tag} class="article-liste-wrapper">`);
-      const lastClose = html.lastIndexOf(`</${tag}>`);
-      if (lastOpen !== -1 && lastOpen > lastClose) {
-        // Liste du même type déjà ouverte → on ajoute juste le <li>
-        html += tagBloc[blocCourant].open + contenuBloc + tagBloc[blocCourant].close;
+      //vérifier si le dernier bloc est vide
+      const dernierBloc = editor.lastElementChild;
+      if (dernierBloc && dernierBloc.classList.contains('cms-bloc') && dernierBloc.textContent.trim() === '') {
+        // Réutiliser le bloc vide existant plutôt qu'en créer un nouveau
+        dernierBloc.dataset.type = cmd;
+        const ph = PLACEHOLDER_BY_TYPE[cmd] ?? 'Écrivez ici…';
+        dernierBloc.dataset.placeholder = ph;
+        dernierBloc.setAttribute('data-empty', 'true');
+        dernierBloc.focus();
+        if (cmd === 'citation') {
+          const suivant = dernierBloc.nextElementSibling;
+          if (!suivant || suivant.dataset.type !== 'auteur') {
+            const auteur = creerBloc('auteur');
+            dernierBloc.after(auteur);
+          }
+        }
       } else {
-        // Fermer une liste d'un autre type si besoin
+        const nouveau = creerBloc(cmd);
+        editor.append(nouveau);
+        if (cmd === 'citation') {
+          const auteur = creerBloc('auteur');
+          editor.append(auteur);
+        }
+        nouveau.focus();
+      }
+    }
+  });
+
+
+  //  UPLOAD IMAGE
+  imagePicker.addEventListener('change', async () => {
+    const fichier = imagePicker.files[0];
+    if (!fichier) return;
+
+    const formData = new FormData();
+    formData.append('image', fichier);
+
+    try {
+      const res = await fetch('/api/upload-temp', { method: 'POST', body: formData });
+      const result = await res.json();
+
+      if (!result.success) {
+        alert("Erreur lors de l'upload : " + (result.message || ''));
+        return;
+      }
+
+      const url = result.url;
+      const blocImage = creerBlocImage(url);
+      const suivant = creerBloc('paragraphe');
+
+      const bloc = getBlocActif() ?? editor.lastElementChild;
+      if (bloc) {
+        bloc.after(blocImage, suivant);
+      } else {
+        editor.append(blocImage, suivant);
+      }
+      suivant.focus();
+
+    } catch (err) {
+      console.error(err);
+      alert("Erreur réseau lors de l'upload.");
+    }
+
+    imagePicker.value = '';
+  });
+
+
+  //  SÉRIALISATION → format texte original
+  function serialiser() {
+    const lignes = [];
+
+    editor.childNodes.forEach(node => {
+      if (!node.classList) return;
+
+      // Image
+      if (node.classList.contains('cms-bloc-image')) {
+        lignes.push('/image');
+        lignes.push(node.dataset.url ?? '');
+        return;
+      }
+
+      if (!node.classList.contains('cms-bloc')) return;
+
+      const type = node.dataset.type;
+
+      if (type === 'separateur') {
+        lignes.push('/separateur');
+        return;
+      }
+
+      // Récupérer le texte avec les formatages inline reconstitués
+      const contenu = serializerInline(node);
+      if (contenu.trim() === '') return;
+
+      const cmd = {
+        titre1:'/titre1',
+        titre2: '/titre2',
+        paragraphe:'/paragraphe',
+        citation:  '/citation',
+        auteur: '/auteur',
+        'liste-puces':'/liste-puces',
+        'liste-numerotee': '/liste-numerotee',
+      }[type] ?? '/paragraphe';
+
+      lignes.push(cmd);
+      lignes.push(contenu);
+    });
+
+    return lignes.join('\n');
+  }
+
+  function serializerInline(el) {
+    let result = '';
+
+    el.childNodes.forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        result += node.textContent.replace(/\u200B/g, '');
+        return;
+      }
+      if (node.nodeType !== Node.ELEMENT_NODE) return;
+
+      const tag = node.tagName.toLowerCase();
+      const style = node.style || {};
+
+      if (tag === 'strong' || tag === 'b') {
+        result += '/gras' + serializerInline(node) + '/normal';
+      } else if (tag === 'em' || tag === 'i') {
+        result += '/italique' + serializerInline(node) + '/normal';
+      } else if (tag === 'u' || (tag === 'span' && node.style.textDecoration?.includes('underline'))) {
+        result += '/souligne' + serializerInline(node) + '/normal';
+      } else if (tag === 'mark') {
+        result += '/surligne' + serializerInline(node) + '/normal';
+      } else if (tag === 'br') {
+        result += ' ';
+      } else {
+        result += serializerInline(node);
+      }
+    });
+
+    return result;
+  }
+
+
+  //  PARSING (identique à l'original) → HTML
+  function parseCMS(text) {
+    const BLOCS   = ['/titre1', '/titre2', '/paragraphe', '/citation', '/auteur', '/separateur', '/image', '/liste-puces', '/liste-numerotee'];
+    const INLINES = ['/gras', '/italique', '/souligne', '/surligne', '/normal'];
+    const toutes  = [...BLOCS, ...INLINES];
+    
+    /*
+    const seule = [...BLOCS, '/titre1', '/titre2', '/paragraphe'];
+    for (const element of seule){
+      console.log(seule)
+    }
+    */
+
+    const splitRegex = new RegExp(
+      '(' + toutes.map(c => c.replace('/', '\\/')).join('|') + ')',
+      'gi'
+    );
+
+    const parts = text.split(splitRegex).filter(p => p !== undefined && p !== '');
+    let html = '', blocCourant = null, contenuBloc = '', inlineCourant = null;
+
+    const tagBloc = {
+      '/titre1':{ open: '<h1 class="article-titre1">', close: '</h1>' },
+      '/titre2':{ open: '<h2 class="article-titre2">', close: '</h2>' },
+      '/paragraphe': { open: '<p class="article-paragraphe">', close: '</p>' },
+      '/citation':{ open: '<blockquote class="article-citation">', close: '</blockquote>' },
+      '/image': { open: '<img class="article-image" src="',  close: '" alt="">' },
+      '/separateur':{ open: '<div class="article-separateur">', close: '</div>' },
+      '/liste-puces':{ open: '<li class="article-liste-puces">', close: '</li>' },
+      '/liste-numerotee':{ open: '<li class="article-liste-numerotee">', close: '</li>' },
+    };
+
+    const tagInline = {
+      '/gras':{ open: '<strong>', close: '</strong>' },
+      '/italique':{ open: '<em>', close: '</em>' },
+      '/souligne':{ open: '<span style="text-decoration:underline">', close: '</span>' },
+      '/surligne':{ open: '<mark>', close: '</mark>' },
+      '/normal':{ open: '', close: '' },
+    };
+
+    function fermerInline() {
+      if (inlineCourant){ 
+        contenuBloc += tagInline[inlineCourant].close; 
+        inlineCourant = null; 
+      }
+    }
+
+    function fermerBloc() {
+      fermerInline();
+      if (!blocCourant) return;
+
+      if (blocCourant === '/separateur') {
         const lastUl = html.lastIndexOf('<ul class="article-liste-wrapper">');
         const lastOl = html.lastIndexOf('<ol class="article-liste-wrapper">');
         const lastUlClose = html.lastIndexOf('</ul>');
         const lastOlClose = html.lastIndexOf('</ol>');
         if (lastUl > lastUlClose) html += '</ul>';
         if (lastOl > lastOlClose) html += '</ol>';
-        // Ouvrir la nouvelle liste et ajouter le <li>
-        html += `<${tag} class="article-liste-wrapper">`;
+        html += tagBloc['/separateur'].open + tagBloc['/separateur'].close;
+
+      } else if (blocCourant === '__auteur_dans_citation__') {
+        html += '<footer class="article-citation-auteur">' + contenuBloc + '</footer></blockquote>';
+
+      } else if (blocCourant === '/auteur') {
+        html += '<p class="article-citation-auteur">' + contenuBloc + '</p>';
+
+      } else if (blocCourant === '/image') {
+        html += tagBloc[blocCourant].open + contenuBloc.trim() + tagBloc[blocCourant].close;
+
+      } else if (blocCourant === '/liste-puces' || blocCourant === '/liste-numerotee') {
+        const tag = blocCourant === '/liste-puces' ? 'ul' : 'ol';
+        const lastOpen  = html.lastIndexOf(`<${tag} class="article-liste-wrapper">`);
+        const lastClose = html.lastIndexOf(`</${tag}>`);
+        if (lastOpen !== -1 && lastOpen > lastClose) {
+          // Liste du même type déjà ouverte -> on ajoute juste le <li>
+          html += tagBloc[blocCourant].open + contenuBloc + tagBloc[blocCourant].close;
+        } else {
+          // Fermer une liste d'un autre type si besoin
+          const lastUl = html.lastIndexOf('<ul class="article-liste-wrapper">');
+          const lastOl = html.lastIndexOf('<ol class="article-liste-wrapper">');
+          const lastUlClose = html.lastIndexOf('</ul>');
+          const lastOlClose = html.lastIndexOf('</ol>');
+          if (lastUl > lastUlClose) html += '</ul>';
+          if (lastOl > lastOlClose) html += '</ol>';
+
+          html += `<${tag} class="article-liste-wrapper">`;
+          html += tagBloc[blocCourant].open + contenuBloc + tagBloc[blocCourant].close;
+        }
+
+      } else {
+        const lastUl = html.lastIndexOf('<ul class="article-liste-wrapper">');
+        const lastOl = html.lastIndexOf('<ol class="article-liste-wrapper">');
+        const lastUlClose = html.lastIndexOf('</ul>');
+        const lastOlClose = html.lastIndexOf('</ol>');
+        if (lastUl > lastUlClose) html += '</ul>';
+        if (lastOl > lastOlClose) html += '</ol>';
         html += tagBloc[blocCourant].open + contenuBloc + tagBloc[blocCourant].close;
       }
 
-    } else {
-      // Bloc normal : fermer une liste ouverte si on change de type
-      const lastUl = html.lastIndexOf('<ul class="article-liste-wrapper">');
-      const lastOl = html.lastIndexOf('<ol class="article-liste-wrapper">');
-      const lastUlClose = html.lastIndexOf('</ul>');
-      const lastOlClose = html.lastIndexOf('</ol>');
-      if (lastUl > lastUlClose) html += '</ul>';
-      if (lastOl > lastOlClose) html += '</ol>';
-      html += tagBloc[blocCourant].open + contenuBloc + tagBloc[blocCourant].close;
+      blocCourant = null;
+      contenuBloc = '';
     }
 
-    blocCourant = null;
-    contenuBloc = '';
+    parts.forEach(part => {
+      const pl = part.toLowerCase().trim();
+
+      if (pl === '/separateur') {
+        fermerBloc();
+        html += tagBloc['/separateur'].open + tagBloc['/separateur'].close;
+
+      } else if (pl === '/auteur') {
+        fermerBloc();
+        if (html.endsWith('</blockquote>')) {
+          html = html.slice(0, -'</blockquote>'.length);
+          blocCourant = '__auteur_dans_citation__';
+        } else {
+          blocCourant = '/auteur';
+        }
+
+      } else if (tagBloc[pl] !== undefined) {
+        fermerBloc();
+        blocCourant = pl;
+
+      } else if (tagInline[pl] !== undefined) {
+        if (!blocCourant) blocCourant = '/paragraphe';
+        fermerInline();
+        if (pl !== '/normal') { 
+          inlineCourant = pl; 
+          contenuBloc += tagInline[pl].open; 
+        }
+
+      } else {
+        const texte = part.replace(/^\n+/, '').replace(/\n+$/, '').replace(/\n/g, ' ');
+        if (!texte) return;
+        if (!blocCourant) blocCourant = '/paragraphe';
+        contenuBloc += texte;
+      }
+    });
+
+    fermerBloc();
+
+    const lastUl = html.lastIndexOf('<ul class="article-liste-wrapper">');
+    const lastOl = html.lastIndexOf('<ol class="article-liste-wrapper">');
+    const lastUlClose = html.lastIndexOf('</ul>');
+    const lastOlClose = html.lastIndexOf('</ol>');
+    if (lastUl > lastUlClose) html += '</ul>';
+    if (lastOl > lastOlClose) html += '</ol>';
+
+    return html;
   }
 
-  parts.forEach(part => {
-    const pl = part.toLowerCase().trim();
 
-    if (pl === '/separateur') {
-      fermerBloc();
-      html += tagBloc['/separateur'].open + tagBloc['/separateur'].close;
-
-    } else if (pl === '/auteur') {
-      fermerBloc();
-      if (html.endsWith('</blockquote>')) {
-        html = html.slice(0, -'</blockquote>'.length);
-        blocCourant = '__auteur_dans_citation__';
-      } else {
-        blocCourant = '/auteur';
-      }
-
-    } else if (tagBloc[pl] !== undefined) {
-      fermerBloc();
-      blocCourant = pl;
-
-    } else if (tagInline[pl] !== undefined) {
-      if (!blocCourant) blocCourant = '/paragraphe';
-      fermerInline();
-      if (pl !== '/normal') { inlineCourant = pl; contenuBloc += tagInline[pl].open; }
-
-    } else {
-      const texte = part.replace(/^\n+/, '').replace(/\n+$/, '').replace(/\n/g, ' ');
-      if (!texte) return;
-      if (!blocCourant) blocCourant = '/paragraphe';
-      contenuBloc += texte;
-    }
+  // BOUTONS
+  document.getElementById('preview-btn').addEventListener('click', () => {
+    const texte = serialiser();
+    preview.innerHTML = parseCMS(texte);
   });
 
-  // Fermer le dernier bloc en cours
-  fermerBloc();
+  document.getElementById('save-btn').addEventListener('click', async () => {
+    const titre = document.getElementById('titre').value.trim();
+    const baseline = document.getElementById('baseline').value.trim();
+    const fichierImage = document.getElementById('presentation').files[0];
+    const texte = serialiser();
+    const contenu = parseCMS(texte);
 
-  // Fermer une éventuelle liste encore ouverte en fin de contenu
-  const lastUl = html.lastIndexOf('<ul class="article-liste-wrapper">');
-  const lastOl = html.lastIndexOf('<ol class="article-liste-wrapper">');
-  const lastUlClose = html.lastIndexOf('</ul>');
-  const lastOlClose = html.lastIndexOf('</ol>');
-  if (lastUl > lastUlClose) html += '</ul>';
-  if (lastOl > lastOlClose) html += '</ol>';
+    if (!titre) { alert('Le titre est obligatoire.'); document.getElementById('titre').focus(); return; }
+    if (!baseline) { alert('La baseline est obligatoire.'); document.getElementById('baseline').focus(); return; }
+    if (!fichierImage) { alert("L'image de présentation est obligatoire."); document.getElementById('presentation').focus(); return; }
+    if (!contenu) { alert("Le contenu de l'article est vide."); editor.focus(); return; }
 
-  return html;
-}
+    const formData = new FormData();
+    formData.append('titre', titre);
+    formData.append('baseline', baseline);
+    formData.append('presentation', fichierImage);
+    formData.append('contenu', contenu);
 
-// ============================================================
-//  BOUTONS
-// ============================================================
-document.getElementById('preview-btn').addEventListener('click', () => {
-  const texte = serialiser();
-  preview.innerHTML = parseCMS(texte);
-});
-
-document.getElementById('save-btn').addEventListener('click', async () => {
-  const titre    = document.getElementById('titre').value.trim();
-  const baseline = document.getElementById('baseline').value.trim();
-  const fichierImage = document.getElementById('presentation').files[0];
-  const texte    = serialiser();
-  const contenu  = parseCMS(texte);
-
-  if (!titre)        { alert('Le titre est obligatoire.');              document.getElementById('titre').focus(); return; }
-  if (!baseline)     { alert('La baseline est obligatoire.');           document.getElementById('baseline').focus(); return; }
-  if (!fichierImage) { alert("L'image de présentation est obligatoire."); document.getElementById('presentation').focus(); return; }
-  if (!contenu)      { alert("Le contenu de l'article est vide.");     editor.focus(); return; }
-
-  const formData = new FormData();
-  formData.append('titre', titre);
-  formData.append('baseline', baseline);
-  formData.append('presentation', fichierImage);
-  formData.append('contenu', contenu);
-
-  try {
-    const res = await fetch('/api/articles', { method: 'POST', body: formData });
-    const result = await res.json();
-    if (result.success) {
-      alert('Article publié avec succès !');
-    } else {
-      alert('Erreur : ' + (result.message || 'Publication échouée.'));
+    try {
+      const res = await fetch('/api/articles', { method: 'POST', body: formData });
+      const result = await res.json();
+      if (result.success) {
+        alert('Article publié avec succès !');
+      } else {
+        alert('Erreur : ' + (result.message || 'Publication échouée.'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erreur réseau, réessayez.');
     }
-  } catch (err) {
-    console.error(err);
-    alert('Erreur réseau, réessayez.');
-  }
-});
+  });
 </script>
