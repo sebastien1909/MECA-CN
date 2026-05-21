@@ -1681,7 +1681,7 @@ app.post("/consulter_offre", async function (req, res) {
       [id],
     );
     const offre = offres[0];
-    console.log(offre);
+    // console.log(offre);
 
 
     // récupérationde "l'enabilité" des sections plus secondaires
@@ -2473,7 +2473,7 @@ app.post("/ajouter_machine",isAdmin,uploadMachines.single("image_machine"),async
         annee_entree,
       } = req.body;
 
-      console.log(req.body);
+      // console.log(req.body);
 
       const imageMachine = req.file
         ? "/img/machines/" + req.file.filename
@@ -3185,7 +3185,7 @@ app.post('/recup_mdp/nouveau_mdp', async (req, res) => {
             [token]
         );
 
-        console.log(rows)
+        // console.log(rows)
 
         if (rows.length === 0) {
             return res.render('recuperation_mdp', {
