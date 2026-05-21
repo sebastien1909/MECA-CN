@@ -2345,7 +2345,7 @@ app.post("/supprimer-realisation", isAdmin, async function (req, res) {
     if (produit.image){
       const imagePath = path.join(__dirname, "public", produit.image);
       if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath);
+          fs.unlinkSync(imagePath); 
       }
 
     }
@@ -2379,7 +2379,7 @@ app.post("/supprimer-machine", isAdmin, async function (req, res) {
         fs.unlinkSync(imagePath);
       }
     }
-
+    //await pool.query("SELECT * FROM produit WHERE categorie LIKE ?", [machine.categorie]);
     await pool.query("DELETE FROM machines WHERE id_machine = ?", [id_machine]);
     return res.redirect("/admin/suppression");
   } catch (err) {
