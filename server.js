@@ -2341,13 +2341,16 @@ app.post("/supprimer-realisation", isAdmin, async function (req, res) {
     const produit = realisation[0];
     const imagePath = path.join(__dirname,"public",produit.image)
 
-    if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
+
+    if (produit.image){
+      const imagePath = path.join(__dirname, "public", produit.image);
+      if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+      }
+
     }
-
-    await pool.query("DELETE FROM produits WHERE id = ?", [id_realisation]);
-
     
+    await pool.query("DELETE FROM produits WHERE id = ?", [id_realisation]);
 
     return res.redirect("/admin/suppression");
   } catch (err) {
@@ -2365,17 +2368,19 @@ Récupère l'id de la machine concernée dans l'URL et supprime grace à ce dern
 app.post("/supprimer-machine", isAdmin, async function (req, res) {
   try {
     const id_machine = req.body.machine_id;
-    // console.log("ID machine à supprimer :", id_machine);
 
     const [machine_list] = await pool.query("SELECT * FROM machines WHERE id_machine = ?", [id_machine]);
     const machine = machine_list[0];
-    const imagePath = path.join(__dirname, "public", machine.image_machine);
 
-    if (fs.existsSync(imagePath)){
-      fs.unlinkSync(imagePath)
+    // On ne tente de supprimer l'image que si elle existe
+    if (machine.image_machine) {
+      const imagePath = path.join(__dirname, "public", machine.image_machine);
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
     }
-    await pool.query("DELETE FROM machines WHERE id_machine = ?", [id_machine]);
 
+    await pool.query("DELETE FROM machines WHERE id_machine = ?", [id_machine]);
     return res.redirect("/admin/suppression");
   } catch (err) {
     console.error("Erreur SQL ou Serveur :", err);

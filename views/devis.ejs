@@ -488,6 +488,9 @@
       .catch((err) => console.error("Erreur chargement dimensions:", err));
 
 
+    console.log("Captcha question:", captchaQuestion);
+
+
     // ── CONVERSION D'UNITÉS ──────────────────────────────────────────
     function convertToMm(value, unit) {
       const val = parseFloat(value) || 0;
