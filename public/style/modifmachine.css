@@ -17,6 +17,30 @@ main {
   background-repeat: no-repeat;
 }
 
+
+
+
+
+/* Listes d'infos (RPM, Postes) */
+    .info1, .info2, .info3, .info4 {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 0.9rem;
+    }
+
+    .info1 p:last-child, .info2 p:last-child, .info3 p:last-child, .info4 p:last-child {
+        font-weight: bold;
+        color: #333;
+    }
+
+
+
+
+
+
+
 /* Colonne gauche (titre) */
 .left-part {
   flex: 1 1 45%;
@@ -291,6 +315,8 @@ main::before {
         font-weight: bold;
         color: #2C5282;
     }
+
+    
 }
 
  
@@ -517,7 +543,18 @@ main::before {
     color: #475569; 
   }
 
+  .info1, .info2, .info3, .info4 {
+        display: flex;
+        justify-content: space-between;
+        padding: 3px 0;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 0.9rem;
+    }
 
+    .info1 p:last-child, .info2 p:last-child, .info3 p:last-child, .info4 p:last-child {
+        font-weight: bold;
+        color: #333;
+    }
 }
 
 

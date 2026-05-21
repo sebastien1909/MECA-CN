@@ -230,6 +230,10 @@
 
             </div>
 
+
+
+
+
         <!-- ========== Machine de tournage et fraisage ========== -->
 
         <div class="filter-group tournage-group ">
@@ -383,6 +387,10 @@
                         <h2 class="machine-subtitle"><%= machine.nom_machine %></h2>
                     </div>
 
+                    <p class="machine-card-desc" style="margin:30px 0;">
+                        <%= machine.description_courte %>
+                    </p>
+
                     <div class="machine-card-stats">
                         <% 
                         // On boucle sur toutes les propriétés de la machine en cours
@@ -420,6 +428,9 @@
                             <p>Dimension Z</p>
                             <p><%= machine.d_z %>mm</p>
                         </div>
+
+
+                        
                     <% } else if (machine.type === 'tournage') { %>
                         <div class="info1">
                             <p>Longueur max</p>
@@ -433,10 +444,43 @@
                             <p>Alésage</p>
                             <p><%= machine.alesage %>mm</p>
                         </div>
+
+
+
+                    <% } else { %>
+                        <!-- DIMENSIONS TOURNAGES -->
+                        <p style="margin-top:20px;"><strong>Dimensions de Tournage</strong></p>
+                         <div class="info1">
+                            <p>Dimension X</p>
+                            <p><%= machine.d_x %>mm</p>
+                        </div>
+                        <div class="info2">
+                            <p>Dimension Y</p>
+                            <p><%= machine.d_y %>mm</p>
+                        </div>
+                        <div class="info3">
+                            <p>Dimension Z</p>
+                            <p><%= machine.d_z %>mm</p>
+                        </div>
+
+
+                        <!-- DIMENSIONS FRAISAGE -->
+                         <p style="margin-top:20px;"><strong>Dimensions de Fraisage</strong></p>
+                        <div class="info1">
+                            <p>Longueur max</p>
+                            <p><%= machine.longueur_max %>mm</p>
+                        </div>
+                        <div class="info2">
+                            <p>Diamètre max</p>
+                            <p><%= machine.diametre_max %>mm</p>
+                        </div>
+                        <div class="info3">
+                            <p>Alésage</p>
+                            <p><%= machine.alesage %>mm</p>
+                        </div>
                     <% } %>
-                    <p class="machine-card-desc">
-                        <%= machine.description_courte %>
-                    </p>
+                    
+                    
                 </div>
             </section>
         <% } %>

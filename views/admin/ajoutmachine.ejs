@@ -51,9 +51,18 @@
                                 <p id="preview-shortdesc"><%= machine.description_courte %></p>
 
                                 <div class="preview-dims">
-                                    <div class="dim"><strong>Dimension X</strong><span id="preview-dx"><%= machine.d_x %></span></div>
-                                    <div class="dim"><strong>Dimension Y</strong><span id="preview-dy"><%= machine.d_y %></span></div>
-                                    <div class="dim"><strong>Dimension Z</strong><span id="preview-dz"><%= machine.d_z %></span></div>
+                                    <!-- Fraisage -->
+                                    <div id="preview-dims-fraisage" style="display:none;">
+                                        <div class="dim"><strong>Dimension X</strong><span id="preview-dx"></span></div>
+                                        <div class="dim"><strong>Dimension Y</strong><span id="preview-dy"></span></div>
+                                        <div class="dim"><strong>Dimension Z</strong><span id="preview-dz"></span></div>
+                                    </div>
+                                    <!-- Tournage -->
+                                    <div id="preview-dims-tournage" style="display:none;">
+                                        <div class="dim"><strong>Longueur max</strong><span id="preview-longueur"></span></div>
+                                        <div class="dim"><strong>Diamètre max</strong><span id="preview-diametre"></span></div>
+                                        <div class="dim"><strong>Alèsage</strong><span id="preview-alesage"></span></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -184,6 +193,11 @@
             </div>
         </form>
 
+
+
+
+
+        <!-- ========== PREVIEW MOBILE ========== -->
         <div class="preview-wrapper preview-mobile">
             <div class="preview-container">
                 <div class="preview-header">
@@ -200,18 +214,65 @@
 
                         <h3 id="preview-mobile-name" class="mobile-title"><%= machine.nom_machine %></h3>
 
+                        <p id="preview-mobile-desc" class="mobile-desc"><%= machine.description_courte || machine.description_longue || '' %></p>
+
                         <div class="mobile-stats">
-                            <div class="mobile-stat">
-                                <div class="stat-label" id="preview-mobile-stat1-name"><%= machine.statistique1_nom %></div>
-                                <div class="stat-value" id="preview-mobile-stat1-value"><%= machine.statistique1_donnee %></div>
+                            <% 
+                            let idx = 1;
+                            for (let cle in machine) { 
+                                if (cle.includes("_nom")) { 
+                                    const nomStat = machine[cle];
+                                    const valeurStat = machine[cle.replace("_nom", "_donnee")];
+                                    if (nomStat && nomStat.trim() !== '' && valeurStat && valeurStat.trim() !== '') { 
+                            %> 
+                                        <div class="mobile-stat">
+                                            <div class="stat-label" id="preview-mobile-stat<%= idx %>-name"><%= nomStat %></div>
+                                            <div class="stat-value" id="preview-mobile-stat<%= idx %>-value"><%= valeurStat %></div>
+                                        </div>
+                            <% 
+                                    idx++;
+                                } 
+                            }}
+                            %>
+                        </div>
+
+
+                        <!-- Dimensions mobile — fraisage -->
+                        <div id="preview-mobile-dims-fraisage" style="display:none;">
+                            <p style="margin-top:20px;"><strong>Dimensions de Fraisage</strong></p>
+                            <div class="info1">
+                                <p>Dimension X</p>
+                                <p id="preview-mobile-dx"></p>
                             </div>
-                            <div class="mobile-stat">
-                                <div class="stat-label" id="preview-mobile-stat2-name"><%= machine.statistique2_nom %></div>
-                                <div class="stat-value" id="preview-mobile-stat2-value"><%= machine.statistique2_donnee %></div>
+                            <div class="info2">
+                                <p>Dimension Y</p>
+                                <p id="preview-mobile-dy"></p>
+                            </div>
+                            <div class="info3">
+                                <p>Dimension Z</p>
+                                <p id="preview-mobile-dz"></p>
                             </div>
                         </div>
 
-                        <p id="preview-mobile-desc" class="mobile-desc"><%= machine.description_courte || machine.description_longue || '' %></p>
+                        <!-- Dimensions mobile — tournage -->
+                        <div id="preview-mobile-dims-tournage" style="display:none;">
+                            <p style="margin-top:20px;"><strong>Dimensions de Tournage</strong></p>
+                            <div class="info1">
+                                <p>Longueur max</p>
+                                <p id="preview-mobile-longueur"></p>
+                            </div>
+                            <div class="info2">
+                                <p>Diamètre max</p>
+                                <p id="preview-mobile-diametre"></p>
+                            </div>
+                            <div class="info3">
+                                <p>Alésage</p>
+                                <p id="preview-mobile-alesage"></p>
+                            </div>
+                        </div>
+
+
+                        
                     </div>
                 </div>
 
@@ -229,21 +290,38 @@
         const fileInput = document.getElementById('image_machine_input');
         const uploadStatus = document.getElementById('upload-status');
         const uploadText = document.getElementById('upload-text');
-        const previewImage = document.getElementById('preview-image'); // small upload preview
-        const previewCardImage = document.getElementById('preview-image-card'); // desktop preview
-        const previewMobileImage = document.getElementById('preview-mobile-image'); // mobile preview
+        const previewImage = document.getElementById('preview-image');
+        const previewCardImage = document.getElementById('preview-image-card');
+        const previewMobileImage = document.getElementById('preview-mobile-image');
         const typeSelect = document.getElementById('type-select');
         const dimsFraisage = document.getElementById('dims-fraisage');
         const dimsTournage = document.getElementById('dims-tournage');
+        const previewDimsFraisage = document.getElementById('preview-dims-fraisage');
+        const previewDimsTournage = document.getElementById('preview-dims-tournage');
+        const previewMobileDimsFraisage = document.getElementById('preview-mobile-dims-fraisage');
+        const previewMobileDimsTournage = document.getElementById('preview-mobile-dims-tournage');
 
-        function toggleDims() {
-            const type = typeSelect.value;
-            dimsFraisage.style.display = (type === 'fraisage' || type === 'tournage/fraisage') ? 'block' : 'none';
-            dimsTournage.style.display = (type === 'tournage' || type === 'tournage/fraisage') ? 'block' : 'none';
+        function updateDimsVisibility() {
+            const val = typeSelect.value;
+            dimsFraisage.style.display = (val === 'fraisage' || val === 'tournage/fraisage') ? '' : 'none';
+            dimsTournage.style.display = (val === 'tournage' || val === 'tournage/fraisage') ? '' : 'none';
         }
 
-        typeSelect.addEventListener('change', toggleDims);
-        toggleDims(); // appel initial
+        // CORRECTION 1 : gère desktop ET mobile
+        function updatePreviewDimsVisibility(type) {
+            if (previewDimsFraisage) previewDimsFraisage.style.display = (type === 'fraisage' || type === 'tournage/fraisage') ? '' : 'none';
+            if (previewDimsTournage) previewDimsTournage.style.display = (type === 'tournage' || type === 'tournage/fraisage') ? '' : 'none';
+            if (previewMobileDimsFraisage) previewMobileDimsFraisage.style.display = (type === 'fraisage' || type === 'tournage/fraisage') ? '' : 'none';
+            if (previewMobileDimsTournage) previewMobileDimsTournage.style.display = (type === 'tournage' || type === 'tournage/fraisage') ? '' : 'none';
+        }
+
+        if (typeSelect) {
+            typeSelect.addEventListener('change', () => {
+                updateDimsVisibility();
+                updatePreview();
+            });
+            updateDimsVisibility();
+        }
 
         if (uploadButton) uploadButton.addEventListener('click', () => fileInput && fileInput.click());
 
@@ -257,9 +335,10 @@
                     uploadStatus.style.color = '#0f4bb7';
                     uploadStatus.style.fontWeight = 'bold';
                 }
-                if (previewImage) previewImage.src = URL.createObjectURL(file);
-                if (previewCardImage) previewCardImage.src = URL.createObjectURL(file);
-                if (previewMobileImage) previewMobileImage.src = URL.createObjectURL(file);
+                const url = URL.createObjectURL(file);
+                if (previewImage) previewImage.src = url;
+                if (previewCardImage) previewCardImage.src = url;
+                if (previewMobileImage) previewMobileImage.src = url;
             });
         }
 
@@ -270,48 +349,94 @@
 
         function updatePreview() {
             const get = s => document.querySelector(s);
-            const name = (get('[name="nom_machine"]') || {}).value || 'Nom machine';
-            const descLong = (get('[name="description_longue"]') || {}).value || '';
-            const descShort = (get('[name="description_courte"]') || {}).value || '';
-            const stat1Name = (get('[name="statistique1_nom"]') || {}).value || '';
-            const stat1Val = (get('[name="statistique1_donnee"]') || {}).value || '';
-            const stat2Name = (get('[name="statistique2_nom"]') || {}).value || '';
-            const stat2Val = (get('[name="statistique2_donnee"]') || {}).value || '';
-            const advTitle = (get('[name="avantage_titre"]') || {}).value || '';
-            const advDesc = (get('[name="avantage_description"]') || {}).value || '';
-            const dx = (get('[name="d_x"]') || {}).value || '';
-            const dy = (get('[name="d_y"]') || {}).value || '';
-            const dz = (get('[name="d_z"]') || {}).value || '';
-            const year = (get('[name="annee_entree"]') || {}).value || '';
 
-            setIf('preview-name', name);
-            setIf('preview-card-title', name);
-            setIf('preview-desc', descLong || descShort);
-            setIf('preview-shortdesc', descShort);
-            setIf('preview-stat1-name', stat1Name);
+            const name      = (get('[name="nom_machine"]')         || {}).value || 'Nom machine';
+            const descLong  = (get('[name="description_longue"]')  || {}).value || '';
+            const descShort = (get('[name="description_courte"]')  || {}).value || '';
+            const advTitle  = (get('[name="avantage_titre"]')      || {}).value || '';
+            const advDesc   = (get('[name="avantage_description"]')|| {}).value || '';
+            const year      = (get('[name="annee_entree"]')        || {}).value || '';
+            const type      = typeSelect ? typeSelect.value : '';
+
+            const dx       = (get('[name="d_x"]')         || {}).value || '';
+            const dy       = (get('[name="d_y"]')         || {}).value || '';
+            const dz       = (get('[name="d_z"]')         || {}).value || '';
+            const longueur = (get('[name="longueur_max"]') || {}).value || '';
+            const diametre = (get('[name="diametre_max"]') || {}).value || '';
+            const alesage  = (get('[name="alesage"]')      || {}).value || '';
+
+            // Desktop — textes
+            setIf('preview-name',        name);
+            setIf('preview-card-title',  name);
+            setIf('preview-desc',        descLong || descShort);
+            setIf('preview-shortdesc',   descShort);
+            setIf('preview-adv-title',   advTitle);
+            setIf('preview-adv-desc',    advDesc);
+            setIf('preview-year',        year);
+
+            // Desktop — stats (IDs fixes sur cette page)
+            const stat1Name = (get('[name="statistique1_nom"]')    || {}).value || '';
+            const stat1Val  = (get('[name="statistique1_donnee"]') || {}).value || '';
+            const stat2Name = (get('[name="statistique2_nom"]')    || {}).value || '';
+            const stat2Val  = (get('[name="statistique2_donnee"]') || {}).value || '';
+            setIf('preview-stat1-name',  stat1Name);
             setIf('preview-stat1-value', stat1Val);
-            setIf('preview-stat2-name', stat2Name);
+            setIf('preview-stat2-name',  stat2Name);
             setIf('preview-stat2-value', stat2Val);
-            setIf('preview-adv-title', advTitle);
-            setIf('preview-adv-desc', advDesc);
-            setIf('preview-dx', dx);
-            setIf('preview-dy', dy);
-            setIf('preview-dz', dz);
-            setIf('preview-year', year);
 
-            // mobile
+            // Desktop — dimensions
+            setIf('preview-dx',       dx       ? dx       + ' mm' : '');
+            setIf('preview-dy',       dy       ? dy       + ' mm' : '');
+            setIf('preview-dz',       dz       ? dz       + ' mm' : '');
+            setIf('preview-longueur', longueur ? longueur + ' mm' : '');
+            setIf('preview-diametre', diametre ? diametre + ' mm' : '');
+            setIf('preview-alesage',  alesage  ? alesage  + ' mm' : '');
+
+            updatePreviewDimsVisibility(type);
+
+            // Mobile — textes
             setIf('preview-mobile-name', name);
             setIf('preview-mobile-desc', descShort || descLong);
-            setIf('preview-mobile-stat1-name', stat1Name);
-            setIf('preview-mobile-stat1-value', stat1Val);
-            setIf('preview-mobile-stat2-name', stat2Name);
-            setIf('preview-mobile-stat2-value', stat2Val);
             setIf('preview-mobile-year', year);
+
+            // Stats mobiles — reconstruire le DOM dynamiquement
+            const mobileStatsContainer = document.querySelector('.mobile-stats');
+            if (mobileStatsContainer) {
+                const formStatNoms    = document.querySelectorAll('[name^="statistique"][name$="_nom"]');
+                const formStatDonnees = document.querySelectorAll('[name^="statistique"][name$="_donnee"]');
+
+                // Vider le conteneur avant de le reconstruire
+                mobileStatsContainer.innerHTML = '';
+
+                formStatNoms.forEach((inputNom, i) => {
+                    const inputVal = formStatDonnees[i];
+                    if (!inputVal) return;
+                    const n = inputNom.value.trim();
+                    const v = inputVal.value.trim();
+                    if (n && v) {
+                        const div = document.createElement('div');
+                        div.className = 'mobile-stat';
+                        div.innerHTML = `
+                            <div class="stat-label">${n}</div>
+                            <div class="stat-value">${v}</div>
+                        `;
+                        mobileStatsContainer.appendChild(div);
+                    }
+                });
+            }
+
+            // CORRECTION 3 : dimensions mobiles
+            setIf('preview-mobile-dx',       dx       ? dx       + ' mm' : '');
+            setIf('preview-mobile-dy',       dy       ? dy       + ' mm' : '');
+            setIf('preview-mobile-dz',       dz       ? dz       + ' mm' : '');
+            setIf('preview-mobile-longueur', longueur ? longueur + ' mm' : '');
+            setIf('preview-mobile-diametre', diametre ? diametre + ' mm' : '');
+            setIf('preview-mobile-alesage',  alesage  ? alesage  + ' mm' : '');
 
             const file = fileInput && fileInput.files && fileInput.files[0];
             if (file) {
                 const url = URL.createObjectURL(file);
-                if (previewCardImage) previewCardImage.src = url;
+                if (previewCardImage)   previewCardImage.src   = url;
                 if (previewMobileImage) previewMobileImage.src = url;
             }
         }
@@ -321,7 +446,6 @@
         const mobileReload = document.getElementById('reload-preview-mobile');
         if (mobileReload) mobileReload.addEventListener('click', updatePreview);
 
-        // initial
         updatePreview();
     })();
 </script>

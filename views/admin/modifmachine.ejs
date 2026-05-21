@@ -248,17 +248,8 @@
 
                         <h3 id="preview-mobile-name" class="mobile-title"><%= machine.nom_machine %></h3>
 
+
                         <div class="mobile-stats">
-                            <div class="mobile-stat">
-                                <div class="stat-label" id="preview-mobile-stat1-name"><%= machine.statistique1_nom %></div>
-                                <div class="stat-value" id="preview-mobile-stat1-value"><%= machine.statistique1_donnee %></div>
-                            </div>
-                            <div class="mobile-stat">
-                                <div class="stat-label" id="preview-mobile-stat2-name"><%= machine.statistique2_nom %></div>
-                                <div class="stat-value" id="preview-mobile-stat2-value"><%= machine.statistique2_donnee %></div>
-                            </div>
-                        </div>
-                        <div class="machine-card-stats">
                            <% 
                             let indexFraisage = 1;
                             for (let cle in machine) { 
@@ -267,10 +258,10 @@
                                     const valeurStat = machine[cle.replace("_nom", "_donnee")];
 
                                     if (nomStat && nomStat.trim() !== '' && valeurStat && valeurStat.trim() !== '') { 
-                            %>
-                                        <div class="info1">
-                                            <p><%= nomStat %></p>
-                                            <p><%= valeurStat %></p>
+                            %> 
+                                        <div class="mobile-stat">
+                                            <div class="stat-label" id="preview-mobile-stat<%=indexFraisage%>-name"><%= nomStat %></div>
+                                            <div class="stat-label" id="preview-mobile-stat<%=indexFraisage%>-value"><%= valeurStat %></div>
                                         </div>
                             <% 
                                         indexFraisage++;
@@ -278,7 +269,45 @@
                                 } 
                             } 
                             %>
+                        </div>
+
+
+                    <!-- Dimensions mobile — fraisage -->
+                    <div id="preview-mobile-dims-fraisage" style="display:none;">
+                        <p style="margin-top:20px;"><strong>Dimensions de Fraisage</strong></p>
+                        <div class="info1">
+                            <p>Dimension X</p>
+                            <p id="preview-mobile-dx"></p>
+                        </div>
+                        <div class="info2">
+                            <p>Dimension Y</p>
+                            <p id="preview-mobile-dy"></p>
+                        </div>
+                        <div class="info3">
+                            <p>Dimension Z</p>
+                            <p id="preview-mobile-dz"></p>
+                        </div>
                     </div>
+
+                    <!-- Dimensions mobile — tournage -->
+                    <div id="preview-mobile-dims-tournage" style="display:none;">
+                        <p style="margin-top:20px;"><strong>Dimensions de Tournage</strong></p>
+                        <div class="info1">
+                            <p>Longueur max</p>
+                            <p id="preview-mobile-longueur"></p>
+                        </div>
+                        <div class="info2">
+                            <p>Diamètre max</p>
+                            <p id="preview-mobile-diametre"></p>
+                        </div>
+                        <div class="info3">
+                            <p>Alésage</p>
+                            <p id="preview-mobile-alesage"></p>
+                        </div>
+                    </div>
+
+
+                     
                         <p id="preview-mobile-desc" class="mobile-desc"><%= machine.description_courte || machine.description_longue || '' %></p>
                     </div>
                 </div>
@@ -302,6 +331,9 @@
     const previewCardImage = document.getElementById('preview-image-card');
     const previewMobileImage = document.getElementById('preview-mobile-image');
 
+    const previewMobileDimsFraisage = document.getElementById('preview-mobile-dims-fraisage');
+    const previewMobileDimsTournage = document.getElementById('preview-mobile-dims-tournage');
+
     // --- Éléments type + dimensions formulaire ---
     const typeSelect = document.getElementById('type-select');
     const dimsFraisage = document.getElementById('dims-fraisage');
@@ -319,10 +351,13 @@
     }
 
     function updatePreviewDimsVisibility(type) {
+        // Desktop
         if (previewDimsFraisage) previewDimsFraisage.style.display = (type === 'fraisage' || type === 'tournage/fraisage') ? '' : 'none';
         if (previewDimsTournage) previewDimsTournage.style.display = (type === 'tournage' || type === 'tournage/fraisage') ? '' : 'none';
+        // Mobile
+        if (previewMobileDimsFraisage) previewMobileDimsFraisage.style.display = (type === 'fraisage' || type === 'tournage/fraisage') ? '' : 'none';
+        if (previewMobileDimsTournage) previewMobileDimsTournage.style.display = (type === 'tournage' || type === 'tournage/fraisage') ? '' : 'none';
     }
-
     // Au changement de type : on met à jour formulaire ET preview d'un coup
     if (typeSelect) {
         typeSelect.addEventListener('change', () => {
@@ -419,6 +454,16 @@
         setIf('preview-mobile-stat2-name',   stat2Name);
         setIf('preview-mobile-stat2-value',  stat2Val);
         setIf('preview-mobile-year',         year);
+
+        // Dimensions fraisage — mobile
+        setIf('preview-mobile-dx', dx ? dx + ' mm' : '');
+        setIf('preview-mobile-dy', dy ? dy + ' mm' : '');
+        setIf('preview-mobile-dz', dz ? dz + ' mm' : '');
+
+        // Dimensions tournage — mobile
+        setIf('preview-mobile-longueur', longueur ? longueur + ' mm' : '');
+        setIf('preview-mobile-diametre', diametre ? diametre + ' mm' : '');
+        setIf('preview-mobile-alesage',  alesage  ? alesage  + ' mm' : '');
 
         // Si une nouvelle image a été sélectionnée, on l'affiche dans la preview
         const file = fileInput && fileInput.files && fileInput.files[0];

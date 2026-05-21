@@ -103,7 +103,7 @@ footer {
 }
 
 .connexion-card {
-    width: min(520px, 100%);
+    width: min(520px, 80%);
     background: #ffffff;
     border-radius: 32px;
     padding: 40px 38px;
@@ -231,7 +231,7 @@ footer {
 
     .connexion-card {
         margin: 0 auto;
-        width: 100%;
+        width: 80%;
     }
 }
 
@@ -326,7 +326,7 @@ footer {
 
 /* --- Section Carte (Formulaire Droite) --- */
 .connexion-card {
-    width: 100%;
+    width: 80%;
     max-width: 480px;
     background: #f8f9fd;
     border-radius: 32px;
