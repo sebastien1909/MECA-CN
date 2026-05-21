@@ -232,35 +232,75 @@
             <button class="filter-btn" data-filter="tournage">Tournage</button>
         </div>
 
-        <% for (const element of machines) { %>
-            <section class="machine-holder-mobile" data-type="<%= element.type %>">
+        <% for (const machine of machines) { %>
+            <section class="machine-holder-mobile" data-type="<%= machine.type %>">
 
-                <a href="/modif_machine/<%= element.id_machine %>">
+                <a href="/modif_machine/<%= machine.id_machine %>">
                     <img src="/img/icons/modifier.svg" alt="Modifier la réalisation">
                 </a>
                 <div class="machine-card-image">
-                    <span class="badge-entree"><%= element.annee_entree %></span>
-                    <img src="<%= element.image_machine %>" alt="Machine Mazak">
+                    <span class="badge-entree"><%= machine.annee_entree %></span>
+                    <img src="<%= machine.image_machine %>" alt="Machine Mazak">
                 </div>
 
                 <div class="machine-card-content">
                     <div class="machine-card-header">
-                        <h2 class="machine-subtitle"><%= element.nom_machine %></h2>
+                        <h2 class="machine-subtitle"><%= machine.nom_machine %></h2>
                     </div>
 
                     <div class="machine-card-stats">
-                        <div class="mobile-stat-box">
-                            <span class="stat-label"><%= element.statistique1_nom %></span>
-                            <span class="stat-value"><%= element.statistique1_donnee %></span>
-                        </div>
-                        <div class="mobile-stat-box highlight">
-                            <span class="stat-label"><%= element.statistique2_nom %></span>
-                            <span class="stat-value"><%= element.statistique2_donnee %></span>
-                        </div>
-                    </div>
+                        <% 
+                        // On boucle sur toutes les propriétés de la machine en cours
+                        for (let cle in machine) { 
+                            // On cherche uniquement les clés qui contiennent "_nom" (ex: statistique1_nom)
+                            if (cle.includes("_nom")) { 
+                                const nomStat = machine[cle];
+                                // On récupère la donnée associée en remplaçant "_nom" par "_donnee"
+                                const cleDonnee = cle.replace("_nom", "_donnee");
+                                const valeurStat = machine[cleDonnee];
 
+                                // On n'affiche le bloc que si le nom ET la donnée existent et ne sont pas vides
+                                if (nomStat && nomStat.trim() !== '' && valeurStat && valeurStat.trim() !== '') { 
+                        %>
+                                    <div class="mobile-stat-box">
+                                        <span class="stat-label"><%= nomStat %></span>
+                                        <span class="stat-value"><%= valeurStat %></span>
+                                    </div>
+                        <% 
+                                } 
+                            } 
+                        } 
+                        %>
+                    </div>
+                    <% if (machine.type === 'fraisage') { %>
+                        <div class="info1">
+                            <p>Dimension X</p>
+                            <p><%= machine.d_x %></p>
+                        </div>
+                        <div class="info2">
+                            <p>Dimension Y</p>
+                            <p><%= machine.d_y %></p>
+                        </div>
+                        <div class="info3">
+                            <p>Dimension Z</p>
+                            <p><%= machine.d_z %></p>
+                        </div>
+                    <% } else if (machine.type === 'tournage') { %>
+                        <div class="info1">
+                            <p>Longueur max</p>
+                            <p><%= machine.longueur_max %></p>
+                        </div>
+                        <div class="info2">
+                            <p>Diamètre max</p>
+                            <p><%= machine.diametre_max %></p>
+                        </div>
+                        <div class="info3">
+                            <p>Alésage</p>
+                            <p><%= machine.alesage %></p>
+                        </div>
+                    <% } %>
                     <p class="machine-card-desc">
-                        <%= element.description_courte %>
+                        <%= machine.description_courte %>
                     </p>
                 </div>
             </section>

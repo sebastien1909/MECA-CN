@@ -2,6 +2,13 @@
 <%- include('./header') %>
 
 <main>
+
+
+
+
+
+
+    <!-- ======================= PREVIEW PC ==============================-->
     <section class="left-part">
         <h1>
             Modifier la <span>machine</span>
@@ -23,14 +30,29 @@
                                     <p id="preview-desc"><%= machine.description_longue ? (machine.description_longue.length > 200 ? machine.description_longue.substring(0,200) + '...' : machine.description_longue) : (machine.description_courte || '') %></p>
 
                                     <div class="preview-info">
-                                        <div class="preview-info-row">
-                                            <span class="label" id="preview-stat1-name"><%= machine.statistique1_nom %></span>
-                                            <span class="value" id="preview-stat1-value"><%= machine.statistique1_donnee %></span>
-                                        </div>
-                                        <div class="preview-info-row">
-                                            <span class="label" id="preview-stat2-name"><%= machine.statistique2_nom %></span>
-                                            <span class="value" id="preview-stat2-value"><%= machine.statistique2_donnee %></span>
-                                        </div>
+
+                                        <% 
+                                        // On boucle sur toutes les propriétés de la machine en cours
+                                        for (let cle in machine) { 
+                                            // On cherche uniquement les clés qui contiennent "_nom" (ex: statistique1_nom)
+                                            if (cle.includes("_nom")) { 
+                                                const nomStat = machine[cle];
+                                                // On récupère la donnée associée en remplaçant "_nom" par "_donnee"
+                                                const cleDonnee = cle.replace("_nom", "_donnee");
+                                                const valeurStat = machine[cleDonnee];
+
+                                                // On n'affiche le bloc que si le nom ET la donnée existent et ne sont pas vides
+                                                if (nomStat && nomStat.trim() !== '' && valeurStat && valeurStat.trim() !== '') { 
+                                        %>
+                                                     <div class="preview-info-row">
+                                                        <span class="label" id="preview-stat1-name"><%= nomStat %></span>
+                                                        <span class="value" id="preview-stat1-value"><%= valeurStat %></span>
+                                                    </div>
+                                                    <% 
+                                                } 
+                                            } 
+                                        } 
+                                        %>
                                     </div>
                                 </div>
 
@@ -49,9 +71,18 @@
                                 <p id="preview-shortdesc"><%= machine.description_courte %></p>
 
                                 <div class="preview-dims">
-                                    <div class="dim"><strong>Dimension X</strong><span id="preview-dx"><%= machine.d_x %></span></div>
-                                    <div class="dim"><strong>Dimension Y</strong><span id="preview-dy"><%= machine.d_y %></span></div>
-                                    <div class="dim"><strong>Dimension Z</strong><span id="preview-dz"><%= machine.d_z %></span></div>
+                                    <!-- Fraisage -->
+                                    <div id="preview-dims-fraisage" style="display:none;">
+                                        <div class="dim"><strong>Dimension X</strong><span id="preview-dx"></span></div>
+                                        <div class="dim"><strong>Dimension Y</strong><span id="preview-dy"></span></div>
+                                        <div class="dim"><strong>Dimension Z</strong><span id="preview-dz"></span></div>
+                                    </div>
+                                    <!-- Tournage -->
+                                    <div id="preview-dims-tournage" style="display:none;">
+                                        <div class="dim"><strong>Longueur max</strong><span id="preview-longueur"></span></div>
+                                        <div class="dim"><strong>Diamètre max</strong><span id="preview-diametre"></span></div>
+                                        <div class="dim"><strong>Alèsage</strong><span id="preview-alesage"></span></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -64,6 +95,14 @@
             </div>
         </div>
     </section>
+
+
+
+
+
+
+
+<!-- ======================= FORMULAIRE ==============================-->
 
     <section class="right-part">
         <form class="form-container" method="POST" enctype="multipart/form-data" action="/modifier_infos_machine">
@@ -127,29 +166,50 @@
                 </div>
 
                 
-
-                <div class="form-group">
-                    <label>Dimension X (mm)</label>
-                    <input type="number" step="0.01" name="d_x" value="<%= machine.d_x %>">
-                </div>
-
-                <div class="form-group">
-                    <label>Dimension Y (mm)</label>
-                    <input type="number" step="0.01" name="d_y" value="<%= machine.d_y %>">
-                </div>
-
-                <div class="form-group">
-                    <label>Dimension Z (mm)</label>
-                    <input type="number" step="0.01" name="d_z" value="<%= machine.d_z %>">
-                </div>
-
                 <div class="form-group">
                     <label>Type</label>
-                    <select name="type">
+                    <select name="type" id="type-select">
                         <option value="tournage" <%= machine.type === 'tournage' ? 'selected' : '' %>>Tournage</option>
                         <option value="fraisage" <%= machine.type === 'fraisage' ? 'selected' : '' %>>Fraisage</option>
+                        <option value="fraisage_tournage" <%= machine.type === 'fraisage_tournage' ? 'selected' : '' %>>Fraisage / Tournage</option>
                     </select>
                 </div>
+
+                
+                <!-- Dimensions fraisage -->
+                <div id="dims-fraisage" style="display:none;">
+                    <div class="form-group">
+                        <label>Dimension X (mm)</label>
+                        <input type="number" step="0.01" name="d_x" value="<%= machine.d_x %>">
+                    </div>
+                    <div class="form-group">
+                        <label>Dimension Y (mm)</label>
+                        <input type="number" step="0.01" name="d_y" value="<%= machine.d_y %>">
+                    </div>
+                    <div class="form-group">
+                        <label>Dimension Z (mm)</label>
+                        <input type="number" step="0.01" name="d_z" value="<%= machine.d_z %>">
+                    </div>
+                </div>
+
+                <!-- Dimensions tournage -->
+                <div id="dims-tournage" style="display:none;">
+                    <div class="form-group">
+                        <label>Diamètre max (mm)</label>
+                        <input type="number" step="0.01" name="diametre_max" value="<%= machine.diametre_max %>">
+                    </div>
+                    <div class="form-group">
+                        <label>Longueur max (mm)</label>
+                        <input type="number" step="0.01" name="longueur_max" value="<%= machine.longueur_max %>">
+                    </div>
+                    <div class="form-group">
+                        <label>Alèsage (mm)</label>
+                        <input type="number" step="0.01" name="alesage" value="<%= machine.alesage %>">
+                    </div>
+                </div>
+                
+
+
 
                 <div class="form-group">
                     <label>Année d'entrée</label>
@@ -160,6 +220,17 @@
                 <button type="submit" class="validate-btn">Valider</button>
             </div>
         </form>
+
+
+
+
+
+
+
+
+
+
+<!-- =============== PREVIEW MOBILE ========================-->
 
         <div class="preview-wrapper preview-mobile">
             <div class="preview-container">
@@ -187,7 +258,27 @@
                                 <div class="stat-value" id="preview-mobile-stat2-value"><%= machine.statistique2_donnee %></div>
                             </div>
                         </div>
+                        <div class="machine-card-stats">
+                           <% 
+                            let indexFraisage = 1;
+                            for (let cle in machine) { 
+                                if (cle.includes("_nom")) { 
+                                    const nomStat = machine[cle];
+                                    const valeurStat = machine[cle.replace("_nom", "_donnee")];
 
+                                    if (nomStat && nomStat.trim() !== '' && valeurStat && valeurStat.trim() !== '') { 
+                            %>
+                                        <div class="info1">
+                                            <p><%= nomStat %></p>
+                                            <p><%= valeurStat %></p>
+                                        </div>
+                            <% 
+                                        indexFraisage++;
+                                    } 
+                                } 
+                            } 
+                            %>
+                    </div>
                         <p id="preview-mobile-desc" class="mobile-desc"><%= machine.description_courte || machine.description_longue || '' %></p>
                     </div>
                 </div>
@@ -202,93 +293,153 @@
 
 <script>
     (function(){
-        const uploadButton = document.querySelector('.upload-button');
-        const fileInput = document.getElementById('image_machine_input');
-        const uploadStatus = document.getElementById('upload-status');
-        const uploadText = document.getElementById('upload-text');
-        const previewImage = document.getElementById('preview-image'); // small upload preview
-        const previewCardImage = document.getElementById('preview-image-card'); // desktop preview
-        const previewMobileImage = document.getElementById('preview-mobile-image'); // mobile preview
+    // --- Éléments upload image ---
+    const uploadButton = document.querySelector('.upload-button');
+    const fileInput = document.getElementById('image_machine_input');
+    const uploadStatus = document.getElementById('upload-status');
+    const uploadText = document.getElementById('upload-text');
+    const previewImage = document.getElementById('preview-image');
+    const previewCardImage = document.getElementById('preview-image-card');
+    const previewMobileImage = document.getElementById('preview-mobile-image');
 
-        if (uploadButton) uploadButton.addEventListener('click', () => fileInput && fileInput.click());
+    // --- Éléments type + dimensions formulaire ---
+    const typeSelect = document.getElementById('type-select');
+    const dimsFraisage = document.getElementById('dims-fraisage');
+    const dimsTournage = document.getElementById('dims-tournage');
 
-        if (fileInput) {
-            fileInput.addEventListener('change', () => {
-                const file = fileInput.files[0];
-                if (!file) return;
-                if (uploadText) uploadText.innerText = 'Nouvelle image sélectionnée';
-                if (uploadStatus) {
-                    uploadStatus.innerText = file.name;
-                    uploadStatus.style.color = '#0f4bb7';
-                    uploadStatus.style.fontWeight = 'bold';
-                }
-                if (previewImage) previewImage.src = URL.createObjectURL(file);
-                if (previewCardImage) previewCardImage.src = URL.createObjectURL(file);
-                if (previewMobileImage) previewMobileImage.src = URL.createObjectURL(file);
-            });
-        }
+    // --- Éléments dimensions preview ---
+    const previewDimsFraisage = document.getElementById('preview-dims-fraisage');
+    const previewDimsTournage = document.getElementById('preview-dims-tournage');
 
-        function setIf(id, value) {
-            const el = document.getElementById(id);
-            if (el) el.textContent = value;
-        }
+    // Met à jour la visibilité des blocs de dimensions dans le FORMULAIRE
+    function updateDimsVisibility() {
+        const val = typeSelect.value;
+        dimsFraisage.style.display = (val === 'fraisage' || val === 'fraisage_tournage') ? '' : 'none';
+        dimsTournage.style.display = (val === 'tournage' || val === 'fraisage_tournage') ? '' : 'none';
+    }
 
-        function updatePreview() {
-            const get = s => document.querySelector(s);
-            const name = (get('[name="nom_machine"]') || {}).value || 'Nom machine';
-            const descLong = (get('[name="description_longue"]') || {}).value || '';
-            const descShort = (get('[name="description_courte"]') || {}).value || '';
-            const stat1Name = (get('[name="statistique1_nom"]') || {}).value || '';
-            const stat1Val = (get('[name="statistique1_donnee"]') || {}).value || '';
-            const stat2Name = (get('[name="statistique2_nom"]') || {}).value || '';
-            const stat2Val = (get('[name="statistique2_donnee"]') || {}).value || '';
-            const advTitle = (get('[name="avantage_titre"]') || {}).value || '';
-            const advDesc = (get('[name="avantage_description"]') || {}).value || '';
-            const dx = (get('[name="d_x"]') || {}).value || '';
-            const dy = (get('[name="d_y"]') || {}).value || '';
-            const dz = (get('[name="d_z"]') || {}).value || '';
-            const year = (get('[name="annee_entree"]') || {}).value || '';
+    // Met à jour la visibilité des blocs de dimensions dans la PREVIEW
+    function updatePreviewDimsVisibility(type) {
+        if (previewDimsFraisage) previewDimsFraisage.style.display = (type === 'fraisage' || type === 'fraisage_tournage') ? '' : 'none';
+        if (previewDimsTournage) previewDimsTournage.style.display = (type === 'tournage' || type === 'fraisage_tournage') ? '' : 'none';
+    }
 
-            setIf('preview-name', name);
-            setIf('preview-card-title', name);
-            setIf('preview-desc', descLong || descShort);
-            setIf('preview-shortdesc', descShort);
-            setIf('preview-stat1-name', stat1Name);
-            setIf('preview-stat1-value', stat1Val);
-            setIf('preview-stat2-name', stat2Name);
-            setIf('preview-stat2-value', stat2Val);
-            setIf('preview-adv-title', advTitle);
-            setIf('preview-adv-desc', advDesc);
-            setIf('preview-dx', dx);
-            setIf('preview-dy', dy);
-            setIf('preview-dz', dz);
-            setIf('preview-year', year);
+    // Au changement de type : on met à jour formulaire ET preview d'un coup
+    if (typeSelect) {
+        typeSelect.addEventListener('change', () => {
+            updateDimsVisibility();
+            updatePreview();
+        });
+        updateDimsVisibility(); // init au chargement
+    }
 
-            // mobile
-            setIf('preview-mobile-name', name);
-            setIf('preview-mobile-desc', descShort || descLong);
-            setIf('preview-mobile-stat1-name', stat1Name);
-            setIf('preview-mobile-stat1-value', stat1Val);
-            setIf('preview-mobile-stat2-name', stat2Name);
-            setIf('preview-mobile-stat2-value', stat2Val);
-            setIf('preview-mobile-year', year);
+    // --- Gestion du changement d'image ---
+    if (uploadButton) uploadButton.addEventListener('click', () => fileInput && fileInput.click());
 
-            const file = fileInput && fileInput.files && fileInput.files[0];
-            if (file) {
-                const url = URL.createObjectURL(file);
-                if (previewCardImage) previewCardImage.src = url;
-                if (previewMobileImage) previewMobileImage.src = url;
+    if (fileInput) {
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+            if (uploadText) uploadText.innerText = 'Nouvelle image sélectionnée';
+            if (uploadStatus) {
+                uploadStatus.innerText = file.name;
+                uploadStatus.style.color = '#0f4bb7';
+                uploadStatus.style.fontWeight = 'bold';
             }
+            const url = URL.createObjectURL(file);
+            if (previewImage) previewImage.src = url;
+            if (previewCardImage) previewCardImage.src = url;
+            if (previewMobileImage) previewMobileImage.src = url;
+        });
+    }
+
+    // Utilitaire : met à jour le texte d'un élément par son id
+    function setIf(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    }
+
+    // Met à jour toute la preview (textes + dimensions + image)
+    function updatePreview() {
+        const get = s => document.querySelector(s);
+
+        // Lecture des champs du formulaire
+        const name     = (get('[name="nom_machine"]')        || {}).value || 'Nom machine';
+        const descLong = (get('[name="description_longue"]') || {}).value || '';
+        const descShort= (get('[name="description_courte"]') || {}).value || '';
+        const stat1Name= (get('[name="statistique1_nom"]')   || {}).value || '';
+        const stat1Val = (get('[name="statistique1_donnee"]')|| {}).value || '';
+        const stat2Name= (get('[name="statistique2_nom"]')   || {}).value || '';
+        const stat2Val = (get('[name="statistique2_donnee"]')|| {}).value || '';
+        const advTitle = (get('[name="avantage_titre"]')     || {}).value || '';
+        const advDesc  = (get('[name="avantage_description"]')|| {}).value || '';
+        const year     = (get('[name="annee_entree"]')       || {}).value || '';
+        const type     = typeSelect ? typeSelect.value : '';
+
+        // Dimensions fraisage
+        const dx = (get('[name="d_x"]') || {}).value || '';
+        const dy = (get('[name="d_y"]') || {}).value || '';
+        const dz = (get('[name="d_z"]') || {}).value || '';
+
+        // Dimensions tournage
+        const longueur = (get('[name="longueur_max"]')  || {}).value || '';
+        const diametre = (get('[name="diametre_max"]')  || {}).value || '';
+        const alesage  = (get('[name="alesage"]')       || {}).value || '';
+
+        // Mise à jour preview desktop
+        setIf('preview-name',      name);
+        setIf('preview-card-title',name);
+        setIf('preview-desc',      descLong || descShort);
+        setIf('preview-shortdesc', descShort);
+        setIf('preview-stat1-name',  stat1Name);
+        setIf('preview-stat1-value', stat1Val);
+        setIf('preview-stat2-name',  stat2Name);
+        setIf('preview-stat2-value', stat2Val);
+        setIf('preview-adv-title', advTitle);
+        setIf('preview-adv-desc',  advDesc);
+        setIf('preview-year',      year);
+
+        // Dimensions fraisage dans la preview
+        setIf('preview-dx', dx ? dx + ' mm' : '');
+        setIf('preview-dy', dy ? dy + ' mm' : '');
+        setIf('preview-dz', dz ? dz + ' mm' : '');
+
+        // Dimensions tournage dans la preview
+        setIf('preview-longueur', longueur ? longueur + ' mm' : '');
+        setIf('preview-diametre', diametre ? diametre + ' mm' : '');
+        setIf('preview-alesage',  alesage  ? alesage  + ' mm' : '');
+
+        // Affichage/masquage des blocs de dimensions dans la preview
+        updatePreviewDimsVisibility(type);
+
+        // Mise à jour preview mobile
+        setIf('preview-mobile-name',         name);
+        setIf('preview-mobile-desc',         descShort || descLong);
+        setIf('preview-mobile-stat1-name',   stat1Name);
+        setIf('preview-mobile-stat1-value',  stat1Val);
+        setIf('preview-mobile-stat2-name',   stat2Name);
+        setIf('preview-mobile-stat2-value',  stat2Val);
+        setIf('preview-mobile-year',         year);
+
+        // Si une nouvelle image a été sélectionnée, on l'affiche dans la preview
+        const file = fileInput && fileInput.files && fileInput.files[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            if (previewCardImage)  previewCardImage.src  = url;
+            if (previewMobileImage) previewMobileImage.src = url;
         }
+    }
 
-        const desktopReload = document.getElementById('reload-preview');
-        if (desktopReload) desktopReload.addEventListener('click', updatePreview);
-        const mobileReload = document.getElementById('reload-preview-mobile');
-        if (mobileReload) mobileReload.addEventListener('click', updatePreview);
+    // Boutons "Recharger"
+    const desktopReload = document.getElementById('reload-preview');
+    if (desktopReload) desktopReload.addEventListener('click', updatePreview);
+    const mobileReload = document.getElementById('reload-preview-mobile');
+    if (mobileReload) mobileReload.addEventListener('click', updatePreview);
 
-        // initial
-        updatePreview();
-    })();
+    // Initialisation au chargement de la page
+    updatePreview();
+})();
+
+
 </script>
-
 <%- include('./footer') %>

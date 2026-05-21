@@ -7,7 +7,6 @@
 
 Lors du renvoi des différentes pages, deux pages css sont aussi renvoyées afin de permettre au serveur de ne pas se surcharger en chargeant toutes les pages CSS
 */
-
 import express from "express";
 import session from "express-session";
 import crypto from "crypto";
@@ -93,6 +92,19 @@ const storageCV = multer.diskStorage({
 const uploadCV = multer({ storage: storageCV})
 
 
+/*
+// CONFIG MULTER POUR TOUT AUTRE FICHIER
+const storageGlobal = multer.diskStorage({
+  destination: (req, file, cb) =>{
+    cb(null, "public/img/placeholders");
+  },
+  filename: (req,file,cb) =>{
+    const ext = path.extname(file.originalname);
+    cb(null, "tmp_" + Date.now() + ext)
+  }
+})
+const globalStorage = multer({storage: storageGlobal})
+*/
 
 
 
@@ -236,6 +248,24 @@ app.get("/machines", async function (req, res) {
     const machinefraiser = machines.filter(
       (machine) => machine.type === "fraisage",
     );
+
+
+    /*
+    // ESSAI ===================================================
+    const machineunique = machines[0];
+    //console.log(machineunique);
+    for (let element in machineunique){
+      //console.log("ceci est un element : ", element);
+      if (element.includes("_nom")){
+        // console.log(element)
+        if (typeof machineunique[element] !== "object"){
+          // console.log("ceci est une statistique : ", machineunique[element], "avec comme donnée associée : ", machineunique[element.replace("_nom", "_donnee")])
+        } 
+      }  
+    }
+    // FIN ESSAI ===============================================
+    */
+
     //console.log(machinefraiser);
     res.render("parcmachine", {
       page_css1: "headerclient.css",
@@ -2450,22 +2480,22 @@ app.post("/ajouter_machine",isAdmin,uploadMachines.single("image_machine"),async
 
 
       const values = [
-          nom_machine     || null,
-          description_courte  || null,
-          description_longue  || null,
-          statistique1_nom    || null,
+          nom_machine || null,
+          description_courte || null,
+          description_longue || null,
+          statistique1_nom || null,
           statistique1_donnee || null,
-          statistique2_nom    || null,
+          statistique2_nom || null,
           statistique2_donnee || null,
-          avantage_titre      || null,
+          avantage_titre || null,
           avantage_description || null,
-          d_x          || null,
-          d_y          || null,
-          d_z          || null,
+          d_x || null,
+          d_y || null,
+          d_z || null,
           diametre_max || null,   // ← nouveau
           longueur_max || null,   // ← nouveau
-          alesage      || null,   // ← nouveau
-          type         || null,
+          alesage || null,   // ← nouveau
+          type || null,
           annee_entree || null,
           imageMachine,
       ];

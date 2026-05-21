@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : mer. 20 mai 2026 à 07:39
+-- Généré le : jeu. 21 mai 2026 à 08:51
 -- Version du serveur : 9.1.0
 -- Version de PHP : 8.3.14
 
@@ -122,18 +122,27 @@ CREATE TABLE IF NOT EXISTS `machines` (
   `d_z` decimal(10,2) DEFAULT NULL,
   `type` enum('tournage','fraisage') DEFAULT 'fraisage',
   `annee_entree` int DEFAULT NULL,
+  `diametre_max` decimal(10,2) DEFAULT NULL,
+  `longueur_max` decimal(10,2) DEFAULT NULL,
+  `statistique3_nom` varchar(50) DEFAULT NULL,
+  `statistique3_donnee` varchar(50) DEFAULT NULL,
+  `statistique4_nom` varchar(50) DEFAULT NULL,
+  `statistique4_donnee` varchar(50) DEFAULT NULL,
+  `alesage` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id_machine`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `machines`
 --
 
-INSERT INTO `machines` (`id_machine`, `nom_machine`, `description_courte`, `description_longue`, `image_machine`, `statistique1_nom`, `statistique1_donnee`, `statistique2_nom`, `statistique2_donnee`, `avantage_titre`, `avantage_description`, `d_x`, `d_y`, `d_z`, `type`, `annee_entree`) VALUES
-(3, 'Mazak Quick Turn 250MSY', 'Tournage-fraisage haute productivité avec axe Y et contre-broche pour le concept Done-In-One.', 'Centre de tournage haute performance équipé d\'une broche de fraisage, d\'un axe Y et d\'une broche secondaire pour un usinage complet sans reprise manuelle.', '/img/machines/Mchn1776863314292.png', 'Diamètre de tournage max', '380 mm', 'Vitesse outils motorisés', '6.000 RPM', 'Productivité Intégrée', 'La présence de la contre-broche (S) et des outils motorisés permet de terminer la pièce entièrement sur une seule machine.', 375.00, 100.00, 2500.00, 'tournage', 2024),
-(4, 'alqigjmqkj', 'eslfigjarml j ameroifjamo fizmqeroijgm qokrjgaq', 'ersgliz jqmgljh rmlgjqerlmoghaqeromugha mqha qmlkjfham eqljkghanm l', '/img/machines/Mchn1776863323954.png', 'poids', '1100 Kg', 'qdfljh', '125mm', 'qre;fjhlkj', 'sfdlvkjsqfmlkjzjqmrkj', 500.00, 250.00, 1010.00, 'tournage', 2025),
-(5, 'aqergzth', 'zzsth', 'zsthzqtfgztshs gzesrg', '/img/machines/Mchn1776863332222.png', 'qfgq', 'qerg', 'qergqrf', 'regaq', 'sgzety', 'zqrtaergsfgztgzdsfg', 500.00, 500.00, 500.00, 'tournage', 2026),
-(6, 'erfr;gaq glkjhfl qjkf', 'zpoigj pmerough kqifjglzrbfaqlm ofhglq rufh lqfj', 'AQTA QRTzekfhagiigikyugloiqrejg mojgjlso k jmqlkrjglm zqjrhglmqjfhg mqorighl qrjk hn luqerhgol qhlfo qhrl oia h', '/img/machines/Mchn1776862379001.png', 'qlkjhlk', '500', 'kjhluh', '50', 'lkug', 'kquhflqiufhvmlqujhg', 500.00, 500.00, 500.00, 'tournage', 2026);
+INSERT INTO `machines` (`id_machine`, `nom_machine`, `description_courte`, `description_longue`, `image_machine`, `statistique1_nom`, `statistique1_donnee`, `statistique2_nom`, `statistique2_donnee`, `avantage_titre`, `avantage_description`, `d_x`, `d_y`, `d_z`, `type`, `annee_entree`, `diametre_max`, `longueur_max`, `statistique3_nom`, `statistique3_donnee`, `statistique4_nom`, `statistique4_donnee`, `alesage`) VALUES
+(3, 'Mazak Quick Turn 250MSY', 'Tournage-fraisage haute productivité avec axe Y et contre-broche pour le concept Done-In-One.', 'Centre de tournage haute performance équipé d\'une broche de fraisage, d\'un axe Y et d\'une broche secondaire pour un usinage complet sans reprise manuelle.', '/img/machines/Mchn1776863314292.png', 'Diamètre de tournage max', '380 mm', 'Vitesse outils motorisés', '6.000 RPM', 'Productivité Intégrée', 'La présence de la contre-broche (S) et des outils motorisés permet de terminer la pièce entièrement sur une seule machine.', 375.00, 100.00, 2500.00, 'tournage', 2024, 450.00, 1200.00, 'test stat 3', '12mm', NULL, NULL, 125.00),
+(4, 'alqigjmqkj', 'eslfigjarml j ameroifjamo fizmqeroijgm qokrjgaq', 'ersgliz jqmgljh rmlgjqerlmoghaqeromugha mqha qmlkjfham eqljkghanm l', '/img/machines/Mchn1776863323954.png', 'poids', '1100 Kg', 'qdfljh', '125mm', 'qre;fjhlkj', 'sfdlvkjsqfmlkjzjqmrkj', 500.00, 250.00, 1010.00, 'tournage', 2025, 400.00, 1300.00, NULL, NULL, NULL, NULL, 85.00),
+(5, 'aqergzth', 'zzsth', 'zsthzqtfgztshs gzesrg', '/img/machines/Mchn1776863332222.png', 'qfgq', 'qerg', 'qergqrf', 'regaq', 'sgzety', 'zqrtaergsfgztgzdsfg', 500.00, 500.00, 500.00, 'tournage', 2026, 380.00, 1327.00, NULL, NULL, NULL, NULL, 150.00),
+(6, 'erfr;gaq glkjhfl qjkf', 'zpoigj pmerough kqifjglzrbfaqlm ofhglq rufh lqfj', 'AQTA QRTzekfhagiigikyugloiqrejg mojgjlso k jmqlkrjglm zqjrhglmqjfhg mqorighl qrjk hn luqerhgol qhlfo qhrl oia h', '/img/machines/Mchn1776862379001.png', 'qlkjhlk', '500', 'kjhluh', '50', 'lkug', 'kquhflqiufhvmlqujhg', 500.00, 500.00, 500.00, 'tournage', 2026, 420.00, 950.00, NULL, NULL, NULL, NULL, 125.00),
+(10, 'Machine test fraisage', 'Machine 5 axes (ou 6, on sait pas, faut être créatif)', 'Description longue de test Description longue de test Description longue de test Description longue de test Description longue de test Description longue de test ', '/img/machines/Mchn1779346496182.png', 'stat 1 test', '12.000 rpm', 'stat 2 test', '125mm', 'Productivité Intégrée', 'Productivité intégrée (je sais pas ce que ca veut dire AAAAAHHHHH)', NULL, NULL, NULL, 'fraisage', 2017, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(11, 'iaortg maltjkr', 'Machine 5 axes (ou 6, on sait pas, faut être créatif)', 'machine tournage test description longuemachine ge test description longue machine tournage test description longuemachine ge test description longue', '/img/machines/Mchn1779346618534.jpg', 'stat 1 test', '12.000 rpm', 'stat 2 test', '125mm', 'Productivité Intégrée', 'lqkfvmqkjfm oiarehfmoa qu rhgmaorhgù aoira;rjkgb larkjga loruhglz itughzoliutygae ouir ghljbhgm', 500.00, 450.00, 750.00, 'tournage', 2026, 250.00, 175.00, NULL, NULL, NULL, NULL, 45.00);
 
 -- --------------------------------------------------------
 
@@ -199,7 +208,7 @@ CREATE TABLE IF NOT EXISTS `password_reset_tokens` (
   `used` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `password_reset_tokens`
@@ -208,7 +217,8 @@ CREATE TABLE IF NOT EXISTS `password_reset_tokens` (
 INSERT INTO `password_reset_tokens` (`id`, `mail`, `token`, `code`, `expires_at`, `used`, `created_at`) VALUES
 (13, 'confreresebastien6@gmail.com', '90f6aa2813717bb31f7929fcc81e4a4f754ef2d20284993ee71a32808965f9c2', '493433', '2026-05-13 09:48:42', 1, '2026-05-13 11:33:42'),
 (12, 'confreresebastien6@gmail.com', 'cf96300cd10d8598bfdb86600c8a0347ed2368e8fef6fe1ea0b97ae117d12d74', '953826', '2026-05-13 09:48:00', 1, '2026-05-13 11:33:00'),
-(11, 'confreresebastien6@gmail.com', '5b68790931d0f5ba2336a79b7f7d678e68543bd56b8ad200e75baa2c7bef4a8c', '121513', '2026-05-13 09:46:56', 1, '2026-05-13 11:31:56');
+(11, 'confreresebastien6@gmail.com', '5b68790931d0f5ba2336a79b7f7d678e68543bd56b8ad200e75baa2c7bef4a8c', '121513', '2026-05-13 09:46:56', 1, '2026-05-13 11:31:56'),
+(14, 'confreresebastien6@gmail.com', 'eae207cde9919860254c00e18b9620e74f20d76b9c6bc639372964849aadb482', '433340', '2026-05-20 09:22:06', 0, '2026-05-20 11:07:06');
 
 -- --------------------------------------------------------
 

@@ -80,7 +80,7 @@ main {
 /* center upload-box vertically inside the left column without centering other elements */
 .upload-box {
   padding:20px;
-  margin: auto 15px;
+  margin: 15px;
   height:auto;
 }
 
@@ -139,6 +139,7 @@ main::before {
 
 .form-group {
   display: flex;
+  width:100%;
   flex-direction: column;
 }
 
@@ -146,6 +147,12 @@ main::before {
   font-size: 13px;
   color: #6b7280;
   margin-bottom: 6px;
+}
+
+
+#preview-dims-tournage, #preview-dims-fraisage {
+  display:flex;
+  gap:8px;
 }
 
 .form-group input[type="text"],
@@ -160,6 +167,7 @@ main::before {
   outline: none;
   box-sizing: border-box;
   width: 100%;
+  resize:vertical
 }
 
 .form-group input:focus,
@@ -212,16 +220,80 @@ main::before {
 
 /* Responsive */
 @media (max-width: 900px) {
-  main { flex-direction: column; padding: 40px 24px; }
-  .left-part { max-width: 100%; margin-bottom: 20px; }
-  .left-part h1 { font-size: 38px; }
-  .right-part { width: 100%; max-width: 800px; }
-  .form-container { flex-direction: column; gap: 20px; padding: 20px; }
-  .form-left { align-items: center; width: 100%; justify-content: flex-start; }
-  .form-right { width: 100%; }
-  .upload-box { margin: 0 auto; }
-  .validate-btn { width: 100%; }
+  main { flex-direction: column; 
+    padding: 40px 24px; 
+  }
+
+  .left-part { max-width: 100%; 
+    margin-bottom: 20px; 
+  }
+
+  .left-part h1 { 
+    font-size: 38px; 
+  }
+
+  .right-part { 
+    width: 100%; 
+    max-width: 800px; 
+  }
+
+  .form-container { 
+    flex-direction: column; 
+    gap: 20px; 
+    padding: 20px; 
+  }
+
+  .form-left { 
+    align-items: center; 
+    width: 100%; 
+    justify-content: flex-start; 
+  }
+  
+  .form-right { 
+    width: 100%; 
+  }
+
+  .upload-box { 
+    margin: 0 auto; 
+  }
+
+  .validate-btn { 
+    width: 100%; 
+  }
+
+
+  /* Stats Grille */
+    .machine-card-stats {
+        display: flex;
+        flex-direction:column;
+        gap: 6px;
+        margin: 15px 0;
+    }
+
+    .mobile-stat-box {
+        background: #EDF2F7;
+        padding: 10px;
+        border-radius: 6px;
+    }
+
+    .mobile-stat-box.highlight {
+        background: #EBF8FF;
+    }
+
+    .stat-label {
+        display: block;
+        font-size: 0.65rem;
+        color: #718096;
+    }
+
+    .stat-value {
+        font-size: 0.85rem;
+        font-weight: bold;
+        color: #2C5282;
+    }
 }
+
+ 
 
 /* Preview card styles for the modif machine page */
 .preview-wrapper {
@@ -312,6 +384,7 @@ main::before {
 
 .preview-dims {
   display: flex;
+  flex-direction:column;
   gap: 8px;
   margin-top: 12px;
   width: 100%;
@@ -325,7 +398,6 @@ main::before {
   text-align: center;
   font-weight: 700;
   color: #002D62;
-  font-size: 0.78rem;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -334,14 +406,14 @@ main::before {
 }
 
 .preview-dims .dim strong {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: none;
   color: #003F87;
 }
 
 .preview-dims .dim span {
-  font-size: 0.78rem;
+  font-size: 0.65rem;
   font-weight: 700;
   color: #002D62;
 }
@@ -394,16 +466,56 @@ main::before {
     color: #0b1724;
   }
 
-  .preview-mobile .mobile-stats { display:flex; gap:10px; margin: 10px 0; }
-  .preview-mobile .mobile-stat { flex:1; background: #eef6fb; padding: 12px; border-radius: 10px; }
-  .preview-mobile .mobile-stat .stat-label { font-size: 0.9rem; color: #6b7280; }
-  .preview-mobile .mobile-stat .stat-value { font-size: 1.05rem; font-weight:700; color: #032c52; margin-top: 6px; }
-  .preview-mobile .mobile-desc { color: #0b1724; font-size: 0.95rem; margin-top: 8px; line-height:1.35; }
+  .preview-mobile .mobile-stats { 
+    display:flex; 
+    gap:10px; 
+    margin: 10px 0; 
+  }
+
+
+  .preview-mobile .mobile-stat { 
+    flex:1; 
+    background: #eef6fb; 
+    padding: 12px; 
+    border-radius: 10px; 
+  }
+
+
+  .preview-mobile .mobile-stat .stat-label { 
+    font-size: 0.9rem; 
+    color: #6b7280; 
+  }
+
+
+  .preview-mobile .mobile-stat .stat-value { 
+    font-size: 1.05rem; 
+    font-weight:700; 
+    color: #032c52; 
+    margin-top: 6px; 
+  }
+
+
+  .preview-mobile .mobile-desc { 
+    color: #0b1724; 
+    font-size: 0.95rem; 
+    margin-top: 8px; 
+    line-height:1.35; 
+  }
 
   /* Darken general mobile preview text for better contrast */
-  .preview-mobile, .preview-mobile .preview-container, .preview-mobile .preview-card { color: #0b1724; }
-  .preview-mobile .preview-sub { color: #475569; }
-  .preview-mobile .mobile-stat .stat-label { color: #475569; }
+  .preview-mobile, .preview-mobile .preview-container, .preview-mobile .preview-card { 
+    color: #0b1724; 
+  }
+
+
+  .preview-mobile .preview-sub { 
+    color: #475569; 
+  
+  }
+  
+  .preview-mobile .mobile-stat .stat-label { 
+    color: #475569; 
+  }
 
 
 }

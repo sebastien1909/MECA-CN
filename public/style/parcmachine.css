@@ -96,7 +96,7 @@
     }
 
     /* Listes d'infos (RPM, Postes) */
-    .info1, .info2 {
+    .info1, .info2, .info3, .info4 {
         display: flex;
         justify-content: space-between;
         padding: 10px 0;
@@ -104,14 +104,13 @@
         font-size: 0.9rem;
     }
 
-    .info1 p:last-child, .info2 p:last-child {
+    .info1 p:last-child, .info2 p:last-child, .info3 p:last-child, .info4 p:last-child {
         font-weight: bold;
         color: #333;
     }
 
     /* Colonne de droite (Le bloc principal avec l'image) */
     .second-column {
-        max-height:580px;
         background: white;
         border-radius: 15px;
         padding: 40px;
@@ -122,6 +121,7 @@
 
     .second-column img {
         max-width:350px;
+        max-height:230px;
         margin-left: -5%;
         margin-bottom: 20px;
         object-fit: contain;
@@ -200,6 +200,19 @@
 
 @media screen and (max-width: 899px) {
 
+
+    .info1, .info2, .info3, .info4 {
+        display: flex;
+        justify-content: space-between;
+        padding: 3px 0;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 0.9rem;
+    }
+
+    .info1 p:last-child, .info2 p:last-child, .info3 p:last-child, .info4 p:last-child {
+        font-weight: bold;
+        color: #333;
+    }
 
     .voir-plus{
         background: #003F87;
