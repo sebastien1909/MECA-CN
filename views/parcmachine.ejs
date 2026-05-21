@@ -26,9 +26,19 @@
         <button class="filter-btn" data-filter="tournage">Tournage</button>
     </div>
 
-    <%# ================= GROUP TOURNAGE ================= %>
+
+
+
+   
+
+
+
+    <!-- ================= GROUP TOURNAGE ================= -->
     <div class="filter-group tournage-group ">
-        <h4 class="section-title tournage-title">Tournage</h4>
+        <div class="title-holder">
+            <h4 class="section-title tournage-title">Tournage</h4>
+            <div class="separateur"></div>
+        </div>
         <% for (const element of machinestourneuses) { %>
             <section class="machine-holder reveal-machine">
 
@@ -93,9 +103,12 @@
         <% } %>
     </div>
 
-    <%# ================= GROUP FRAISAGE ================= %>
+    <!-- ================= GROUP FRAISAGE ================= -->
     <div class="filter-group fraisage-group">
-        <h4 class="section-title fraisage-title">Fraisage</h4>
+        <div class="title-holder">
+            <h4 class="section-title fraisage-title">Fraisage</h4>
+            <div class="separateur"></div>
+        </div>
         <% if (typeof machinefraiser == 'undefined' || machinefraiser.length === 0) { %>
             <p class="no-data">Aucune machine de fraisage enregistrée.</p>
         <% } %>
@@ -163,6 +176,126 @@
             </section>
         <% } %>
     </div>
+
+
+
+
+     <!-- ========== GROUPE TOURNAGE ET FRAISAGE ========== -->
+
+        <div class="filter-group tournage-group ">
+            <div class="title-holder">
+                <h4 class="section-title tournage-title">Machines de tournage et fraisage</h4>
+                <div class="separateur" style="width:50%;"></div>
+            </div>
+            
+            <% if (typeof machineglobale == 'undefined' || machineglobale.length === 0) { %>
+                <p class="no-data">Aucune machine de tournage enregistrée.</p>
+            <% } %>
+            <% for (const element of machineglobale) { %>
+                <section class="machine-holder">
+
+                    <a href="/modif_machine/<%= element.id_machine %>">
+                        <img src="/img/icons/modifier.svg" alt="Modifier la réalisation">
+                    </a>
+
+
+                    <div class="first-column">
+                        <div class="top-part">
+                            <h2><%= element.nom_machine %></h2>
+                            <p><%= element.description_longue %></p>
+                            <% 
+                            // On boucle sur toutes les propriétés de la machine en cours
+                            for (let cle in element) { 
+                                // On cherche uniquement les clés qui contiennent "_nom" (ex: statistique1_nom)
+                                if (cle.includes("_nom")) { 
+                                    const nomStat = element[cle];
+                                    // On récupère la donnée associée en remplaçant "_nom" par "_donnee"
+                                    const cleDonnee = cle.replace("_nom", "_donnee");
+                                    const valeurStat = element[cleDonnee];
+
+                                    // On n'affiche le bloc que si le nom ET la donnée existent et ne sont pas vides
+                                    if (nomStat && nomStat.trim() !== '' && valeurStat && valeurStat.trim() !== '') { 
+                            %>
+                                        <div class="info1">
+                                            <p><%= nomStat %></p>
+                                            <p><%= valeurStat %></p>
+                                        </div>
+                            <% 
+                                    } 
+                                } 
+                            } 
+                            %>
+                        </div>
+
+                        <div class="bottom-part">
+                            <h2>
+                                <%= element.avantage_titre %>
+                            </h2>
+
+                            <p>
+                                <%= element.avantage_description %>
+                            </p>
+                        </div>
+                    </div>
+
+
+
+
+
+
+                    <div class="second-column">
+                        <img src="<%= element.image_machine %>" alt="Machine Mazak">
+                        <div class="main-info-top">
+                            <h4><%= element.nom_machine %></h4>
+                            <span class="date-holder">
+                                <%= element.annee_entree %>
+                            </span>
+                        </div>
+                        
+                        <p> 
+                            <%= element.description_courte %>
+                        </p>
+
+                        <div class="stats-holder" style="margin-bottom:15px;">
+                            <div class="first-stat">
+                                <h5>Longueur max</h5>
+                                <span><%= element.longueur_max %>mm</span>
+                            </div>
+
+                            <div class="second-stat">
+                                <h5>Diamètre max</h5>
+                                <span><%= element.diametre_max %>mm</span>
+                            </div>
+
+                            <div class="third-stat">
+                                <h5>Alèsage</h5>
+                                <span><%= element.alesage %>mm</span>
+                            </div>
+                        </div>
+                        <div class="stats-holder">
+                            <div class="first-stat">
+                                <h5>Dimension X</h5>
+                                <span><%= element.d_x %>mm</span>
+                            </div>
+
+                            <div class="second-stat">
+                                <h5>Dimension Y</h5>
+                                <span><%= element.d_y %>mm</span>
+                            </div>
+
+                            <div class="third-stat">
+                                <h5>Dimension Z</h5>
+                                <span><%= element.d_z %>mm</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+        
+                </section>
+
+            <% } %>
+        </div>
 </section>
 
 

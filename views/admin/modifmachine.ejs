@@ -171,7 +171,7 @@
                     <select name="type" id="type-select">
                         <option value="tournage" <%= machine.type === 'tournage' ? 'selected' : '' %>>Tournage</option>
                         <option value="fraisage" <%= machine.type === 'fraisage' ? 'selected' : '' %>>Fraisage</option>
-                        <option value="fraisage_tournage" <%= machine.type === 'fraisage_tournage' ? 'selected' : '' %>>Fraisage / Tournage</option>
+                        <option value="tournage/fraisage" <%= machine.type === 'tournage/fraisage' ? 'selected' : '' %>>Fraisage / Tournage</option>
                     </select>
                 </div>
 
@@ -314,14 +314,13 @@
     // Met à jour la visibilité des blocs de dimensions dans le FORMULAIRE
     function updateDimsVisibility() {
         const val = typeSelect.value;
-        dimsFraisage.style.display = (val === 'fraisage' || val === 'fraisage_tournage') ? '' : 'none';
-        dimsTournage.style.display = (val === 'tournage' || val === 'fraisage_tournage') ? '' : 'none';
+        dimsFraisage.style.display = (val === 'fraisage' || val === 'tournage/fraisage') ? '' : 'none';
+        dimsTournage.style.display = (val === 'tournage' || val === 'tournage/fraisage') ? '' : 'none';
     }
 
-    // Met à jour la visibilité des blocs de dimensions dans la PREVIEW
     function updatePreviewDimsVisibility(type) {
-        if (previewDimsFraisage) previewDimsFraisage.style.display = (type === 'fraisage' || type === 'fraisage_tournage') ? '' : 'none';
-        if (previewDimsTournage) previewDimsTournage.style.display = (type === 'tournage' || type === 'fraisage_tournage') ? '' : 'none';
+        if (previewDimsFraisage) previewDimsFraisage.style.display = (type === 'fraisage' || type === 'tournage/fraisage') ? '' : 'none';
+        if (previewDimsTournage) previewDimsTournage.style.display = (type === 'tournage' || type === 'tournage/fraisage') ? '' : 'none';
     }
 
     // Au changement de type : on met à jour formulaire ET preview d'un coup

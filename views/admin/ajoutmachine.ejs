@@ -134,7 +134,7 @@
                     <select name="type" id="type-select">
                         <option value="fraisage" <%= machine.type === 'fraisage' ? 'selected' : '' %>>Fraisage</option>
                         <option value="tournage" <%= machine.type === 'tournage' ? 'selected' : '' %>>Tournage</option>
-                        <option value="les_deux" <%= machine.type === 'les_deux' ? 'selected' : '' %>>Fraisage + Tournage </option>
+                        <option value="tournage/fraisage" <%= machine.type === 'tournage/fraisage' ? 'selected' : '' %>>Fraisage + Tournage </option>
                     </select>
                 </div>
                         <!-- Dimensions fraisage -->
@@ -238,8 +238,8 @@
 
         function toggleDims() {
             const type = typeSelect.value;
-            dimsFraisage.style.display = (type === 'fraisage' || type === 'les_deux') ? 'block' : 'none';
-            dimsTournage.style.display = (type === 'tournage' || type === 'les_deux') ? 'block' : 'none';
+            dimsFraisage.style.display = (type === 'fraisage' || type === 'tournage/fraisage') ? 'block' : 'none';
+            dimsTournage.style.display = (type === 'tournage' || type === 'tournage/fraisage') ? 'block' : 'none';
         }
 
         typeSelect.addEventListener('change', toggleDims);

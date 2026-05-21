@@ -15,7 +15,7 @@
 
 .machine-container .section-title {
     max-width: 1200px;
-    margin: 30px auto 10px;
+    margin: 0px 10% 5px;
     padding-left: 8px;
     font-size: 1.25rem;
     color: #1A202C;
@@ -477,4 +477,26 @@
 /* Masquage des groupes lors du tri */
 .hidden {
     display: none !important;
+}
+
+
+
+.title-holder{
+    display:flex;
+    gap:15px;
+    align-items:center;
+    justify-content:left;
+    margin-bottom:75px;
+    margin-top:100px !important;
+}
+
+.separateur{
+    width:60%;
+    height:1.5px;
+    background-color:#003983;
+}
+
+.fraisage-group{
+    
+    margin-bottom:50px !important;
 }

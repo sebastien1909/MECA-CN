@@ -249,6 +249,10 @@ app.get("/machines", async function (req, res) {
       (machine) => machine.type === "fraisage",
     );
 
+    const machineglobale = machines.filter(
+      (machine) => machine.type === 'tournage/fraisage',
+    )
+
 
     /*
     // ESSAI ===================================================
@@ -273,6 +277,7 @@ app.get("/machines", async function (req, res) {
       machines: machines,
       machinestourneuses: machinestourneuses,
       machinefraiser: machinefraiser,
+      machineglobale: machineglobale,
     });
   } catch (err) {
     console.error(err);
@@ -317,6 +322,10 @@ app.get("/admin/machines", isAdmin, async function (req, res) {
       (machine) => machine.type === "fraisage",
     );
 
+    const machineglobale = machines.filter(
+      (machine) => machine.type === "tournage/fraisage"
+    );
+
     const successMessage =
       req.query.success === "add"
         ? "La machine a été ajoutée avec succès !"
@@ -328,6 +337,7 @@ app.get("/admin/machines", isAdmin, async function (req, res) {
       machines,
       machinestourneuses,
       machinefraiser,
+      machineglobale,
       successMessage,
     });
   } catch (err) {
@@ -2462,6 +2472,8 @@ app.post("/ajouter_machine",isAdmin,uploadMachines.single("image_machine"),async
         type,
         annee_entree,
       } = req.body;
+
+      console.log(req.body);
 
       const imageMachine = req.file
         ? "/img/machines/" + req.file.filename
