@@ -19,9 +19,12 @@ import path from "path";
 import "dotenv/config";
 import sha256 from "js-sha256";
 import { findSourceMap } from "module";
-import {generateHTML} from '@tiptap/html';
-import StarterKit from '@tiptap/starter-kit';
-import { fileURLToPath } from 'url';
+import { generateHTML } from "@tiptap/html";
+import StarterKit from "@tiptap/starter-kit";
+import { fileURLToPath } from "url";
+
+
+
 
 
 
@@ -38,6 +41,7 @@ const storageProduits = multer.diskStorage({
 });
 const uploadProduits = multer({ storage: storageProduits });
 
+
 // --- CONFIGURATION MULTER POUR LES MACHINES ---
 const storageMachines = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -50,20 +54,22 @@ const storageMachines = multer.diskStorage({
 });
 const uploadMachines = multer({ storage: storageMachines });
 
-// --- CONFIGURATION MULTER POUR LES IMAGES DES ACTUS --- 
+
+// --- CONFIGURATION MULTER POUR LES IMAGES DES ACTUS ---
 const storageActu = multer.diskStorage({
-  destination: (req, file, cb) =>{
+  destination: (req, file, cb) => {
     cb(null, "public/img/actus");
   },
-  filename: (req, file, cb) =>{
+  filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    cb(null, "Actu_main" + Date.now() + ext)
+    cb(null, "Actu_main" + Date.now() + ext);
   },
 });
-const uploadActu = multer({ storage: storageActu})
+const uploadActu = multer({ storage: storageActu });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 
 // --- CONFIGURATION MULTER POUR LES IMAGES TEMPORAIRES
 const storageTemp = multer.diskStorage({
@@ -78,18 +84,17 @@ const storageTemp = multer.diskStorage({
 const uploadTemp = multer({ storage: storageTemp });
 
 
-
 // CONFIG MULTER POUR LES CV
 const storageCV = multer.diskStorage({
-  destination: (req, file, cb) =>{
+  destination: (req, file, cb) => {
     cb(null, "uploads");
   },
-  filename: (req,file, cb) =>{
+  filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    cb(null, "tmp_" + Date.now() + ext)
-  }
-})
-const uploadCV = multer({ storage: storageCV})
+    cb(null, "tmp_" + Date.now() + ext);
+  },
+});
+const uploadCV = multer({ storage: storageCV });
 
 
 /*
@@ -108,15 +113,17 @@ const globalStorage = multer({storage: storageGlobal})
 
 
 
+
+
 // Setting d'express
 // ==> sert à rendre les views
 const app = express();
 app.set("view engine", "ejs");
 
-app.use('/uploads', express.static('uploads'));
-app.use(express.urlencoded({extended:true}))
+app.use("/uploads", express.static("uploads"));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
-app.use(express.json())
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -128,10 +135,17 @@ app.use(
   }),
 );
 
+
+
 app.use((req, res, next) => {
   res.locals.userRole = req.session.userRole || null;
   next();
 });
+
+
+
+
+
 
 //MIDDLEWARES MAISON
 
@@ -161,6 +175,20 @@ function isAdmin(req, res, next) {
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // ROUTES
 
 // app.get
@@ -174,7 +202,7 @@ app.get("/", async function (req, res) {
   try {
     // regarde s'il y a des offres et affiche le bandeau dans le cas positif
     const [offres] = await pool.query("SELECT * FROM offres");
-    const taille_liste_offre = offres.length
+    const taille_liste_offre = offres.length;
     // console.log(offres.length)
     if (req.session.role === "admin") {
       return res.redirect("/admin/accueil");
@@ -182,7 +210,7 @@ app.get("/", async function (req, res) {
       res.render("accueil", {
         page_css1: "headerclient.css",
         page_css2: "accueilclient.css",
-        nbOffres: taille_liste_offre
+        nbOffres: taille_liste_offre,
       });
     }
   } catch (err) {
@@ -191,21 +219,23 @@ app.get("/", async function (req, res) {
   }
 });
 
+
 /**
 GET /presentation
 Page de présentation de l'entreprise. Rend la vue adaptée selon le rôle.
  */
 app.get("/presentation", async function (req, res) {
   try {
-      res.render("presentation", {
-        page_css1: "headerclient.css",
-        page_css2: "presentation.css",
-  });
+    res.render("presentation", {
+      page_css1: "headerclient.css",
+      page_css2: "presentation.css",
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("Erreur serveur");
   }
 });
+
 
 // Route publique pour lister les machines
 /**
@@ -250,9 +280,8 @@ app.get("/machines", async function (req, res) {
     );
 
     const machineglobale = machines.filter(
-      (machine) => machine.type === 'tournage/fraisage',
-    )
-
+      (machine) => machine.type === "tournage/fraisage",
+    );
 
     /*
     // ESSAI ===================================================
@@ -284,6 +313,7 @@ app.get("/machines", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
 
 // Route admin pour la gestion du parc machine (protégée)
 app.get("/admin/machines", isAdmin, async function (req, res) {
@@ -323,7 +353,7 @@ app.get("/admin/machines", isAdmin, async function (req, res) {
     );
 
     const machineglobale = machines.filter(
-      (machine) => machine.type === "tournage/fraisage"
+      (machine) => machine.type === "tournage/fraisage",
     );
 
     const successMessage =
@@ -345,6 +375,7 @@ app.get("/admin/machines", isAdmin, async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
 
 /**
 GET /realisations
@@ -408,6 +439,7 @@ app.get("/realisations", async function (req, res) {
   }
 });
 
+
 /**
 GET /devis
 Page du formulaire de demande de devis. Récupère les dimensions max des machines pour éviter toutes demandes impossibles (affichage et validation côté client).
@@ -418,8 +450,6 @@ app.get("/devis", async function (req, res) {
       "SELECT MAX(d_x) as max_x, MAX(d_y) as max_y, MAX(d_z) as max_z, MAX(longueur_max) as max_longueur, MAX(diametre_max) as max_diametre, MAX(alesage) as max_alesage FROM machines",
     );
     // console.log(dimensions[0]);
-
-
 
     // Générer une question math aléatoire
     const a = Math.floor(Math.random() * 10) + 1;
@@ -436,24 +466,21 @@ app.get("/devis", async function (req, res) {
     // Stocker la réponse en session (jamais exposée au client)
     req.session.devisCaptchaAnswer = op.answer;
 
-
-
-
-
     res.render("devis", {
       page_css1: "headerclient.css",
       page_css2: "devis.css",
       maxDimensions: dimensions[0],
       role: req.session.role,
       captchaQuestion: op.label, // ex: "7 + 3"
-      page_devis:devis_pre,
-      role:req.session.role,
+      page_devis: devis_pre,
+      role: req.session.role,
     });
   } catch (err) {
     console.error(err);
     res.status(500).send("Erreur serveur");
   }
 });
+
 
 /**
  * GET /contact
@@ -481,14 +508,15 @@ app.get("/contact", async function (req, res) {
       success: null,
       error: null,
       captchaQuestion: op.label,
-      page_contact:contact_pre,
-      role:req.session.role,
+      page_contact: contact_pre,
+      role: req.session.role,
     });
   } catch (err) {
     console.error(err);
     res.status(500).send("Erreur serveur");
   }
 });
+
 
 /**
  * GET /connexion
@@ -505,6 +533,7 @@ app.get("/connexion", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
 
 /**
  * GET /mentions
@@ -544,10 +573,11 @@ app.get("/offres", async function (req, res) {
       );
       offresResultat = rows;
     } else {
-      const [rows] = await pool.query("SELECT * FROM offres ORDER BY offre_id ASC");
+      const [rows] = await pool.query(
+        "SELECT * FROM offres ORDER BY offre_id ASC",
+      );
       offresResultat = rows;
     }
-
 
     // Quantité
     const [categories] = await pool.query(
@@ -566,6 +596,7 @@ app.get("/offres", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
 
 /*
 GET /offre/:id
@@ -594,7 +625,6 @@ app.get("/offre/:id", async function (req, res) {
 });
 
 
-
 /*
 GET postuler/:id
 Renvoie l'utilisateur vers la page d'envoi pour postuler sur l'offre
@@ -618,6 +648,7 @@ app.get("/postuler/:id", async function (req, res) {
   }
 });
 
+
 /**
  * GET /tests
 Page de test/de développement (utilitaire).
@@ -633,6 +664,7 @@ app.get("/tests", async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
 
 /**
  * GET /admin/accueil
@@ -650,6 +682,7 @@ app.get("/admin/accueil", isAdmin, async function (req, res) {
   }
 });
 
+
 /**
  * GET /admin/presentation
 Page admin pour modifier la page de présentation publique.
@@ -665,6 +698,7 @@ app.get("/admin/presentation", isAdmin, async function (req, res) {
     res.status(500).send("Erreur serveur");
   }
 });
+
 
 /**
  * GET /admin/realisations
@@ -726,6 +760,7 @@ app.get("/admin/realisations", isAdmin, async function (req, res) {
   }
 });
 
+
 /**
  * GET /deconnexion
 Détruit la session et déconnecte l'utilisateur.
@@ -747,6 +782,7 @@ app.get("/deconnexion", async function (req, res) {
   }
 });
 
+
 /**
  * GET /api/max-dimensions
 Récupération des dimensions maximales des machines (capacité maximale) et renvoie de ces dernières sous format JSON
@@ -762,6 +798,7 @@ app.get("/api/max-dimensions", async (req, res) => {
     res.status(500).send("Erreur serveur");
   }
 });
+
 
 /**
  * GET /modif_realisations/:id
@@ -792,6 +829,7 @@ app.get("/modif_realisations/:id", isAdmin, async function (req, res) {
   }
 });
 
+
 /**
  * GET /suppression
 Page de confirmation de suppression (catégorie, réalisations, machines).
@@ -813,6 +851,7 @@ app.get("/admin/suppression", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de la suppression de la réalisation");
   }
 });
+
 
 /**
  * GET /modif_machine/:id
@@ -842,6 +881,10 @@ app.get("/modif_machine/:id", isAdmin, async function (req, res) {
   }
 });
 
+/**
+ * Route GET permettant d'accéder à la page de création d'une machine. 
+ * Fournit un objet "machine" vide pour le rendu du formulaire et de la prévisualisation
+ */
 app.get("/admin/ajoutmachine", isAdmin, async function (req, res) {
   try {
     // Fournir un objet 'machine' par défaut pour éviter les erreurs côté template
@@ -875,6 +918,11 @@ app.get("/admin/ajoutmachine", isAdmin, async function (req, res) {
   }
 });
 
+/**
+ * Route GET
+ * Accéder à la page d'ajout de produit
+ * Fournit un objet "produit" vide pour le rendu du formulaire et de la prévisualisation
+ */
 app.get("/admin/ajoutproduit", isAdmin, async function (req, res) {
   try {
     const [categories] = await pool.query("SELECT * FROM categories");
@@ -900,6 +948,11 @@ app.get("/admin/ajoutproduit", isAdmin, async function (req, res) {
   }
 });
 
+/**
+ * Route GET
+ * Ramène vers la page d'ajout de catégorie. 
+ * Récupère aussi les produits sans catégorie pour les afficher dans la page et permettre à l'administrateur de les catégoriser.
+ */
 app.get("/ajout_categorie", isAdmin, async function (req, res) {
   try {
     const [produit_sans_categorie] = await pool.query(
@@ -930,6 +983,11 @@ app.get("/ajout_categorie", isAdmin, async function (req, res) {
   }
 });
 
+/**
+ * route GET ramenant au profil de l'administrateur (informations personnelles). 
+ * Récupère les informations de l'utilisateur connecté grâce à son id stocké en session.
+ * La page profil n'existe et n'est accessible que pour l'admin (pas de nécessité pour les clients d'avoir un compte pour le moment)
+ */
 app.get("/admin/profil", isAdmin, async function (req, res) {
   try {
     const userId = req.session.userID;
@@ -952,6 +1010,11 @@ app.get("/admin/profil", isAdmin, async function (req, res) {
   }
 });
 
+/**
+ * Route GET
+ * Rend la lage de listing des offres d'emploi côté ADMINISTRATEUR (avec options de gestion).
+ * Gère aussi le filtrage par catégorie
+ */
 app.get("/admin/offres", isAdmin, async function (req, res) {
   try {
     const categorieChoisie = req.query.categorie;
@@ -965,7 +1028,9 @@ app.get("/admin/offres", isAdmin, async function (req, res) {
       );
       offresResultat = rows;
     } else {
-      const [rows] = await pool.query("SELECT * FROM offres ORDER BY offre_id ASC");
+      const [rows] = await pool.query(
+        "SELECT * FROM offres ORDER BY offre_id ASC",
+      );
       offresResultat = rows;
     }
 
@@ -976,7 +1041,7 @@ app.get("/admin/offres", isAdmin, async function (req, res) {
     res.render("admin/offres", {
       page_css1: "offres.css",
       page_css2: "headeradmin.css",
-      page_css4:"revealsecondary.css",
+      page_css4: "revealsecondary.css",
       offres: offresResultat,
       categories: categories,
       categorieChoisie: categorieChoisie || "all",
@@ -987,131 +1052,167 @@ app.get("/admin/offres", isAdmin, async function (req, res) {
   }
 });
 
-
-app.get("/ajoutoffre", isAdmin, async function(req,res){
-  const [offres] = await pool.query("SELECT * FROM offres")
+/**
+ * Route GET
+ * Rend la page d'ajout d'offre d'emploi côté ADMINISTRATEUR.
+ * Récupère les informations nécessaires à l'affichage de la page 
+ * (ex: les types d'offres déjà présents dans la bdd pour les proposer dans un menu déroulant, le nom de l'admin connecté pour l'afficher dans le header, etc.)
+ */
+app.get("/ajoutoffre", isAdmin, async function (req, res) {
+  const [offres] = await pool.query("SELECT * FROM offres");
   // console.log(offres)
-  const user_id = req.session.userID
+  const user_id = req.session.userID;
   // console.log("ID utilisateur : ", user_id)
-  const [username] = await pool.query("SELECT identifiant FROM utilisateurs WHERE id = ?", [user_id])
+  const [username] = await pool.query(
+    "SELECT identifiant FROM utilisateurs WHERE id = ?",
+    [user_id],
+  );
   const [types] = await pool.query("SELECT DISTINCT type FROM offres");
   // console.log(types[1].type)
   const [pres] = await pool.query("SELECT DISTINCT presentation FROM offres");
-  const presentation = pres[0].presentation
+  const presentation = pres[0].presentation;
   //console.log(presentation[0].presentation)
 
-  const [categoriesData] = await pool.query("SELECT DISTINCT categorie FROM offres");
-  const categories = categoriesData.map(cat => cat.categorie);
+  const [categoriesData] = await pool.query(
+    "SELECT DISTINCT categorie FROM offres",
+  );
+  const categories = categoriesData.map((cat) => cat.categorie);
 
   //console.log(username[0].identifiant)
   res.render("admin/ajoutoffre", {
-    offres:offres, 
-    page_css1:"headeradmin.css", 
-    page_css2:"ajoutoffre.css", 
-    username:username[0].identifiant, 
-    types:types, 
-    presentation:presentation,
-    categories:categories
-  })
-})
+    offres: offres,
+    page_css1: "headeradmin.css",
+    page_css2: "ajoutoffre.css",
+    username: username[0].identifiant,
+    types: types,
+    presentation: presentation,
+    categories: categories,
+  });
+});
 
-
-app.get("/actualites", async function(req,res){
-  const [actualites] = await pool.query("SELECT * FROM actualite ORDER BY date_publication DESC LIMIT 99999 OFFSET 1");
+/**
+ * Route GET
+ * Rend la page listant les actualités côté CLIENT (avec la une et les autres actualités séparées).
+ * Les actualités sont triées par date de publication (de la plus récente à la plus ancienne).
+ */
+app.get("/actualites", async function (req, res) {
+  const [actualites] = await pool.query(
+    "SELECT * FROM actualite ORDER BY date_publication DESC LIMIT 99999 OFFSET 1",
+  );
   //console.log(actualites);
-  const [une] = await pool.query("SELECT * FROM actualite ORDER BY date_publication DESC LIMIT 1");
+  const [une] = await pool.query(
+    "SELECT * FROM actualite ORDER BY date_publication DESC LIMIT 1",
+  );
   // console.log(une)
   const actu_une = une[0];
 
   res.render("actualite_liste", {
-    page_css1:"headerclient.css",
-    page_css2:"actualite-liste.css",
+    page_css1: "headerclient.css",
+    page_css2: "actualite-liste.css",
     une: actu_une,
-    actus:actualites
-  })
+    actus: actualites,
+  });
 });
 
-
-
-app.get("/articles/:id", (req,res) => {
-  const file = fs.readFileSync(
-    `articles/${req.params.id}.json`
-  );
+/**
+ * Route GET
+ * Rend la page d'une actualité spécifique côté CLIENT.
+ * Récupère l'id de l'actualité dans la requête, puis récupère les infos dans la bdd grace à cet id
+ * Génère le contenu HTML de l'article à partir du contenu JSON stocké en base de données (grâce à tiptap et son StarterKit) pour pouvoir l'afficher correctement formaté dans la page.
+ */
+app.get("/articles/:id", (req, res) => {
+  const file = fs.readFileSync(`articles/${req.params.id}.json`);
   const article = JSON.parse(file);
 
-  const html = generateHTML(article.content, [StarterKit])
+  const html = generateHTML(article.content, [StarterKit]);
 
-  res.render('actualite', {
+  res.render("actualite", {
     article: article,
-    content:html
-  })
-})
+    content: html,
+  });
+});
 
-
-
-
-
-app.get("/ajoutarticle", isAdmin, async function(req,res){
-
-
+/**
+ * Route GET
+ * Rend la page d'ajout d'actualité côté ADMINISTRATEUR.
+ */
+app.get("/ajoutarticle", isAdmin, async function (req, res) {
   res.render("admin/ajoutarticle", {
-    page_css1:"ajoutarticle.css",
-    page_css2:"headeradmin.css"
-   })
-})
+    page_css1: "ajoutarticle.css",
+    page_css2: "headeradmin.css",
+  });
+});
 
-
-app.get("/actualite/:id", async function(req,res){
-  const [rows] = await pool.query("SELECT * FROM actualite WHERE id = ?", [req.params.id])
+/**
+ * Route GET
+ * Rend la page d'une actualité spécifique côté CLIENT
+ * Récupère l'id de l'actualité dans la requête, puis récupère les infos dans la bdd grace à cet id
+ */
+app.get("/actualite/:id", async function (req, res) {
+  const [rows] = await pool.query("SELECT * FROM actualite WHERE id = ?", [
+    req.params.id,
+  ]);
 
   const article = rows[0];
-  res.render('actualite', {
-    article
-  })
-})
+  res.render("actualite", {
+    article,
+  });
+});
 
-app.get("/admin/actu", isAdmin, async function(req,res){
-  const [actualites] = await pool.query("SELECT * FROM actualite ORDER BY date_publication DESC LIMIT 99999 OFFSET 1");
+/**
+ * Route GET
+ * Rend la page listant les actualités côté ADMINISTRATEUR (avec la une et les autres actualités séprarées).
+ * Les actualités sont triées par date de publication (de la plus récente à la plus ancienne).
+ */
+app.get("/admin/actu", isAdmin, async function (req, res) {
+  const [actualites] = await pool.query(
+    "SELECT * FROM actualite ORDER BY date_publication DESC LIMIT 99999 OFFSET 1",
+  );
   //console.log(actualites);
-  const [une] = await pool.query("SELECT * FROM actualite ORDER BY date_publication DESC LIMIT 1");
+  const [une] = await pool.query(
+    "SELECT * FROM actualite ORDER BY date_publication DESC LIMIT 1",
+  );
   // console.log(une)
   const actu_une = une[0];
 
   res.render("admin/actualite_liste", {
-    page_css1:"headeradmin.css",
-    page_css2:"actualite-liste.css",
+    page_css1: "headeradmin.css",
+    page_css2: "actualite-liste.css",
     une: actu_une,
-    actus:actualites
-  })
-})
+    actus: actualites,
+  });
+});
 
-app.get("/oubli_mdp", async function(req,res){
-  try{
+/**
+ * Route GET
+ * Rend la page de récupération de mot de passe côté CLIENT (formulaire pour entrer son adresse email et recevoir un lien de réinitialisation du mot de passe).
+ */
+app.get("/oubli_mdp", async function (req, res) {
+  try {
     res.render("recuperation_mdp", {
-      page_css1:"headerclient.css",
-      page_css2:"recuperation.css"
-    })
-  } catch(err){
+      page_css1: "headerclient.css",
+      page_css2: "recuperation.css",
+    });
+  } catch (err) {}
+});
 
-  }
-})
-
-app.get("/desabonnement", async function(req,res){
-  try{
+/**
+ * Route GET
+ * Rend la page de désabonnement côté CLIENT (formulaire pour entrer son adresse email et se désabonner de la newsletter).
+ */
+app.get("/desabonnement", async function (req, res) {
+  try {
     const email = req.query.email || "";
     res.render("desabonnement", {
       page_css1: "headerclient.css",
-      page_css2:"contact.css",
-      email:email,
-  })
-  } catch(err){
+      page_css2: "contact.css",
+      email: email,
+    });
+  } catch (err) {
     console.error(err);
     res.status(500).send("Erreur serveur");
   }
-})
-
-
-
+});
 
 
 
@@ -1127,25 +1228,31 @@ app.get("/desabonnement", async function(req,res){
 
 
 
-/* 
-Route POST /envoyer_cv
-*/
- 
-app.post("/envoyer_cv", uploadCV.array("fichiers", 5), async function(req, res) {
+/**
+ * Route POST /envoyer_cv
+ * Traite le formulaire de candidature et envoi le CV ainsi que les informations du candidat par email à l'entreprise grâce à Nodemailer.
+ * Gère aussi la validation basique du formulaire (présence du nom et de l'email) et le nettoyage des fichiers orphelins en cas d'erreur de validation.
+ * Les fichiers sont stockés temporairement sur le serveur grâce à la configuration Multer (ligne 87) et sont joints à l'email envoyé à l'entreprise.
+ */
+app.post(
+  "/envoyer_cv",
+  uploadCV.array("fichiers", 5),
+  async function (req, res) {
     try {
       const { mail, name, message } = req.body;
- 
+
       // ── Validation basique ──
       if (!mail || !name) {
         // Nettoyage des fichiers orphelins
         if (req.files && req.files.length > 0) {
           req.files.forEach((file) => {
             fs.unlink(file.path, (err) => {
-              if (err) console.error("Erreur suppression fichier orphelin :", err);
+              if (err)
+                console.error("Erreur suppression fichier orphelin :", err);
             });
           });
         }
- 
+
         return res.render("confirmation_cv", {
           success: false,
           message: "Veuillez renseigner votre adresse email et votre nom.",
@@ -1153,7 +1260,7 @@ app.post("/envoyer_cv", uploadCV.array("fichiers", 5), async function(req, res) 
           page_css2: "confirmation_cv.css",
         });
       }
- 
+
       // ── Transport Nodemailer ──
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -1162,27 +1269,30 @@ app.post("/envoyer_cv", uploadCV.array("fichiers", 5), async function(req, res) 
           pass: process.env.EMAIL_PASS,
         },
       });
- 
+
       // ── Pièces jointes ──
       const attachments = req.files.map((file) => ({
         filename: file.originalname,
         path: file.path,
       }));
- 
+
       // ── Offre concernée (si tu veux la tracer) ───────────────────
       // L'offre_id peut être passée en champ caché dans le formulaire :
       // <input type="hidden" name="offre_id" value="<%= offre.offre_id %>" />
       const offreId = req.body.offre_id || "Non précisé";
-      const [list_offre_name] = await pool.query("SELECT intitule FROM offres WHERE offre_id = ?", [offreId])
+      const [list_offre_name] = await pool.query(
+        "SELECT intitule FROM offres WHERE offre_id = ?",
+        [offreId],
+      );
       const offreIntitule = list_offre_name[0].intitule;
       // console.log(list_offre_name);
       // console.log(offreIntitule);
- 
+
       // ── Envoi du mail ──
       await transporter.sendMail({
         from: `"Site Web MECA-CN" <${process.env.EMAIL_USER}>`,
         to: process.env.EMAIL_DEST || "contact@meca-cn.com",
-        replyTo: mail,                              // répondre directement au candidat
+        replyTo: mail, // répondre directement au candidat
         subject: `Nouvelle candidature — ${name}`,
         text: `
           Nouvelle candidature reçue depuis le site.
@@ -1196,7 +1306,7 @@ app.post("/envoyer_cv", uploadCV.array("fichiers", 5), async function(req, res) 
           
           Fichiers joints : ${req.files.length ? req.files.map((f) => f.originalname).join(", ") : "Aucun"}
                   `.trim(),
-                  html: `
+        html: `
           <div style="font-family: Arial, sans-serif; color: #1f2937; background: #f4f6fb; padding: 20px;">
             <div style="max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0;">
               
@@ -1226,7 +1336,9 @@ app.post("/envoyer_cv", uploadCV.array("fichiers", 5), async function(req, res) 
                 <div style="margin-bottom: 24px;">
                   <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f4bb7;">Message / Lettre de motivation</h2>
                   <p style="margin: 0; color: #475569; white-space: pre-line;">${
-                    message ? message.replace(/</g, "&lt;").replace(/>/g, "&gt;") : "Aucun message fourni."
+                    message
+                      ? message.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                      : "Aucun message fourni."
                   }</p>
                 </div>
           
@@ -1238,7 +1350,7 @@ app.post("/envoyer_cv", uploadCV.array("fichiers", 5), async function(req, res) 
                 ${req.files
                   .map(
                     (file) =>
-                      `<li style="margin-bottom: 8px;">${file.originalname} (${Math.round(file.size / 1024)} Ko)</li>`
+                      `<li style="margin-bottom: 8px;">${file.originalname} (${Math.round(file.size / 1024)} Ko)</li>`,
                   )
                   .join("")}
                </ul>`
@@ -1255,14 +1367,15 @@ app.post("/envoyer_cv", uploadCV.array("fichiers", 5), async function(req, res) 
         `,
         attachments,
       });
- 
+
       // ── Suppression des fichiers temporaires ──
       req.files.forEach((file) => {
         fs.unlink(file.path, (err) => {
-          if (err) console.error("Erreur suppression fichier temporaire :", err);
+          if (err)
+            console.error("Erreur suppression fichier temporaire :", err);
         });
       });
- 
+
       // ── Succès ──
       res.render("confirmation_cv", {
         success: true,
@@ -1272,24 +1385,26 @@ app.post("/envoyer_cv", uploadCV.array("fichiers", 5), async function(req, res) 
       });
     } catch (err) {
       console.error("Erreur Nodemailer (CV) :", err);
- 
+
       // Nettoyage en cas d'erreur
       if (req.files && req.files.length > 0) {
         req.files.forEach((file) => {
           fs.unlink(file.path, (errUnlink) => {
-            if (errUnlink) console.error("Erreur suppression fichier :", errUnlink);
+            if (errUnlink)
+              console.error("Erreur suppression fichier :", errUnlink);
           });
         });
       }
- 
+
       res.render("confirmation_cv", {
         success: false,
-        message: "Désolé, une erreur technique est survenue. Veuillez réessayer.",
+        message:
+          "Désolé, une erreur technique est survenue. Veuillez réessayer.",
         page_css1: "headerclient.css",
         page_css2: "confirmation_cv.css",
       });
     }
-  }
+  },
 );
 
 
@@ -1300,74 +1415,63 @@ Récupère l'id de l'URL
 -> Recherche toutes les images présentent dans l'article en lui-même, et les supprimes elles-aussi du stockage
 -> Une fois les images supprimées, suppression de l'article de la bdd et renvoit de la page de listing d'actualité
 */
-
-app.post("/supprimerArticle", isAdmin, async function(req, res) {
-    const idNews = req.body.id;
-    try {
-        // Récupération de l'article
-        const [rows] = await pool.query(
-            "SELECT img_presentation, contenu FROM actualite WHERE id = ?",
-            [idNews]
-        );
-        if (rows.length === 0) {
-            return res.status(404).send("Article introuvable.");
-        }
-        const article = rows[0];
-
-        //
-        // SUPPRESSION IMAGE PRINCIPALE
-        //
-
-        if (article.img_presentation) {
-            const presentationPath = path.join(
-                __dirname,
-                "public",
-                article.img_presentation
-            );
-            if (fs.existsSync(presentationPath)) {
-                fs.unlinkSync(presentationPath);
-            }
-        }
-
-        // 
-        // EXTRACTION DES IMAGES INLINE
-        // 
-
-        const regex = /<img[^>]+src="([^"]+)"/g;
-        let match;
-        while ((match = regex.exec(article.contenu)) !== null) {
-            const imageSrc = match[1];
-            // On évite les liens externes
-            if (!imageSrc.startsWith("/img/actus/")) continue;
-            const imagePath = path.join(
-                __dirname,
-                "public",
-                imageSrc
-            );
-
-            if (fs.existsSync(imagePath)) {
-                fs.unlinkSync(imagePath);
-                // console.log("Image supprimée :", imagePath);
-            }
-        }
-
-        //
-        // SUPPRESSION SQL
-        //
-
-        await pool.query(
-            "DELETE FROM actualite WHERE id = ?",
-            [idNews]
-        );
-        res.redirect("/admin/actu");
-    } catch (err) {
-        console.error("Erreur suppression article :", err);
-        res.status(500).send(
-            "Erreur lors de la suppression de l'article."
-        );
+app.post("/supprimerArticle", isAdmin, async function (req, res) {
+  const idNews = req.body.id;
+  try {
+    // Récupération de l'article
+    const [rows] = await pool.query(
+      "SELECT img_presentation, contenu FROM actualite WHERE id = ?",
+      [idNews],
+    );
+    if (rows.length === 0) {
+      return res.status(404).send("Article introuvable.");
     }
-});
+    const article = rows[0];
 
+    //
+    // SUPPRESSION IMAGE PRINCIPALE
+    //
+
+    if (article.img_presentation) {
+      const presentationPath = path.join(
+        __dirname,
+        "public",
+        article.img_presentation,
+      );
+      if (fs.existsSync(presentationPath)) {
+        fs.unlinkSync(presentationPath);
+      }
+    }
+
+    //
+    // EXTRACTION DES IMAGES INLINE
+    //
+
+    const regex = /<img[^>]+src="([^"]+)"/g;
+    let match;
+    while ((match = regex.exec(article.contenu)) !== null) {
+      const imageSrc = match[1];
+      // On évite les liens externes
+      if (!imageSrc.startsWith("/img/actus/")) continue;
+      const imagePath = path.join(__dirname, "public", imageSrc);
+
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+        // console.log("Image supprimée :", imagePath);
+      }
+    }
+
+    //
+    // SUPPRESSION SQL
+    //
+
+    await pool.query("DELETE FROM actualite WHERE id = ?", [idNews]);
+    res.redirect("/admin/actu");
+  } catch (err) {
+    console.error("Erreur suppression article :", err);
+    res.status(500).send("Erreur lors de la suppression de l'article.");
+  }
+});
 
 
 // Route : upload temporaire d'une image inline
@@ -1376,19 +1480,24 @@ Sert pour la réalisation d'article
 -> lorsue l'utilisateur insère une image dans le CMS d'article, cette dernière est stockée temporairement dans le dossier /uploads/ 
 (via une config multer à retrouver en haut du server.js)
 */
-app.post("/api/upload-temp", isAdmin, uploadTemp.single("image"), function(req,res){
-  if (!req.file){
-    return res.status(400).json({
-      success:false,
-      message:"Aucun fichier reçu",
+app.post(
+  "/api/upload-temp",
+  isAdmin,
+  uploadTemp.single("image"),
+  function (req, res) {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Aucun fichier reçu",
+      });
+    }
+    // On renvoie l'URL publique de l'image temporaire
+    res.json({
+      success: true,
+      url: "/uploads/" + req.file.filename,
     });
-  };
-  // On renvoie l'URL publique de l'image temporaire
-  res.json({
-    success:true,
-    url:"/uploads/" + req.file.filename
-  })
-})
+  },
+);
 
 
 /*
@@ -1397,94 +1506,114 @@ Récupère le contenu
 Trouve les images associées à ce contenu dans le dossier /uploads/ et les transfère vers le dossiers actus/ (/public/img/actus/)
 insère les données (dont le contenu) dans la bdd
 */
-app.post("/api/articles", isAdmin, uploadActu.single("presentation"), async function(req, res) {
-  const { titre, baseline, contenu } = req.body;
-  const presentation = req.file ? "/img/actus/" + req.file.filename : null;
+app.post(
+  "/api/articles",
+  isAdmin,
+  uploadActu.single("presentation"),
+  async function (req, res) {
+    const { titre, baseline, contenu } = req.body;
+    const presentation = req.file ? "/img/actus/" + req.file.filename : null;
 
-  if (!titre || !contenu || !presentation || !baseline) {
-    return res.status(400).json({ success: false, message: 'Tous les champs sont obligatoires.' });
-  }
-
-  try {
-    // ── Déplacement des images temporaires inline ────────────────────
-    let contenuFinal = contenu;
-    const regex = /src="\/uploads\/(tmp_[^"]+)"/g;
-    let match;
-    const deplacements = [];
-
-    while ((match = regex.exec(contenu)) !== null) {
-      const filename = match[1];
-      deplacements.push({
-        src:  path.join("uploads", filename),
-        dest: path.join("public", "img", "actus", filename),
-        filename,
-      });
+    if (!titre || !contenu || !presentation || !baseline) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Tous les champs sont obligatoires.",
+        });
     }
 
-    for (const { src, dest, filename } of deplacements) {
-      if (fs.existsSync(src)) fs.renameSync(src, dest);
-      contenuFinal = contenuFinal.replace(`/uploads/${filename}`, `/img/actus/${filename}`);
-    }
-    // ────────────────────────────────────────────────────────────────
+    try {
+      // ── Déplacement des images temporaires inline ────────────────────
+      let contenuFinal = contenu;
+      const regex = /src="\/uploads\/(tmp_[^"]+)"/g;
+      let match;
+      const deplacements = [];
 
-    const date = new Date();
-    const redacteur_id = req.session.userID;
-    const [redacteurs] = await pool.query(
-      "SELECT identifiant FROM utilisateurs WHERE id = ?", [redacteur_id]
-    );
-    const redacteur = redacteurs[0].identifiant;
-
-    await pool.query(`
-      INSERT INTO actualite (contenu, date_publication, redacteur, titre, baseline, img_presentation)
-      VALUES (?, ?, ?, ?, ?, ?)`,
-      [contenuFinal, date, redacteur, titre, baseline, presentation]
-    );
-
-    // ── Notification newsletter ──────────────────────────────────────
-    const [abonnes] = await pool.query("SELECT email FROM abonnement WHERE actif = 1");
-
-    if (abonnes.length > 0) {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
-
-      const dateFormatee = date.toLocaleDateString("fr-FR", {
-        day: "numeric", month: "long", year: "numeric"
-      });
-
-      // URL absolue de l'image de présentation (pour qu'elle s'affiche dans le mail)
-      const imageUrl = `${process.env.SITE_URL}${presentation}`;
-
-
-      // Extrait le texte brut du HTML et le tronque
-      function extraireExtrait(html, maxChars = 300) {
-        const texteBrut = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-        return texteBrut.length > maxChars ? texteBrut.substring(0, maxChars) : texteBrut;
+      while ((match = regex.exec(contenu)) !== null) {
+        const filename = match[1];
+        deplacements.push({
+          src: path.join("uploads", filename),
+          dest: path.join("public", "img", "actus", filename),
+          filename,
+        });
       }
 
-      const extrait = extraireExtrait(contenuFinal);
+      for (const { src, dest, filename } of deplacements) {
+        if (fs.existsSync(src)) fs.renameSync(src, dest);
+        contenuFinal = contenuFinal.replace(
+          `/uploads/${filename}`,
+          `/img/actus/${filename}`,
+        );
+      }
+      // ────────────────────────────────────────────────────────────────
 
+      const date = new Date();
+      const redacteur_id = req.session.userID;
+      const [redacteurs] = await pool.query(
+        "SELECT identifiant FROM utilisateurs WHERE id = ?",
+        [redacteur_id],
+      );
+      const redacteur = redacteurs[0].identifiant;
 
+      await pool.query(
+        `
+      INSERT INTO actualite (contenu, date_publication, redacteur, titre, baseline, img_presentation)
+      VALUES (?, ?, ?, ?, ?, ?)`,
+        [contenuFinal, date, redacteur, titre, baseline, presentation],
+      );
 
-      // Écriture du mail
-      for (const abonne of abonnes) {
-        await transporter.sendMail({
-          from:    `"MECA-CN" <${process.env.EMAIL_USER}>`,
-          to:      abonne.email,
-          replyTo: process.env.EMAIL_USER,
-          subject: `Nouvel article : ${titre}`,
-          text:
-            `Nouvel article publié sur MECA-CN\n\n` +
-            `${titre}\n${baseline}\n\n` +
-            `Publié le ${dateFormatee} par ${redacteur}.\n\n` +
-            `Retrouvez cet article sur : ${process.env.SITE_URL}/actualites\n\n` +
-            `---\nVous recevez cet email car vous êtes abonné à la newsletter MECA-CN.\n` +
-            `Pour vous désabonner : ${process.env.SITE_URL}/desabonnement`,
-          html: `
+      // ── Notification newsletter ──────────────────────────────────────
+      const [abonnes] = await pool.query(
+        "SELECT email FROM abonnement WHERE actif = 1",
+      );
+
+      if (abonnes.length > 0) {
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
+        });
+
+        const dateFormatee = date.toLocaleDateString("fr-FR", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+
+        // URL absolue de l'image de présentation (pour qu'elle s'affiche dans le mail)
+        const imageUrl = `${process.env.SITE_URL}${presentation}`;
+
+        // Extrait le texte brut du HTML et le tronque
+        function extraireExtrait(html, maxChars = 300) {
+          const texteBrut = html
+            .replace(/<[^>]+>/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+          return texteBrut.length > maxChars
+            ? texteBrut.substring(0, maxChars)
+            : texteBrut;
+        }
+
+        const extrait = extraireExtrait(contenuFinal);
+
+        // Écriture du mail
+        for (const abonne of abonnes) {
+          await transporter.sendMail({
+            from: `"MECA-CN" <${process.env.EMAIL_USER}>`,
+            to: abonne.email,
+            replyTo: process.env.EMAIL_USER,
+            subject: `Nouvel article : ${titre}`,
+            text:
+              `Nouvel article publié sur MECA-CN\n\n` +
+              `${titre}\n${baseline}\n\n` +
+              `Publié le ${dateFormatee} par ${redacteur}.\n\n` +
+              `Retrouvez cet article sur : ${process.env.SITE_URL}/actualites\n\n` +
+              `---\nVous recevez cet email car vous êtes abonné à la newsletter MECA-CN.\n` +
+              `Pour vous désabonner : ${process.env.SITE_URL}/desabonnement`,
+            html: `
             <div style="font-family: Arial, sans-serif; color: #1f2937; background: #f4f6fb; padding: 20px;">
               <div style="max-width: 640px; margin: 0 auto; background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0;">
 
@@ -1532,22 +1661,28 @@ app.post("/api/articles", isAdmin, uploadActu.single("presentation"), async func
               </div>
             </div>
           `,
-        });
+          });
+        }
       }
+
+      res.json({ success: true });
+    } catch (err) {
+      console.error("Erreur SQL :", err);
+      res.status(500).json({ success: false, message: "Erreur serveur." });
     }
+  },
+);
 
 
-    res.json({ success: true });
-  } catch (err) {
-    console.error("Erreur SQL :", err);
-    res.status(500).json({ success: false, message: "Erreur serveur." });
-  }
-});
+/**
+ * Route POST
+ * Traite le formulaire de désabonnement de la newsletter.
+ * Récupère l'adresse email depuis le formulaire, vérifie si elle est présente dans la base de données et active, puis la désactive 
+ * (actif = false) pour arrêter les envois de newsletter à cette adresse.
+ * 
+ * Gère aussi les cas d'erreur (email manquante, email non trouvée ou déjà désabonnée) et renvoie des messages d'erreur appropriés à la page de désabonnement.
+ */
 
-
-/*
-Route POST pour se désabonner de la newsletter
-*/
 app.post("/desabonnement", async function (req, res) {
   try {
     const email = req.body.email;
@@ -1562,7 +1697,8 @@ app.post("/desabonnement", async function (req, res) {
     }
 
     const [rows] = await pool.query(
-      "SELECT * FROM abonnement WHERE email = ?", [email]
+      "SELECT * FROM abonnement WHERE email = ?",
+      [email],
     );
 
     if (rows.length === 0 || !rows[0].actif) {
@@ -1574,9 +1710,9 @@ app.post("/desabonnement", async function (req, res) {
       });
     }
 
-    await pool.query(
-      "UPDATE abonnement SET actif = false WHERE email = ?", [email]
-    );
+    await pool.query("UPDATE abonnement SET actif = false WHERE email = ?", [
+      email,
+    ]);
 
     res.render("desabonnement", {
       page_css1: "headerclient.css",
@@ -1595,50 +1731,56 @@ app.post("/desabonnement", async function (req, res) {
 route POST ajoutant l'adresse mail de la personne à la table de newslette
 Vérifie si l'adresse est déjà présente dans la bdd ou non, ou bien si elle est "active" ou "innactive"
 */
-app.post("/newsletter_add", async function(req,res){
-  try{
+app.post("/newsletter_add", async function (req, res) {
+  try {
     // Récupération de l'adresse mail et de la date (date -> pour statistiques)
-    const email = req.body.mail
-    const date = new Date()
+    const email = req.body.mail;
+    const date = new Date();
     // console.log(email);
 
     // regarde si l'address mail est déjà présente dans la table
-    const [rows] = await pool.query("SELECT * FROM abonnement WHERE email = ?", [email])
+    const [rows] = await pool.query(
+      "SELECT * FROM abonnement WHERE email = ?",
+      [email],
+    );
     // console.log(rows)
 
     // S'il y a déjà une adresse mail ↓
-    if (rows.length > 0){
+    if (rows.length > 0) {
       const abonnement = rows[0];
-      if (abonnement.actif){
-          return res.status(200).json({
-                    success: false,
-                    message: "Cette adresse mail est déjà abonnée."
-                });
-      } else{
-        await pool.query("UPDATE abonnement SET actif = true WHERE email = ?", [email]);
+      if (abonnement.actif) {
         return res.status(200).json({
-          success:true,
-          message:"Abonnement réactivé"
-        })
+          success: false,
+          message: "Cette adresse mail est déjà abonnée.",
+        });
+      } else {
+        await pool.query("UPDATE abonnement SET actif = true WHERE email = ?", [
+          email,
+        ]);
+        return res.status(200).json({
+          success: true,
+          message: "Abonnement réactivé",
+        });
       }
-    } else{
-      await pool.query("INSERT INTO abonnement (email, date_abonnement, actif) VALUES (?, ?, true)", [email,date])
+    } else {
+      await pool.query(
+        "INSERT INTO abonnement (email, date_abonnement, actif) VALUES (?, ?, true)",
+        [email, date],
+      );
       return res.status(200).json({
-        success:true,
-        message:"Vous êtes maintenant abonné à la Newsletter"
-      })
-    }
-    
-  } catch(err){
-      console.error("Erreur SQL ou serveur : ", err);
-
-      return res.status(500).json({
-        success: false,
-        message: "Erreur lors de l'abonnement à la Newsletter"
+        success: true,
+        message: "Vous êtes maintenant abonné à la Newsletter",
       });
     }
-})
+  } catch (err) {
+    console.error("Erreur SQL ou serveur : ", err);
 
+    return res.status(500).json({
+      success: false,
+      message: "Erreur lors de l'abonnement à la Newsletter",
+    });
+  }
+});
 
 
 /*
@@ -1646,29 +1788,31 @@ route POST qui renvoie à la page des détails sur un article d'actualité préc
 Récupération de l'id depuis l'URL (envoyé grace au formulaire metho POST)
 récupération de l'article grace à cet id
 */
-app.post("/article", async function(req,res){
-  try{
+app.post("/article", async function (req, res) {
+  try {
     const id = req.body.id;
     //console.log(id);
-    const [article] = await pool.query("SELECT * FROM actualite WHERE id = ?", [id]);
+    const [article] = await pool.query("SELECT * FROM actualite WHERE id = ?", [
+      id,
+    ]);
     // console.log(article);
 
     // Récupération des autres articles pour les afficher sur la page
-    const [autres] = await pool.query("SELECT * FROM actualite WHERE id != ? LIMIT 2", [id])
+    const [autres] = await pool.query(
+      "SELECT * FROM actualite WHERE id != ? LIMIT 2",
+      [id],
+    );
     res.render("actualite", {
-      page_css1:"actualite.css",
-      page_css2:"headerclient.css",
-      article:article[0],
-      autres: autres
-    })
-
-    
-
-  } catch (err){
+      page_css1: "actualite.css",
+      page_css2: "headerclient.css",
+      article: article[0],
+      autres: autres,
+    });
+  } catch (err) {
     console.error("Erreur SQL ou serveru : ", err);
-    res.status(500).send("Erreur lors de la récupération de l'article")
+    res.status(500).send("Erreur lors de la récupération de l'article");
   }
-})
+});
 
 
 /* Route post qui permet d'arriver sur une offre d'emploi précise
@@ -1678,7 +1822,6 @@ Attention -> Différence entre "offre" et "offres".
 "offre" renvoie une seule offre avec toute les infos la correspondantes
 "offres" (avec un "s") renvoie la page listant toutes les offres disponibles
 */
-
 app.post("/consulter_offre", async function (req, res) {
   try {
     const id = req.body.offre_id;
@@ -1690,7 +1833,6 @@ app.post("/consulter_offre", async function (req, res) {
     const offre = offres[0];
     // console.log(offre);
 
-
     // récupérationde "l'enabilité" des sections plus secondaires
     const methodeEnable = offre.MethodeEnable;
     const infosEnable = offre.InfosEnable;
@@ -1698,17 +1840,16 @@ app.post("/consulter_offre", async function (req, res) {
     const recrutementEnable = offre.RecrutementEnable;
     const avantageEnable = offre.AvantageEnable;
 
-
     //console.log(offre);
     res.render("offre", {
       offre: offre,
       page_css1: "offre.css",
       page_css2: "headeradmin.css",
       methodeE: methodeEnable,
-      infosE:infosEnable,
-      salaireE:salaireEnable,
-      recrutementE:recrutementEnable,
-      avantageE:avantageEnable
+      infosE: infosEnable,
+      salaireE: salaireEnable,
+      recrutementE: recrutementEnable,
+      avantageE: avantageEnable,
     });
   } catch (err) {
     console.error("Erreur SQL ou serveur : ", err);
@@ -1721,8 +1862,7 @@ app.post("/consulter_offre", async function (req, res) {
 route POST pour ajouter une offre d'emploi
 Elle est longue, il faut pas se décourager
 */
-app.post("/ajouteroffre", async function(req,res){
-
+app.post("/ajouteroffre", async function (req, res) {
   //cconsole.log(req.body)
 
   /* 
@@ -1730,7 +1870,7 @@ app.post("/ajouteroffre", async function(req,res){
   -> textes
   -> ON / OFF pour les informations plus "complémentaires"
   */
-  
+
   const intitule = req.body.intitule;
   const type = req.body["type-offre"];
   const location = req.body.localisation;
@@ -1742,82 +1882,80 @@ app.post("/ajouteroffre", async function(req,res){
   const recrutement = req.body.recrutement;
   const complementaire = req.body.complementaire;
   const methode = req.body.methode;
-  let salaireEnable = req.body["salaire-switch"]
-  let methodeEnable = req.body["methode-switch"]
-  let avantageEnable = req.body["avantage-switch"]
-  let recrutementEnable = req.body["recrutement-switch"]
-  let infosEnable = req.body["infos-switch"]
+  let salaireEnable = req.body["salaire-switch"];
+  let methodeEnable = req.body["methode-switch"];
+  let avantageEnable = req.body["avantage-switch"];
+  let recrutementEnable = req.body["recrutement-switch"];
+  let infosEnable = req.body["infos-switch"];
   // console.log(infosEnable);
   let categorie = req.body.categorie;
 
-  if(categorie === "autre"){
+  if (categorie === "autre") {
     categorie = req.body.nouvelleCategorie;
   }
 
   // Récupération de la date actuelle, pour préciser depuis quand l'offre est disponible
   const today = new Date();
 
-
   // Mise en forme de la date pour correspondre au format demandé JJ/MM/AAAA
   // On s'assure qu'ils ont 2 chiffres avec padStart(2, '0')
   const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, '0'); // Janvier est 0 !
-  const dd = String(today.getDate()).padStart(2, '0');
+  const mm = String(today.getMonth() + 1).padStart(2, "0"); // Janvier est 0 !
+  const dd = String(today.getDate()).padStart(2, "0");
 
-  const hh = String(today.getHours()).padStart(2, '0');
-  const min = String(today.getMinutes()).padStart(2, '0');
-  const ss = String(today.getSeconds()).padStart(2, '0');
+  const hh = String(today.getHours()).padStart(2, "0");
+  const min = String(today.getMinutes()).padStart(2, "0");
+  const ss = String(today.getSeconds()).padStart(2, "0");
 
   const formattedDate = `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
   // console.log(formattedDate);
 
-
-
   // transformer les "on" / "off" en booleen
   // Transformation nécessaire -> utilisation de SWITCH envoyant ON/OFF -> ne marche pas avec les booleen de la BDD
-  if (infosEnable == "on"){
-    infosEnable = 1
-  } else{
-    infosEnable = 0
+  if (infosEnable == "on") {
+    infosEnable = 1;
+  } else {
+    infosEnable = 0;
   }
 
-  if (recrutementEnable == "on"){
-    recrutementEnable = 1
-  } else{
-    recrutementEnable = 0
+  if (recrutementEnable == "on") {
+    recrutementEnable = 1;
+  } else {
+    recrutementEnable = 0;
   }
 
-  if (avantageEnable == "on"){
-    avantageEnable = 1
-  } else{
-    avantageEnable = 0
+  if (avantageEnable == "on") {
+    avantageEnable = 1;
+  } else {
+    avantageEnable = 0;
   }
 
-  if (methodeEnable == "on"){
-    methodeEnable = 1
-  } else{
-    methodeEnable = 0
+  if (methodeEnable == "on") {
+    methodeEnable = 1;
+  } else {
+    methodeEnable = 0;
   }
 
-  if (salaireEnable == "on"){
-    salaireEnable = 1
-  } else{
-    salaireEnable = 0
+  if (salaireEnable == "on") {
+    salaireEnable = 1;
+  } else {
+    salaireEnable = 0;
   }
   //console.log(salaireEnable);
-
 
   /*
   On cherche ici le plus petit ID libre dans la BDD pour garder des données avec un ID assez bas
   */
-  const [liste_ids] = await pool.query("SELECT offre_id FROM offres ORDER BY offre_id ASC");
+  const [liste_ids] = await pool.query(
+    "SELECT offre_id FROM offres ORDER BY offre_id ASC",
+  );
 
   let id_final = 1;
   for (const element of liste_ids) {
-      if (element.offre_id !== id_final) {
-          break;
-      }
-      id_final++;
+    if (element.offre_id !== id_final) {
+      break;
+    }
+    id_final++;
   }
 
   // Une seule requête, on spécifie toujours l'id
@@ -1828,13 +1966,29 @@ app.post("/ajouteroffre", async function(req,res){
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
   await pool.query(requete, [
-      id_final, intitule, type, location, salaire, salaireEnable, presentation, missions,
-      competences, avantage, avantageEnable, recrutement, recrutementEnable, complementaire, infosEnable, formattedDate, methode, methodeEnable, categorie
+    id_final,
+    intitule,
+    type,
+    location,
+    salaire,
+    salaireEnable,
+    presentation,
+    missions,
+    competences,
+    avantage,
+    avantageEnable,
+    recrutement,
+    recrutementEnable,
+    complementaire,
+    infosEnable,
+    formattedDate,
+    methode,
+    methodeEnable,
+    categorie,
   ]);
-  
- res.redirect("/ajoutoffre")
-})
 
+  res.redirect("/ajoutoffre");
+});
 
 
 /*
@@ -1844,12 +1998,11 @@ récupère toutes les informations dans l'URL
 La route compare les anciennes versions des différentes informations avec les "nouvelles" pour ne modifier que celles qui ont été changées
 -> performances améliorées
 */
-app.post('/confirmer_modif/:id', async (req, res) => {
+app.post("/confirmer_modif/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    
-    // console.log(req.body);
 
+    // console.log(req.body);
 
     const {
       intitule,
@@ -1859,12 +2012,10 @@ app.post('/confirmer_modif/:id', async (req, res) => {
       competences,
       avantages,
       recrutement,
-      infos_complementaires
+      infos_complementaires,
     } = req.body;
 
     // console.log("nouvelle missions : ",missions)
-
-
 
     /*
     Afin de n'actualiser que la section concernée, on test si chacun est différentde ce qui est stocké dans la bdd
@@ -1877,108 +2028,139 @@ app.post('/confirmer_modif/:id', async (req, res) => {
     des "if" utilisés ci-dessous
     */
 
-
     // missions
 
-        const [old_miss] = await pool.query("SELECT missions FROM offres WHERE offre_id = ?", [id]);
-        const ancienne_missions = old_miss[0].missions
-        // console.log("Ancienne missions : ", ancienne_missions)
-        // console.log(ancienne_missions);
-        if (ancienne_missions !== missions){
-          await pool.query(`UPDATE offres SET 
+    const [old_miss] = await pool.query(
+      "SELECT missions FROM offres WHERE offre_id = ?",
+      [id],
+    );
+    const ancienne_missions = old_miss[0].missions;
+    // console.log("Ancienne missions : ", ancienne_missions)
+    // console.log(ancienne_missions);
+    if (ancienne_missions !== missions) {
+      await pool.query(
+        `UPDATE offres SET 
                               missions = ? 
-                              WHERE offre_id = ?`, 
-                              [missions, id]);
-          // console.log("Les missions ont été modifiées")
-        };
-
+                              WHERE offre_id = ?`,
+        [missions, id],
+      );
+      // console.log("Les missions ont été modifiées")
+    }
 
     // competences
 
-        const [old_comp] = await pool.query("SELECT competences FROM offres WHERE offre_id = ?", [id]);
-        const ancienne_competences = old_comp[0].competences;
-        if (ancienne_competences !== competences){
-          await pool.query(`UPDATE offres SET 
+    const [old_comp] = await pool.query(
+      "SELECT competences FROM offres WHERE offre_id = ?",
+      [id],
+    );
+    const ancienne_competences = old_comp[0].competences;
+    if (ancienne_competences !== competences) {
+      await pool.query(
+        `UPDATE offres SET 
                               competences = ? 
-                              WHERE offre_id = ?`, 
-                              [competences, id])
-          //console.log("Les compétences ont été modifiées");
-        };
-
+                              WHERE offre_id = ?`,
+        [competences, id],
+      );
+      //console.log("Les compétences ont été modifiées");
+    }
 
     // avantages
 
-        const [old_advantage] = await pool.query("SELECT avantages FROM offres WHERE offre_id = ?", [id])
-        const ancien_avantage = old_advantage[0].avantages
-        if (ancien_avantage !== avantages){
-          await pool.query(`UPDATE offres SET 
+    const [old_advantage] = await pool.query(
+      "SELECT avantages FROM offres WHERE offre_id = ?",
+      [id],
+    );
+    const ancien_avantage = old_advantage[0].avantages;
+    if (ancien_avantage !== avantages) {
+      await pool.query(
+        `UPDATE offres SET 
                               avantages = ? 
-                              WHERE offre_id = ?`, 
-                              [avantages, id]);
-          //console.log("Les avantages ont été modifiés");
-        };
-
+                              WHERE offre_id = ?`,
+        [avantages, id],
+      );
+      //console.log("Les avantages ont été modifiés");
+    }
 
     // recrutements
 
-        const [old_recruit] = await pool.query("SELECT recrutement FROM offres WHERE offre_id = ?", [id]);
-        const ancien_recrutement = old_recruit[0].recrutement;
-        if (ancien_recrutement !== recrutement){
-          await pool.query(`UPDATE offres SET 
+    const [old_recruit] = await pool.query(
+      "SELECT recrutement FROM offres WHERE offre_id = ?",
+      [id],
+    );
+    const ancien_recrutement = old_recruit[0].recrutement;
+    if (ancien_recrutement !== recrutement) {
+      await pool.query(
+        `UPDATE offres SET 
                               recrutement = ? 
-                              WHERE offre_id = ?`, 
-                              [recrutement, id]);
-          // console.log("Le process de recrutement a été modifié")
-        };
-
+                              WHERE offre_id = ?`,
+        [recrutement, id],
+      );
+      // console.log("Le process de recrutement a été modifié")
+    }
 
     // informations complémentaires
 
-        const [old_infos] = await pool.query("SELECT infos_complementaires FROM offres WHERE offre_id = ?", [id]);
-        const ancienne_infos = old_infos[0].infos_complementaires;
-        if (ancienne_infos !== infos_complementaires){
-          await pool.query(`UPDATE offres SET 
+    const [old_infos] = await pool.query(
+      "SELECT infos_complementaires FROM offres WHERE offre_id = ?",
+      [id],
+    );
+    const ancienne_infos = old_infos[0].infos_complementaires;
+    if (ancienne_infos !== infos_complementaires) {
+      await pool.query(
+        `UPDATE offres SET 
                               infos_complementaires = ? 
-                              WHERE offre_id = ?`, 
-                              [infos_complementaires, id]);
-          //console.log("Les informations complémentaires ont bien été modifiées");
-        };
-
+                              WHERE offre_id = ?`,
+        [infos_complementaires, id],
+      );
+      //console.log("Les informations complémentaires ont bien été modifiées");
+    }
 
     //  presentation
 
-        const [old_pres] = await pool.query("SELECT presentation FROM offres WHERE offre_id = ?", [id])
-        const ancienne_presentation = old_pres[0].presenation;
-        if (ancienne_presentation !== presentation){
-          await pool.query(`UPDATE offres SET
+    const [old_pres] = await pool.query(
+      "SELECT presentation FROM offres WHERE offre_id = ?",
+      [id],
+    );
+    const ancienne_presentation = old_pres[0].presenation;
+    if (ancienne_presentation !== presentation) {
+      await pool.query(
+        `UPDATE offres SET
                               presentation = ?`,
-                            [presentation]);
-        };
-
+        [presentation],
+      );
+    }
 
     // intitule
-        
-        const [old_int] = await pool.query("SELECT intitule FROM offres WHERE offre_id = ?", [id]);
-        const ancien_intitule = old_int[0].intitule;
-        if (ancien_intitule !== intitule){
-          await pool.query(`UPDATE offres SET
+
+    const [old_int] = await pool.query(
+      "SELECT intitule FROM offres WHERE offre_id = ?",
+      [id],
+    );
+    const ancien_intitule = old_int[0].intitule;
+    if (ancien_intitule !== intitule) {
+      await pool.query(
+        `UPDATE offres SET
                               intitule = ?
                               WHERE offre_id = ?`,
-                            [intitule, id]);
-        };
-
+        [intitule, id],
+      );
+    }
 
     // Type
 
-        const [old_type] = await pool.query("SELECT type FROM offres WHERE offre_id = ?", [id]);
-        const ancien_type = old_int[0].type;
-        if (ancien_type !== type){
-          await pool.query(`UPDATE offres SET
+    const [old_type] = await pool.query(
+      "SELECT type FROM offres WHERE offre_id = ?",
+      [id],
+    );
+    const ancien_type = old_int[0].type;
+    if (ancien_type !== type) {
+      await pool.query(
+        `UPDATE offres SET
                               type = ?
                               WHERE offre_id = ?`,
-                            [type, id]);
-        };
-
+        [type, id],
+      );
+    }
 
     /*
     
@@ -2013,15 +2195,12 @@ app.post('/confirmer_modif/:id', async (req, res) => {
 
     */
 
-
-    res.redirect('/admin/offres');
-
+    res.redirect("/admin/offres");
   } catch (err) {
     console.error("Erreur modif offre :", err);
     res.status(500).send("Erreur serveur");
   }
 });
-
 
 
 /*
@@ -2039,7 +2218,6 @@ app.post("/admin/consulter_offre", async function (req, res) {
     const offre = offres[0];
     //console.log(offre);
 
-
     // récupération de "l'enabilité" des sections plus secondaires
     const methodeEnable = offre.MethodeEnable;
     const infosEnable = offre.InfosEnable;
@@ -2047,23 +2225,22 @@ app.post("/admin/consulter_offre", async function (req, res) {
     const recrutementEnable = offre.RecrutementEnable;
     const avantageEnable = offre.AvantageEnable;
 
-
-
     res.render("admin/offre", {
       offre: offre,
       page_css1: "offre.css",
       page_css2: "headeradmin.css",
-      methodeE:methodeEnable,
-      infosE:infosEnable,
-      salaireE:salaireEnable,
-      recrutementE:recrutementEnable,
-      avantageE:avantageEnable
+      methodeE: methodeEnable,
+      infosE: infosEnable,
+      salaireE: salaireEnable,
+      recrutementE: recrutementEnable,
+      avantageE: avantageEnable,
     });
   } catch (err) {
     console.error("Erreur SQL ou serveur : ", err);
     res.status(500).send("Erreur lors de la consultation de l'offre");
   }
 });
+
 
 /* 
 Route POST qui permet d'arriver sur la page de modification de l'offre
@@ -2114,9 +2291,6 @@ app.post("/supprimer_offre", async function (req, res) {
 });
 
 
-
-
-
 // Modifications infos profil (identifiant, email, téléphone, mot de passe)
 /*
 Vérifie que l'utilisateur est admin (middleware isAdmin)
@@ -2148,7 +2322,6 @@ app.post("/modifier-id", isAdmin, async function (req, res) {
 });
 
 
-
 /*
 route POST pour modifier l'adresse email de l'utilisateur
 vérifie si l'ancien email = le nouveau pour éviter d'update la bdd inutilement
@@ -2175,7 +2348,6 @@ app.post("/modifier-email", isAdmin, async function (req, res) {
     res.status(500).send("Erreur lors de la modification de l'email");
   }
 });
-
 
 
 /*
@@ -2209,7 +2381,6 @@ app.post("/modifier-telephone", isAdmin, async function (req, res) {
       .send("Erreur lors de la modification du numéro de téléphone");
   }
 });
-
 
 
 /*
@@ -2257,7 +2428,6 @@ app.post("/modifier-mot-de-passe", isAdmin, async function (req, res) {
     Vérification entre ancien mot de passe rentré par l'utilisateur et l'ancien mot de passe selon la bdd
     */
     if (hashed == rows[0].password) {
-
       // Vérification si l'utilsiateur a fait une erreur ou non
       if (nouveau_motdepasse === confirm_motdepasse) {
         // Hashage du mot de passe afin de l'insérer dans la bdd
@@ -2265,7 +2435,6 @@ app.post("/modifier-mot-de-passe", isAdmin, async function (req, res) {
         //const nouveau_hashed2 = sha256(nouveau_hashed);
         //console.log(nouveau_hashed2);
 
-        
         // UPDATE du mot de passe de l'utilisateur dans la bdd -> Ajout du nouveau mot de passe hashé
         await pool.query("UPDATE utilisateurs SET password = ? WHERE id = ?", [
           nouveau_hashed,
@@ -2279,17 +2448,13 @@ app.post("/modifier-mot-de-passe", isAdmin, async function (req, res) {
             "Mot de passe modifié avec succès ! <br><a href='/admin/profil'>Retourner au profil</a>",
           );
 
-
-      // Si le nouveau mot de passe et sa confirmation ne correspondent pas (erreur de frappe ou autre) -> on le précise à l'utilisateur
+        // Si le nouveau mot de passe et sa confirmation ne correspondent pas (erreur de frappe ou autre) -> on le précise à l'utilisateur
       } else {
         return res
           .status(400)
           .send(
             "Le nouveau mot de passe et sa confirmation ne correspondent pas. Veuillez réessayer. <br><a href='/admin/profil'>Retourner au profil</a>",
           );
-
-
-
       }
 
       // L'utilisateur a rentré un mauvais mot de passe
@@ -2301,19 +2466,12 @@ app.post("/modifier-mot-de-passe", isAdmin, async function (req, res) {
         );
     }
 
-  
-  // Il y a eu un problème sur la route
+    // Il y a eu un problème sur la route
   } catch (err) {
     console.error("Erreur SQL ou Serveur :", err);
     res.status(500).send("Erreur lors de la modification du mot de passe");
   }
 });
-
-
-
-
-
-
 
 
 /*
@@ -2344,19 +2502,20 @@ app.post("/supprimer-realisation", isAdmin, async function (req, res) {
   try {
     const id_realisation = req.body.realisation_id;
     // console.log("ID réalisation à supprimer :", id_realisation);
-    const [realisation] = await pool.query("SELECT * FROM produits WHERE id = ?", [id_realisation])
+    const [realisation] = await pool.query(
+      "SELECT * FROM produits WHERE id = ?",
+      [id_realisation],
+    );
     const produit = realisation[0];
-    const imagePath = path.join(__dirname,"public",produit.image)
+    const imagePath = path.join(__dirname, "public", produit.image);
 
-
-    if (produit.image){
+    if (produit.image) {
       const imagePath = path.join(__dirname, "public", produit.image);
       if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath); 
+        fs.unlinkSync(imagePath);
       }
-
     }
-    
+
     await pool.query("DELETE FROM produits WHERE id = ?", [id_realisation]);
 
     return res.redirect("/admin/suppression");
@@ -2376,7 +2535,10 @@ app.post("/supprimer-machine", isAdmin, async function (req, res) {
   try {
     const id_machine = req.body.machine_id;
 
-    const [machine_list] = await pool.query("SELECT * FROM machines WHERE id_machine = ?", [id_machine]);
+    const [machine_list] = await pool.query(
+      "SELECT * FROM machines WHERE id_machine = ?",
+      [id_machine],
+    );
     const machine = machine_list[0];
 
     // On ne tente de supprimer l'image que si elle existe
@@ -2425,13 +2587,15 @@ app.post("/ajouter_categorie", isAdmin, async function (req, res) {
 });
 
 
-
-
 /**
  * POST /ajouter_produit
  * Traite l'ajout d'une nouvelle réalisation (produit) depuis le back-office.
  */
-app.post("/ajouter_produit",isAdmin,uploadProduits.single("image_produit"),async function (req, res) {
+app.post(
+  "/ajouter_produit",
+  isAdmin,
+  uploadProduits.single("image_produit"),
+  async function (req, res) {
     try {
       const { nom_produit, description_produit, categorie } = req.body;
       const image = req.file ? "/img/produits/" + req.file.filename : null;
@@ -2456,14 +2620,16 @@ app.post("/ajouter_produit",isAdmin,uploadProduits.single("image_produit"),async
 );
 
 
-
-
 /**
 POST /ajouter_machine
 Traite le formulaire d'ajout d'une nouvelle machine (admin).
 Gère l'upload d'image et insère la nouvelle ligne dans la table `machines`.
  */
-app.post("/ajouter_machine",isAdmin,uploadMachines.single("image_machine"),async function (req, res) {
+app.post(
+  "/ajouter_machine",
+  isAdmin,
+  uploadMachines.single("image_machine"),
+  async function (req, res) {
     try {
       const {
         nom_machine,
@@ -2502,26 +2668,25 @@ app.post("/ajouter_machine",isAdmin,uploadMachines.single("image_machine"),async
           type, annee_entree, image_machine
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-
       const values = [
-          nom_machine || null,
-          description_courte || null,
-          description_longue || null,
-          statistique1_nom || null,
-          statistique1_donnee || null,
-          statistique2_nom || null,
-          statistique2_donnee || null,
-          avantage_titre || null,
-          avantage_description || null,
-          d_x || null,
-          d_y || null,
-          d_z || null,
-          diametre_max || null,   // ← nouveau
-          longueur_max || null,   // ← nouveau
-          alesage || null,   // ← nouveau
-          type || null,
-          annee_entree || null,
-          imageMachine,
+        nom_machine || null,
+        description_courte || null,
+        description_longue || null,
+        statistique1_nom || null,
+        statistique1_donnee || null,
+        statistique2_nom || null,
+        statistique2_donnee || null,
+        avantage_titre || null,
+        avantage_description || null,
+        d_x || null,
+        d_y || null,
+        d_z || null,
+        diametre_max || null, // ← nouveau
+        longueur_max || null, // ← nouveau
+        alesage || null, // ← nouveau
+        type || null,
+        annee_entree || null,
+        imageMachine,
       ];
 
       await pool.query(insertQuery, values);
@@ -2536,9 +2701,18 @@ app.post("/ajouter_machine",isAdmin,uploadMachines.single("image_machine"),async
 );
 
 
-
-// Route POST pour enregistrer les modifications d'une machine (avec gestion de l'image)
-app.post("/modifier_infos_machine",isAdmin,uploadMachines.single("image_machine"),async function (req, res) {
+/**
+ * Route POST
+ * Sert à enregistrer les modifications d'une machine (avec gestion de l'image via Multer -> config en haut du serveur.js).
+ * Si une nouvelle image est envoyée, l'ancienne est supprimée du serveur (si elle existe) pour : 
+ * -> éviter d'avoir des fichiers orphelins
+ * -> Sauver de l'espace disque
+ */
+app.post(
+  "/modifier_infos_machine",
+  isAdmin,
+  uploadMachines.single("image_machine"),
+  async function (req, res) {
     try {
       const {
         id_machine,
@@ -2562,7 +2736,6 @@ app.post("/modifier_infos_machine",isAdmin,uploadMachines.single("image_machine"
         annee_entree,
       } = req.body;
 
-
       let query = `UPDATE machines SET 
       nom_machine = ?, 
       description_courte = ?, 
@@ -2582,7 +2755,6 @@ app.post("/modifier_infos_machine",isAdmin,uploadMachines.single("image_machine"
       d_z = ?, 
       type = ?, 
       annee_entree = ?`;
-
 
       const values = [
         nom_machine,
@@ -2648,42 +2820,47 @@ app.post("/modifier_infos_machine",isAdmin,uploadMachines.single("image_machine"
 );
 
 
-
-
 /**
  POST /envoyer-devis
 Traite le formulaire de demande de devis, envoie un email avec les pièces jointes.
 Style du mail géré par le serveur
 // Limitation Multer à 10 fichiers (uploadProduits.array("fichiers", 10)) pour éviter les abus / le spam
  */
-app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) => {
+app.post(
+  "/envoyer-devis",
+  uploadProduits.array("fichiers", 10),
+  async (req, res) => {
     try {
-
       // Captcha
       const userAnswer = parseInt(req.body.captcha_answer, 10);
       const expectedAnswer = req.session.devisCaptchaAnswer;
 
       req.session.devisCaptchaAnswer = null;
 
-      if (!expectedAnswer || isNaN(userAnswer) || userAnswer !== expectedAnswer) {
-
+      if (
+        !expectedAnswer ||
+        isNaN(userAnswer) ||
+        userAnswer !== expectedAnswer
+      ) {
         if (req.files && req.files.length > 0) {
           req.files.forEach((file) => {
             fs.unlink(file.path, (err) => {
-              if (err) console.error("Erreur lors de la suppression du fichier orphelin :", err);
+              if (err)
+                console.error(
+                  "Erreur lors de la suppression du fichier orphelin :",
+                  err,
+                );
             });
           });
-        };
-        
+        }
+
         return res.render("confirmation_devis", {
           success: false,
           message: "Réponse au captcha incorrecte. Veuillez réessayer.",
           page_css1: "headerclient.css",
           page_css2: "devis.css",
         });
-      };
-
-
+      }
 
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -2693,30 +2870,41 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
         },
       });
 
-
       const attachments = req.files.map((file) => ({
         filename: file.originalname,
         path: file.path,
       }));
 
-      const fournitureLabel = req.body.matiere_fourniture === "client"
-        ? "Fournie par le client"
-        : req.body.matiere_fourniture === "entreprise"
-        ? "Fournie par MECA-CN"
-        : "Non précisé";
-
-
+      const fournitureLabel =
+        req.body.matiere_fourniture === "client"
+          ? "Fournie par le client"
+          : req.body.matiere_fourniture === "entreprise"
+            ? "Fournie par MECA-CN"
+            : "Non précisé";
 
       // Construction des dimensions selon le procédé (tournage, fraisage, les deux ou non précisé)
       const procede = req.body.type_usinage || "";
-      const usesTournage = procede === "tournage" || procede === "les_deux" || procede === "" || procede === "Je ne sais pas";
-      const usesFraisage = procede === "fraisage" || procede === "les_deux" || procede === "" || procede === "Je ne sais pas";
+      const usesTournage =
+        procede === "tournage" ||
+        procede === "les_deux" ||
+        procede === "" ||
+        procede === "Je ne sais pas";
+      const usesFraisage =
+        procede === "fraisage" ||
+        procede === "les_deux" ||
+        procede === "" ||
+        procede === "Je ne sais pas";
 
       const dimsText = [];
-      if (usesFraisage && req.body.dim_x) dimsText.push(`Fraisage : ${req.body.dim_x} × ${req.body.dim_y} × ${req.body.dim_z} mm`);
-      if (usesTournage && req.body.longueur) dimsText.push(`Tournage : L:${req.body.longueur} mm / Ø:${req.body.diametre} mm`);
+      if (usesFraisage && req.body.dim_x)
+        dimsText.push(
+          `Fraisage : ${req.body.dim_x} × ${req.body.dim_y} × ${req.body.dim_z} mm`,
+        );
+      if (usesTournage && req.body.longueur)
+        dimsText.push(
+          `Tournage : L:${req.body.longueur} mm / Ø:${req.body.diametre} mm`,
+        );
       const dimensionsStr = dimsText.join(" | ") || "Non précisé";
-
 
       // Affichage des dimensions pour le mail (format HTML)
       const dimsHtml = [
@@ -2734,18 +2922,18 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
           : "",
       ].join("");
 
-
       // Type d'usinage (pour l'affichage dans le mail, plus lisible que les valeurs brutes du formulaire)
       var type;
-      if (req.body.type_usinage === "les_deux"){
+      if (req.body.type_usinage === "les_deux") {
         type = "Tournage et fraisage";
-      } else if (req.body.type_usinage === "Je ne sais pas"){
+      } else if (req.body.type_usinage === "Je ne sais pas") {
         type = "À définir";
-      } else if (req.body.type_usinage === "tournage" || req.body.type_usinage === "fraisage"){
+      } else if (
+        req.body.type_usinage === "tournage" ||
+        req.body.type_usinage === "fraisage"
+      ) {
         type = req.body.type_usinage;
       }
-
-
 
       await transporter.sendMail({
         from: `"Site Web MECA-CN" <${process.env.EMAIL_USER}>`,
@@ -2783,7 +2971,7 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
                                       <td style="padding: 12px 0; color: #64748b;">Matière</td>
                                       <td style="padding: 12px 0; font-weight: 700;">
                                         ${req.body.matiere || "Non précisé"}
-                                        <span style="display: inline-block; margin-left: 8px; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; background: ${req.body.matiere_fourniture === 'client' ? '#dbeafe' : '#dbeafe'}; color: ${req.body.matiere_fourniture === 'client' ? '#1d4ed8' : '#1d4ed8'};">
+                                        <span style="display: inline-block; margin-left: 8px; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; background: ${req.body.matiere_fourniture === "client" ? "#dbeafe" : "#dbeafe"}; color: ${req.body.matiere_fourniture === "client" ? "#1d4ed8" : "#1d4ed8"};">
                                           ${fournitureLabel}
                                         </span>
                                       </td>
@@ -2842,11 +3030,15 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
   },
 );
 
+
 /**
  * POST /modifier_infos_realisation
-Traite le formulaire d'édition d'une réalisation (admin), gère l'image.
+ * Traite le formulaire d'édition d'une réalisation (admin), gère l'image.
  */
-app.post("/modifier_infos_realisation",uploadProduits.array("fichiers", 1),async function (req, res) {
+app.post(
+  "/modifier_infos_realisation",
+  uploadProduits.array("fichiers", 1),
+  async function (req, res) {
     try {
       const { id_produit, nom_produit, description, categorie } = req.body;
 
@@ -2907,11 +3099,10 @@ app.post("/modifier_infos_realisation",uploadProduits.array("fichiers", 1),async
 );
 
 
-
 /**
-POST /envoyer-contact
-Envoie un email de contact avec les informations fournies.
-Utilise Nodemailer pour l'envoi => passage par une adresse mail définie dans le .env => envoi à l'adresse mail définitive
+ * POST /envoyer-contact
+ * Envoie un email de contact avec les informations fournies.
+ * Utilise Nodemailer pour l'envoi => passage par une adresse mail définie dans le .env => envoi à l'adresse mail définitive
  */
 app.post("/envoyer-contact", async function (req, res) {
   const { nom, entreprise, email, telephone, objet, message } = req.body;
@@ -3012,7 +3203,8 @@ app.post("/envoyer-contact", async function (req, res) {
       page_css1: "headerclient.css",
       page_css2: "contact.css",
       success: null,
-      error: "Désolé, une erreur est survenue. Veuillez nous contacter par téléphone.",
+      error:
+        "Désolé, une erreur est survenue. Veuillez nous contacter par téléphone.",
       captchaQuestion: op.label,
       nom,
       entreprise,
@@ -3025,13 +3217,10 @@ app.post("/envoyer-contact", async function (req, res) {
 });
 
 
-
-
-
 /**
 * POST /connexion
-Authentifie un utilisateur en comparant les identifiants au hash stocké.
-Remplit la session et redirige selon le rôle.
+ * Authentifie un utilisateur en comparant les identifiants au hash stocké.
+ * Remplit la session et redirige selon le rôle.
  */
 app.post("/connexion", async function (req, res) {
   const { id_user, password } = req.body;
@@ -3078,242 +3267,208 @@ app.post("/connexion", async function (req, res) {
 });
 
 
-
-
-
-
-/* Fonction POST permettant de se connecter directement aux pages Admin
-Utile en production
-Afin d'afficher ce bouton, voici le code à insérer : 
-
-<form method="POST" action="/connexionrapide">
-  <button class="connexion-rapide" type="submit">Connexion Rapide</button>
-</form>
-
-
----
-À SUPPRIMER JUSTE AVANT LA MISE EN LIGNE SUR LE SERVEUR
----
-
-*/
-app.post("/connexionrapide", async function (req, res) {
+/**
+ * Route POST /recup_mdp/envoi_code
+ * Traite la première étape de la récupération de mot de passe
+ * - Vérifie si le mail existe dans la base
+ * - Génère un code à 6 chiffres + token unique + expiration
+ * - Invalide les anciens tokens non utilisés pour ce mail
+ */
+app.post("/recup_mdp/envoi_code", async (req, res) => {
+  const { mail } = req.body;
+  //console.log(mail);
   try {
-    req.session.userID = 1;
-    req.session.role = "admin";
-    return res.redirect("/admin/accueil");
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    // 1. Chercher l'utilisateur
+    const [rows] = await pool.query(
+      "SELECT id FROM utilisateurs WHERE mail = ? LIMIT 1",
+      [mail],
+    );
+
+    if (rows.length > 0) {
+      // 2. Générer un code à 6 chiffres et un token unique
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      const token = crypto.randomBytes(32).toString("hex");
+
+      // Expiration dans 15 minutes
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ");
+
+      // 3. Invalider les anciens tokens pour ce mail
+      await pool.query(
+        "UPDATE password_reset_tokens SET used = 1 WHERE mail = ? AND used = 0",
+        [mail],
+      );
+
+      // 4. Insérer le nouveau token
+      await pool.query(
+        `INSERT INTO password_reset_tokens (mail, token, code, expires_at)
+                 VALUES (?, ?, ?, ?)`,
+        [mail, token, code, expiresAt],
+      );
+
+      // 5. Envoyer le mail stylisé
+      await transporter.sendMail({
+        from: `"MECA-CN" <${process.env.MAIL_FROM}>`,
+        to: mail,
+        subject: "Réinitialisation de votre mot de passe — MECA-CN",
+        html: buildResetEmail(code),
+      });
+    }
+
+    // Dans tous les cas (mail trouvé ou non) → étape 2
+    res.render("recuperation_mdp", {
+      showCodeStep: true,
+      mailSent: mail,
+      page_css1: "headerclient.css",
+      page_css2: "recuperation.css",
+    });
   } catch (err) {
-    console.error("Erreur connexion rapide :", err);
-    res.status(500).send("Erreur serveur");
+    console.error("[recup_mdp] envoi_code :", err);
+    res.render("recuperation_mdp", {
+      error: "Une erreur est survenue. Veuillez réessayer.",
+    });
   }
 });
 
 
+/**
+ * POST /recup_mdp/verif_code
+ * Vérifie le code saisi par l'utilisateur
+ */
+app.post("/recup_mdp/verif_code", async (req, res) => {
+  const { mail, code } = req.body;
 
-
-
-
-app.post('/recup_mdp/envoi_code', async (req, res) => {
-    const { mail } = req.body;
-    //console.log(mail);
-    try {
-
-        const transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-          },
-        });
-
-        // 1. Chercher l'utilisateur
-        const [rows] = await pool.query(
-            'SELECT id FROM utilisateurs WHERE mail = ? LIMIT 1',
-            [mail]
-        );
-
-        if (rows.length > 0) {
-            // 2. Générer un code à 6 chiffres et un token unique
-            const code  = Math.floor(100000 + Math.random() * 900000).toString();
-            const token = crypto.randomBytes(32).toString('hex');
-
-            // Expiration dans 15 minutes
-            const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
-                .toISOString()
-                .slice(0, 19)
-                .replace('T', ' ');
-
-            // 3. Invalider les anciens tokens pour ce mail
-            await pool.query(
-                'UPDATE password_reset_tokens SET used = 1 WHERE mail = ? AND used = 0',
-                [mail]
-            );
-
-            // 4. Insérer le nouveau token
-            await pool.query(
-                `INSERT INTO password_reset_tokens (mail, token, code, expires_at)
-                 VALUES (?, ?, ?, ?)`,
-                [mail, token, code, expiresAt]
-            );
-
-            // 5. Envoyer le mail stylisé
-            await transporter.sendMail({
-                from:    `"MECA-CN" <${process.env.MAIL_FROM}>`,
-                to:      mail,
-                subject: 'Réinitialisation de votre mot de passe — MECA-CN',
-                html:    buildResetEmail(code),
-            });
-        }
-
-        // Dans tous les cas (mail trouvé ou non) → étape 2
-        res.render('recuperation_mdp', {
-            showCodeStep: true,
-            mailSent:     mail,
-            page_css1:"headerclient.css",
-            page_css2:"recuperation.css"
-        });
-
-    } catch (err) {
-        console.error('[recup_mdp] envoi_code :', err);
-        res.render('recuperation_mdp', {
-            error: 'Une erreur est survenue. Veuillez réessayer.',
-        });
-    }
-});
-
-
-
-
-/*
-   POST /recup_mdp/verif_code
-   Vérifie le code saisi par l'utilisateur
-*/
-app.post('/recup_mdp/verif_code', async (req, res) => {
-    const { mail, code } = req.body;
-
-    try {
-        const [rows] = await pool.query(
-            `SELECT token FROM password_reset_tokens
+  try {
+    const [rows] = await pool.query(
+      `SELECT token FROM password_reset_tokens
              WHERE mail = ? AND code = ? AND used = 0
              ORDER BY created_at DESC LIMIT 1`,
-            [mail, code]
-        );
-        // console.log(rows)
+      [mail, code],
+    );
+    // console.log(rows)
 
-        if (rows.length === 0) {
-            // Code invalide ou expiré → retour étape 2 avec erreur
-            return res.render('recuperation_mdp', {
-                showCodeStep: true,
-                mailSent:     mail,
-                codeError:    'Code invalide ou expiré. Vérifiez votre e-mail ou recommencez.',
-                page_css1:"headerclient.css",
-                page_css2:"recuperation.css"
-            });
-        }
-
-        // Code valide → afficher l'étape 3 (nouveau mot de passe)
-        res.render('recuperation_mdp', {
-            token: rows[0].token,
-            page_css1:"headerclient.css",
-            page_css2:"recuperation.css"
-        });
-
-    } catch (err) {
-        console.error('[recup_mdp] verif_code :', err);
-        res.render('recuperation_mdp', {
-            showCodeStep: true,
-            mailSent:     mail,
-            codeError:    'Une erreur est survenue. Veuillez réessayer.',
-            page_css1:"headerclient.css",
-            page_css2:"recuperation.css"
-        });
+    if (rows.length === 0) {
+      // Code invalide ou expiré → retour étape 2 avec erreur
+      return res.render("recuperation_mdp", {
+        showCodeStep: true,
+        mailSent: mail,
+        codeError:
+          "Code invalide ou expiré. Vérifiez votre e-mail ou recommencez.",
+        page_css1: "headerclient.css",
+        page_css2: "recuperation.css",
+      });
     }
+
+    // Code valide → afficher l'étape 3 (nouveau mot de passe)
+    res.render("recuperation_mdp", {
+      token: rows[0].token,
+      page_css1: "headerclient.css",
+      page_css2: "recuperation.css",
+    });
+  } catch (err) {
+    console.error("[recup_mdp] verif_code :", err);
+    res.render("recuperation_mdp", {
+      showCodeStep: true,
+      mailSent: mail,
+      codeError: "Une erreur est survenue. Veuillez réessayer.",
+      page_css1: "headerclient.css",
+      page_css2: "recuperation.css",
+    });
+  }
 });
 
 
+/**
+ * POST /recup_mdp/nouveau_mdp
+ * Réinitialise réellement le mot de passe
+ */
+app.post("/recup_mdp/nouveau_mdp", async (req, res) => {
+  const { token, password, password_confirm } = req.body;
 
-/*
-   POST /recup_mdp/nouveau_mdp
-   Réinitialise réellement le mot de passe
-*/
-app.post('/recup_mdp/nouveau_mdp', async (req, res) => {
-    const { token, password, password_confirm } = req.body;
+  // Vérification côté serveur (ne pas se fier uniquement au JS client)
+  if (!password || password !== password_confirm) {
+    return res.render("recuperation_mdp", {
+      token,
+      pwdError: "Les mots de passe ne correspondent pas.",
+      page_css1: "headerclient.css",
+      page_css2: "recuperation.css",
+    });
+  }
 
-    // Vérification côté serveur (ne pas se fier uniquement au JS client)
-    if (!password || password !== password_confirm) {
-        return res.render('recuperation_mdp', {
-            token,
-            pwdError: 'Les mots de passe ne correspondent pas.',
-            page_css1:"headerclient.css",
-            page_css2:"recuperation.css"
-        });
-    }
+  if (password.length < 8) {
+    return res.render("recuperation_mdp", {
+      token,
+      pwdError: "Le mot de passe doit contenir au moins 8 caractères.",
+      page_css1: "headerclient.css",
+      page_css2: "recuperation.css",
+    });
+  }
 
-    if (password.length < 8) {
-        return res.render('recuperation_mdp', {
-            token,
-            pwdError: 'Le mot de passe doit contenir au moins 8 caractères.',
-            page_css1:"headerclient.css",
-            page_css2:"recuperation.css"
-        });
-    }
-
-    try {
-        // 1. Vérifier que le token est toujours valide
-        const [rows] = await pool.query(
-            `SELECT mail FROM password_reset_tokens
+  try {
+    // 1. Vérifier que le token est toujours valide
+    const [rows] = await pool.query(
+      `SELECT mail FROM password_reset_tokens
              WHERE token = ? AND used = 0
              LIMIT 1`,
-            [token]
-        );
+      [token],
+    );
 
-        // console.log(rows)
+    // console.log(rows)
 
-        if (rows.length === 0) {
-            return res.render('recuperation_mdp', {
-                error: 'Ce lien de réinitialisation est invalide ou expiré. Recommencez.',
-                page_css1:"headerclient.css",
-                page_css2:"recuperation.css"
-            });
-        }
-
-        const { mail } = rows[0];
-
-        // 2. Hasher le nouveau mot de passe
-        const hash = await sha256(password);
-
-        // 3. Mettre à jour le mot de passe dans la table admins
-        // Adaptez le nom de la colonne à votre schéma
-        await pool.query(
-            'UPDATE utilisateurs SET password = ? WHERE mail = ?',
-            [hash, mail]
-        );
-
-        // 4. Invalider le token (et tous les autres tokens de ce mail)
-        await pool.query(
-            'UPDATE password_reset_tokens SET used = 1 WHERE mail = ?',
-            [mail]
-        );
-
-        // 5. Rediriger vers la connexion avec un message de succès
-        res.redirect('/connexion?mdp_reset=1');
-
-    } catch (err) {
-        console.error('[recup_mdp] nouveau_mdp :', err);
-        res.render('recuperation_mdp', {
-            token,
-            pwdError: 'Une erreur est survenue. Veuillez réessayer.',
-            page_css1:"headerclient.css",
-            page_css2:"recuperation.css"
-        });
+    if (rows.length === 0) {
+      return res.render("recuperation_mdp", {
+        error:
+          "Ce lien de réinitialisation est invalide ou expiré. Recommencez.",
+        page_css1: "headerclient.css",
+        page_css2: "recuperation.css",
+      });
     }
+
+    const { mail } = rows[0];
+
+    // 2. Hasher le nouveau mot de passe
+    const hash = await sha256(password);
+
+    // 3. Mettre à jour le mot de passe dans la table admins
+    // Adaptez le nom de la colonne à votre schéma
+    await pool.query("UPDATE utilisateurs SET password = ? WHERE mail = ?", [
+      hash,
+      mail,
+    ]);
+
+    // 4. Invalider le token (et tous les autres tokens de ce mail)
+    await pool.query(
+      "UPDATE password_reset_tokens SET used = 1 WHERE mail = ?",
+      [mail],
+    );
+
+    // 5. Rediriger vers la connexion avec un message de succès
+    res.redirect("/connexion?mdp_reset=1");
+  } catch (err) {
+    console.error("[recup_mdp] nouveau_mdp :", err);
+    res.render("recuperation_mdp", {
+      token,
+      pwdError: "Une erreur est survenue. Veuillez réessayer.",
+      page_css1: "headerclient.css",
+      page_css2: "recuperation.css",
+    });
+  }
 });
-
-
 
 // Formate le mail pour reset le password
 
 function buildResetEmail(code) {
-    return `
+  return `
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -3414,12 +3569,59 @@ function buildResetEmail(code) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Fonction POST permettant de se connecter directement aux pages Admin
+Utile en production
+Afin d'afficher ce bouton, voici le code à insérer : 
+
+<form method="POST" action="/connexionrapide">
+  <button class="connexion-rapide" type="submit">Connexion Rapide</button>
+</form>
+
+
+---
+À SUPPRIMER JUSTE AVANT LA MISE EN LIGNE SUR LE SERVEUR
+---
+
+*/
+app.post("/connexionrapide", async function (req, res) {
+  try {
+    req.session.userID = 1;
+    req.session.role = "admin";
+    return res.redirect("/admin/accueil");
+  } catch (err) {
+    console.error("Erreur connexion rapide :", err);
+    res.status(500).send("Erreur serveur");
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
 // Renvoie la page 404 si aucune des routes au dessus n'a récupéré l'appel
 
 app.use((req, res) => {
   res.status(404).render("404");
 });
 
-
-
-app.listen(3000)
+app.listen(3000);
