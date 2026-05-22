@@ -496,6 +496,7 @@ main::before {
     display:flex; 
     gap:10px; 
     margin: 10px 0; 
+    flex-wrap:wrap;
   }
 
 
@@ -555,6 +556,13 @@ main::before {
         font-weight: bold;
         color: #333;
     }
+
+    .previs-link{
+      position:absolute;
+      bottom:-40px;
+      left:50%;
+      transform:translateX(-50%);
+    }
 }
 
 
@@ -603,4 +611,90 @@ main::before {
     outline: none;
     box-sizing: border-box;
     width: 100%;
+}
+
+
+
+
+
+
+/* Bouton de navigation fixe sur mobile */
+.mobile-nav-btn {
+    display: none; /* Caché sur PC par défaut */
+}
+
+@media (max-width: 900px) {
+    /* Masquer l'ancien lien devenu inutile */
+    .previs-link {
+        display: none !important;
+    }
+
+    .mobile-nav-btn {
+        display: flex;
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 999;
+        background: #0b63b6;
+        color: #ffffff;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 30px;
+        box-shadow: 0 8px 24px rgba(11, 40, 70, 0.25);
+        font-weight: 700;
+        font-size: 0.9rem;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .mobile-nav-btn:active {
+        transform: translateX(-50%) scale(0.95);
+    }
+
+    /* Optionnel : couleur différente quand on remonte */
+    .mobile-nav-btn[data-target="up"] {
+        background: #0b1724;
+    }
+}
+
+
+@media screen and (max-width: 600px){
+    .previs-link {
+        display: none !important;
+    }
+
+    .mobile-nav-btn {
+        display: flex;
+        position: fixed;
+        bottom: 125px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 999;
+        background: #0b63b6;
+        color: #ffffff;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 30px;
+        box-shadow: 0 8px 24px rgba(11, 40, 70, 0.25);
+        font-weight: 700;
+        font-size: 0.9rem;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .mobile-nav-btn:active {
+        transform: translateX(-50%) scale(0.95);
+    }
+
+    /* Optionnel : couleur différente quand on remonte */
+    .mobile-nav-btn[data-target="up"] {
+        background: #0b1724;
+    }
 }

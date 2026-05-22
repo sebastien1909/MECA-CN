@@ -415,8 +415,11 @@ Page du formulaire de demande de devis. Récupère les dimensions max des machin
 app.get("/devis", async function (req, res) {
   try {
     const [dimensions] = await pool.query(
-      "SELECT MAX(d_x) as max_x, MAX(d_y) as max_y, MAX(d_z) as max_z FROM machines",
+      "SELECT MAX(d_x) as max_x, MAX(d_y) as max_y, MAX(d_z) as max_z, MAX(longueur_max) as max_longueur, MAX(diametre_max) as max_diametre, MAX(alesage) as max_alesage FROM machines",
     );
+    // console.log(dimensions[0]);
+
+
 
     // Générer une question math aléatoire
     const a = Math.floor(Math.random() * 10) + 1;
@@ -432,6 +435,10 @@ app.get("/devis", async function (req, res) {
 
     // Stocker la réponse en session (jamais exposée au client)
     req.session.devisCaptchaAnswer = op.answer;
+
+
+
+
 
     res.render("devis", {
       page_css1: "headerclient.css",
@@ -2551,7 +2558,24 @@ app.post("/modifier_infos_machine",isAdmin,uploadMachines.single("image_machine"
         annee_entree,
       } = req.body;
 
-      let query = `UPDATE machines SET nom_machine = ?, description_courte = ?, description_longue = ?, statistique1_nom = ?, statistique1_donnee = ?, statistique2_nom = ?, statistique2_donnee = ?, avantage_titre = ?, avantage_description = ?, d_x = ?, d_y = ?, d_z = ?, type = ?, annee_entree = ?`;
+
+      let query = `UPDATE machines SET 
+      nom_machine = ?, 
+      description_courte = ?, 
+      description_longue = ?, 
+      statistique1_nom = ?, 
+      statistique1_donnee = ?, 
+      statistique2_nom = ?, 
+      statistique2_donnee = ?, 
+      avantage_titre = ?, 
+      avantage_description = ?, 
+      d_x = ?, 
+      d_y = ?, 
+      d_z = ?, 
+      type = ?, 
+      annee_entree = ?`;
+
+
       const values = [
         nom_machine,
         description_courte,
@@ -2618,6 +2642,7 @@ app.post("/modifier_infos_machine",isAdmin,uploadMachines.single("image_machine"
  POST /envoyer-devis
 Traite le formulaire de demande de devis, envoie un email avec les pièces jointes.
 Style du mail géré par le serveur
+// Limitation Multer à 10 fichiers (uploadProduits.array("fichiers", 10)) pour éviter les abus / le spam
  */
 app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) => {
     try {
@@ -2636,7 +2661,7 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
               if (err) console.error("Erreur lors de la suppression du fichier orphelin :", err);
             });
           });
-        }
+        };
         
         return res.render("confirmation_devis", {
           success: false,
@@ -2644,7 +2669,7 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
           page_css1: "headerclient.css",
           page_css2: "devis.css",
         });
-      }
+      };
 
 
 
@@ -2668,12 +2693,54 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
         ? "Fournie par MECA-CN"
         : "Non précisé";
 
+
+
+      // Construction des dimensions selon le procédé (tournage, fraisage, les deux ou non précisé)
+      const procede = req.body.type_usinage || "";
+      const usesTournage = procede === "tournage" || procede === "les_deux" || procede === "" || procede === "Je ne sais pas";
+      const usesFraisage = procede === "fraisage" || procede === "les_deux" || procede === "" || procede === "Je ne sais pas";
+
+      const dimsText = [];
+      if (usesFraisage && req.body.dim_x) dimsText.push(`Fraisage : ${req.body.dim_x} × ${req.body.dim_y} × ${req.body.dim_z} mm`);
+      if (usesTournage && req.body.longueur) dimsText.push(`Tournage : L:${req.body.longueur} mm / Ø:${req.body.diametre} mm`);
+      const dimensionsStr = dimsText.join(" | ") || "Non précisé";
+
+
+      // Affichage des dimensions pour le mail (format HTML)
+      const dimsHtml = [
+        usesFraisage && req.body.dim_x
+          ? `<tr style="border-top: 1px solid #e2e8f0;">
+              <td style="padding: 12px 0; color: #64748b;">Dimensions fraisage</td>
+              <td style="padding: 12px 0; font-weight: 700;">${req.body.dim_x} × ${req.body.dim_y} × ${req.body.dim_z} mm</td>
+            </tr>`
+          : "",
+        usesTournage && req.body.longueur
+          ? `<tr style="border-top: 1px solid #e2e8f0;">
+              <td style="padding: 12px 0; color: #64748b;">Dimensions tournage</td>
+              <td style="padding: 12px 0; font-weight: 700;">L:${req.body.longueur} mm / Ø:${req.body.diametre} mm</td>
+            </tr>`
+          : "",
+      ].join("");
+
+
+      // Type d'usinage (pour l'affichage dans le mail, plus lisible que les valeurs brutes du formulaire)
+      var type;
+      if (req.body.type_usinage === "les_deux"){
+        type = "Tournage et fraisage";
+      } else if (req.body.type_usinage === "Je ne sais pas"){
+        type = "À définir";
+      } else if (req.body.type_usinage === "tournage" || req.body.type_usinage === "fraisage"){
+        type = req.body.type_usinage;
+      }
+
+
+
       await transporter.sendMail({
         from: `"Site Web MECA-CN" <${process.env.EMAIL_USER}>`,
         to: process.env.EMAIL_DEST || "contact@meca-cn.com",
         replyTo: req.body.email, // Permet de répondre directement au client
         subject: `Nouveau Devis - ${req.body.entreprise || req.body.nom}`,
-        text: `Nouvelle demande de devis\n\nClient: ${req.body.nom} (${req.body.entreprise})\nEmail: ${req.body.email}\nProduit: ${req.body.produit} Procédé souhaité: ${req.body.type_usinage || "Non précisé"}\n(${req.body.quantite} pièces)\nMatière: ${req.body.matiere || "Non précisé"} — ${fournitureLabel}\nDimensions: ${req.body.dim_x} x ${req.body.dim_y} x ${req.body.dim_z} mm\nDélais souhaités : ${req.body.date_livraison}\nDescription: ${req.body.description || "Aucune"}\nFichiers joints: ${req.files.length ? req.files.map((file) => file.originalname).join(", ") : "Aucun"}\n`,
+        text: `Nouvelle demande de devis\n\nClient: ${req.body.nom} (${req.body.entreprise})\nEmail: ${req.body.email}\nProduit: ${req.body.produit} Procédé souhaité: ${type || "Non précisé"}\n(${req.body.quantite} pièces)\nMatière: ${req.body.matiere || "Non précisé"} — ${fournitureLabel}\nDimensions: ${dimensionsStr}\nDélais souhaités : ${req.body.date_livraison}\nDescription: ${req.body.description || "Aucune"}\nFichiers joints: ${req.files.length ? req.files.map((file) => file.originalname).join(", ") : "Aucun"}\n`,
         html: `
                 <div style="font-family: Arial, sans-serif; color: #1f2937; background: #f4f6fb; padding: 20px;">
                     <div style="max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0;">
@@ -2698,7 +2765,7 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
                                     </tr>
                                     <tr style="border-top: 1px solid #e2e8f0;">
                                         <td style="padding: 12px 0; color: #64748b;">Procédé souhaité</td>
-                                        <td style="padding: 12px 0; font-weight: 700;">${req.body.type_usinage || "Non précisé"}</td>
+                                        <td style="padding: 12px 0; font-weight: 700;">${type || "Non précisé"}</td>
                                     </tr>
                                     <tr style="border-top: 1px solid #e2e8f0;">
                                       <td style="padding: 12px 0; color: #64748b;">Matière</td>
@@ -2713,10 +2780,7 @@ app.post("/envoyer-devis",uploadProduits.array("fichiers", 10),async (req, res) 
                                         <td style="padding: 12px 0; color: #64748b;">Quantité</td>
                                         <td style="padding: 12px 0; font-weight: 700;">${req.body.quantite || "0"} pièce(s)</td>
                                     </tr>
-                                    <tr style="border-top: 1px solid #e2e8f0;">
-                                        <td style="padding: 12px 0; color: #64748b;">Dimensions</td>
-                                        <td style="padding: 12px 0; font-weight: 700;">${req.body.dim_x || "0"} x ${req.body.dim_y || "0"} x ${req.body.dim_z || "0"} mm</td>
-                                    </tr>
+                                    ${dimsHtml}
                                     <tr style="border-top: 1px solid #e2e8f0;">
                                         <td style="padding: 12px 0; color: #64748b;">Délais souhaités</td>
                                         <td style="padding: 12px 0; font-weight: 700;">${req.body.date_livraison || "Non sélectionnée"}</td>

@@ -172,67 +172,101 @@
             </select>
          </div>
 
-          <div class="form-row" style="margin-bottom: 24px">
-            <div class="form-group">
-              <label>Dimension X *</label>
-              <div class="input-unit-group">
-                <input
-                  type="number"
-                  name="display_dim_x"
-                  min="0.01"
-                  step="0.01"
-                  placeholder="Long."
-                  required
-                />
-                <select class="unit-selector" id="unit_x">
-                  <option value="mm">mm</option>
-                  <option value="cm">cm</option>
-                  <option value="dm">dm</option>
-                </select>
-              </div>
-              <input type="hidden" name="dim_x" />
-            </div>
 
-            <div class="form-group">
-              <label>Dimension Y *</label>
-              <div class="input-unit-group">
-                <input
-                  type="number"
-                  name="display_dim_y"
-                  min="0.01"
-                  step="0.01"
-                  placeholder="Larg."
-                  required
-                />
-                <select class="unit-selector" id="unit_y">
-                  <option value="mm">mm</option>
-                  <option value="cm">cm</option>
-                  <option value="dm">dm</option>
-                </select>
-              </div>
-              <input type="hidden" name="dim_y" />
-            </div>
 
-            <div class="form-group">
-              <label>Dimension Z *</label>
-              <div class="input-unit-group">
-                <input
-                  type="number"
-                  name="display_dim_z"
-                  min="0.01"
-                  step="0.01"
-                  placeholder="Haut."
-                  required
-                />
-                <select class="unit-selector" id="unit_z">
-                  <option value="mm">mm</option>
-                  <option value="cm">cm</option>
-                  <option value="dm">dm</option>
-                </select>
-              </div>
-              <input type="hidden" name="dim_z" />
+
+         <!-- ========== Dimensions tournage =========== -->
+        <div id="dims-tournage" class="form-row dims-group" style="margin-bottom: 24px; display:none; flex-wrap:wrap;">
+          <div class="form-group">
+            <label>Longueur *</label>
+            <div class="input-unit-group">
+              <input type="number" name="display_longueur" min="0.01" step="0.01" placeholder="Long." />
+              <select class="unit-selector" id="unit_longueur">
+                <option value="mm">mm</option>
+                <option value="cm">cm</option>
+                <option value="dm">dm</option>
+              </select>
             </div>
+            <input type="hidden" name="longueur" />
           </div>
+          <div class="form-group">
+            <label>Diamètre *</label>
+            <div class="input-unit-group">
+              <input type="number" name="display_diametre" min="0.01" step="0.01" placeholder="Diamètre" />
+              <select class="unit-selector" id="unit_diametre">
+                <option value="mm">mm</option>
+                <option value="cm">cm</option>
+                <option value="dm">dm</option>
+              </select>
+            </div>
+            <input type="hidden" name="diametre" />
+          </div>
+        </div>
+
+        <!-- ========== Dimensions fraisage ========== -->
+        <div id="dims-fraisage" class="form-row dims-group" style="margin-bottom: 24px; display:none; flex-wrap:wrap;">
+
+          <div class="form-group">
+            <div class="tooltip-holder">
+              <label>Dimension X *</label>
+              <span class="tooltip-wrap">
+                <span class="tooltip-icon">?</span>
+                <span class="tooltip-bubble">Longueur de la pièce (axe horizontal principal)</span>
+              </span>
+            </div>
+            <div class="input-unit-group">
+              <input type="number" name="display_dim_x" min="0.01" step="0.01" placeholder="Long." />
+              <select class="unit-selector" id="unit_x">
+                <option value="mm">mm</option>
+                <option value="cm">cm</option>
+                <option value="dm">dm</option>
+              </select>
+            </div>
+            <input type="hidden" name="dim_x" />
+          </div>
+
+
+          <div class="form-group">
+            <div class="tooltip-holder">
+              <label>Dimension Y *</label>
+              <span class="tooltip-wrap">
+                <span class="tooltip-icon">?</span>
+                <span class="tooltip-bubble">Largeur de la pièce (axe horizontal secondaire)</span>
+              </span>
+            </div>
+            <div class="input-unit-group">
+              <input type="number" name="display_dim_y" min="0.01" step="0.01" placeholder="Larg." />
+              <select class="unit-selector" id="unit_y">
+                <option value="mm">mm</option>
+                <option value="cm">cm</option>
+                <option value="dm">dm</option>
+              </select>
+            </div>
+            <input type="hidden" name="dim_y" />
+          </div>
+
+
+          <div class="form-group">
+            <div class="tooltip-holder">
+              <label>Dimension Z *</label>
+              <span class="tooltip-wrap">
+                <span class="tooltip-icon">?</span>
+                <span class="tooltip-bubble">Hauteur de la pièce (axe vertical)</span>
+              </span>
+            </div>
+            <div class="input-unit-group">
+              <input type="number" name="display_dim_z" min="0.01" step="0.01" placeholder="Haut." />
+              <select class="unit-selector" id="unit_z">
+                <option value="mm">mm</option>
+                <option value="cm">cm</option>
+                <option value="dm">dm</option>
+              </select>
+            </div>
+            <input type="hidden" name="dim_z" />
+          </div>
+        </div>
+
+
 
           <label>Choisissez une date de livraison souhaitée *</label>
           <div class="elegant-calencar">
@@ -501,35 +535,116 @@
       }
     }
 
-    function updateHiddenDimensions() {
-      ["x", "y", "z"].forEach((d) => {
-        const displayVal = document.querySelector(`input[name="display_dim_${d}"]`).value;
-        const unit = document.getElementById(`unit_${d}`).value;
-        document.querySelector(`input[name="dim_${d}"]`).value = convertToMm(displayVal, unit);
+    // ── TOGGLE DIMENSIONS SELON PROCÉDÉ ─────────────────────────────
+    function toggleDimensions() {
+      var procede = document.getElementById("type_usinage").value;
+      var showTournage = procede === "tournage";
+      var showFraisage = procede === "fraisage";
+      // "les_deux" et "Je ne sais pas" → tout afficher
+      var showBoth = procede === "les_deux" || procede === "" || procede === "Je ne sais pas";
+
+      var dimsTournage = document.getElementById("dims-tournage");
+      var dimsFraisage = document.getElementById("dims-fraisage");
+
+      dimsTournage.style.display = (showTournage || showBoth) ? "flex" : "none";
+      dimsFraisage.style.display = (showFraisage || showBoth) ? "flex" : "none";
+
+      // Gérer le required dynamiquement
+      var inputsTournage = dimsTournage.querySelectorAll("input[type='number']");
+      var inputsFraisage = dimsFraisage.querySelectorAll("input[type='number']");
+
+      inputsTournage.forEach(function(i) {
+        i.required = (showTournage || showBoth);
+      });
+      inputsFraisage.forEach(function(i) {
+        i.required = (showFraisage || showBoth);
       });
     }
 
+    document.getElementById("type_usinage").addEventListener("change", toggleDimensions);
+    toggleDimensions(); // appel initial
 
-    // ── VALIDATION DES DIMENSIONS ────────────────────────────────────
+    function updateHiddenDimensions() {
+      var procede = document.getElementById("type_usinage").value;
+      var usesTournage = procede === "tournage" || procede === "les_deux" || procede === "" || procede === "Je ne sais pas";
+      var usesFraisage = procede === "fraisage" || procede === "les_deux" || procede === "" || procede === "Je ne sais pas";
+
+      if (usesFraisage) {
+        ["x", "y", "z"].forEach(function(d) {
+          var displayVal = document.querySelector('input[name="display_dim_' + d + '"]').value;
+          var unit = document.getElementById("unit_" + d).value;
+          document.querySelector('input[name="dim_' + d + '"]').value = convertToMm(displayVal, unit);
+        });
+      }
+
+      if (usesTournage) {
+        var displayLongueur = document.querySelector('input[name="display_longueur"]').value;
+        var unitLongueur = document.getElementById("unit_longueur").value;
+        document.querySelector('input[name="longueur"]').value = convertToMm(displayLongueur, unitLongueur);
+
+        var displayDiametre = document.querySelector('input[name="display_diametre"]').value;
+        var unitDiametre = document.getElementById("unit_diametre").value;
+        document.querySelector('input[name="diametre"]').value = convertToMm(displayDiametre, unitDiametre);
+      }
+}
+
+
     function validateDimensions() {
       if (!maxDimensions) {
         showErrorModal("Erreur technique", "Impossible de vérifier les dimensions.");
         return false;
       }
-
       updateHiddenDimensions();
 
-      const dimX = parseFloat(document.querySelector("input[name='dim_x']").value) || 0;
-      const dimY = parseFloat(document.querySelector("input[name='dim_y']").value) || 0;
-      const dimZ = parseFloat(document.querySelector("input[name='dim_z']").value) || 0;
+      var procede = document.getElementById("type_usinage").value;
+      var usesTournage = procede === "tournage" || procede === "les_deux" || procede === "" || procede === "Je ne sais pas";
+      var usesFraisage = procede === "fraisage" || procede === "les_deux" || procede === "" || procede === "Je ne sais pas";
 
-      if (dimX > maxDimensions.max_x || dimY > maxDimensions.max_y || dimZ > maxDimensions.max_z) {
-        showErrorModal(
-          "Dimensions incompatibles",
-          `Les dimensions (${dimX}x${dimY}x${dimZ} mm) dépassent les capacités (max: ${maxDimensions.max_x}x${maxDimensions.max_y}x${maxDimensions.max_z} mm).`
-        );
-        return false;
+      if (usesFraisage) {
+        var dimX = parseFloat(document.querySelector("input[name='dim_x']").value) || 0;
+        var dimY = parseFloat(document.querySelector("input[name='dim_y']").value) || 0;
+        var dimZ = parseFloat(document.querySelector("input[name='dim_z']").value) || 0;
+
+        const maxLength = Math.max(maxDimensions.max_x, maxDimensions.max_longueur);
+        if (dimX > maxLength) {
+          showErrorModal(
+            "Dimensions incompatibles",
+            "La longueur de votre pièce dépasse les capacités de nos machines (max : " + maxLength + " mm)."
+          );
+          return false;
+        }
+
+        const maxWidth = Math.max(maxDimensions.max_y, maxDimensions.max_diametre);
+        if (dimY > maxWidth) {
+          showErrorModal(
+            "Dimensions incompatibles",
+            "La largeur de votre pièce dépasse les capacités de nos machines (max : " + maxWidth + " mm)."
+          );
+          return false;
+        }
+
+        const maxHeight = Math.max(maxDimensions.max_z, maxDimensions.max_diametre);
+        if (dimZ > maxHeight) {
+          showErrorModal(
+            "Dimensions incompatibles",
+            "La hauteur de votre pièce dépasse les capacités de nos machines (max : " + maxHeight + " mm)."
+          );
+          return false;
+        }
+      } // ← accolade fermante du if (usesFraisage) — c'était celle-ci qui manquait
+
+      if (usesTournage && maxDimensions.max_longueur && maxDimensions.max_diametre) {
+        var longueur = parseFloat(document.querySelector("input[name='longueur']").value) || 0;
+        var diametre = parseFloat(document.querySelector("input[name='diametre']").value) || 0;
+        if (longueur > maxDimensions.max_longueur || diametre > maxDimensions.max_diametre) {
+          showErrorModal(
+            "Dimensions incompatibles",
+            "Les dimensions tournage (L:" + longueur + " mm / Ø:" + diametre + " mm) dépassent les capacités (max L:" + maxDimensions.max_longueur + " / Ø:" + maxDimensions.max_diametre + " mm)."
+          );
+          return false;
+        }
       }
+
       return true;
     }
 
@@ -858,34 +973,52 @@
       var recapBox = document.getElementById("recap-display");
       updateHiddenDimensions();
 
+      var procede = document.getElementById("type_usinage").value;
+      var usesTournage = procede === "tournage" || procede === "les_deux" || procede === "" || procede === "Je ne sais pas";
+      var usesFraisage = procede === "fraisage" || procede === "les_deux" || procede === "" || procede === "Je ne sais pas";
+
       var data = {
-        nom:         document.querySelector('input[name="nom"]').value         || "Non précisé",
-        entreprise:  document.querySelector('input[name="entreprise"]').value  || "Non précisé",
-        email:       document.querySelector('input[name="email"]').value       || "Non précisé",
-        produit:     document.querySelector('input[name="produit"]').value     || "Non précisé",
-        quantite:    document.querySelector('input[name="quantite"]').value    || "0",
-        dim_x:       document.querySelector('input[name="dim_x"]').value      || "0",
-        dim_y:       document.querySelector('input[name="dim_y"]').value      || "0",
-        dim_z:       document.querySelector('input[name="dim_z"]').value      || "0",
-        date:        document.getElementById("date_livraison_input").value    || "Non sélectionnée",
+        nom: document.querySelector('input[name="nom"]').value || "Non précisé",
+        entreprise: document.querySelector('input[name="entreprise"]').value || "Non précisé",
+        email: document.querySelector('input[name="email"]').value || "Non précisé",
+        produit: document.querySelector('input[name="produit"]').value || "Non précisé",
+        quantite: document.querySelector('input[name="quantite"]').value || "0",
+        date: document.getElementById("date_livraison_input").value || "Non sélectionnée",
         description: document.querySelector('textarea[name="description"]').value || "Aucune description",
       };
 
+      var dimsHtml = "";
+      if (usesFraisage) {
+        var dx = document.querySelector("input[name='dim_x']").value || "0";
+        var dy = document.querySelector("input[name='dim_y']").value || "0";
+        var dz = document.querySelector("input[name='dim_z']").value || "0";
+        dimsHtml += "<p><strong>Dimensions fraisage :</strong> " + dx + " × " + dy + " × " + dz + " mm</p>";
+      }
+      if (usesTournage) {
+        var dl = document.querySelector("input[name='longueur']").value || "0";
+        var dd = document.querySelector("input[name='diametre']").value || "0";
+        dimsHtml += "<p><strong>Dimensions tournage :</strong> L:" + dl + " mm / Ø:" + dd + " mm</p>";
+      }
+
       var fichiersHtml = selectedFiles.length > 0
-        ? "<p><strong>Fichiers joints :</strong></p><ul>" + selectedFiles.map(function (f) { return "<li>" + f.name + " (" + formatBytes(f.size) + ")</li>"; }).join("") + "</ul>"
+        ? "<p><strong>Fichiers joints :</strong></p><ul>" +
+          selectedFiles.map(function (f) {
+            return "<li>" + f.name + " (" + formatBytes(f.size) + ")</li>";
+          }).join("") +
+          "</ul>"
         : "<p><strong>Fichiers joints :</strong> Aucun fichier</p>";
 
-      recapBox.innerHTML = `
-        <div class="recap-content">
-          <p><strong>Nom complet :</strong> ${data.nom}</p>
-          <p><strong>Entreprise :</strong> ${data.entreprise}</p>
-          <p><strong>Contact :</strong> ${data.email}</p>
-          <p><strong>Produit :</strong> ${data.produit} (${data.quantite} pièces)</p>
-          <p><strong>Dimensions :</strong> ${data.dim_x} x ${data.dim_y} x ${data.dim_z} mm</p>
-          <p><strong>Délais souhaités :</strong> ${data.date}</p>
-          <p><strong>Description :</strong> ${data.description.substring(0, 100)}${data.description.length > 100 ? "..." : ""}</p>
-          ${fichiersHtml}
-        </div>`;
+      recapBox.innerHTML =
+        '<div class="recap-content">' +
+          "<p><strong>Nom complet :</strong> " + data.nom + "</p>" +
+          "<p><strong>Entreprise :</strong> " + data.entreprise + "</p>" +
+          "<p><strong>Contact :</strong> " + data.email + "</p>" +
+          "<p><strong>Produit :</strong> " + data.produit + " (" + data.quantite + " pièces)</p>" +
+          dimsHtml +
+          "<p><strong>Délais souhaités :</strong> " + data.date + "</p>" +
+          "<p><strong>Description :</strong> " + data.description.substring(0, 100) + (data.description.length > 100 ? "..." : "") + "</p>" +
+          fichiersHtml +
+        "</div>";
     }
 
 
@@ -956,7 +1089,6 @@
     captchaModal.addEventListener("click", function (e) {
       if (e.target === captchaModal) closeCaptchaModal();
     });
-    // ────────────────────────────────────────────────────────────────
 
   }, false);
 </script>

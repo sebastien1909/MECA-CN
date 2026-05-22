@@ -233,7 +233,8 @@
 <!-- =============== PREVIEW MOBILE ========================-->
 
         <div class="preview-wrapper preview-mobile">
-            <div class="preview-container">
+
+            <div class="preview-container" id="preview-mobile-container-link">
                 <div class="preview-header">
                     <h4>Prévisualisation</h4>
                     <p class="preview-sub">Prévisualisez la carte de votre machine ici</p>
@@ -319,6 +320,12 @@
         </div>
     </section>
 </main>
+
+<!-- Bouton de navigation rapide Preview / Formulaire sur Mobile -->
+<button type="button" id="mobile-nav-toggle" class="mobile-nav-btn" data-target="down">
+    <span class="nav-btn-icon">↓</span>
+    <span class="nav-btn-text">Voir la prévisualisation</span>
+</button>
 
 <script>
     (function(){
@@ -484,6 +491,44 @@
     updatePreview();
 })();
 
+
+
+
+    // --- Gestion du bouton de navigation rapide Mobile ---
+    const mobileNavBtn = document.getElementById('mobile-nav-toggle');
+    const mobilePreviewZone = document.getElementById('preview-mobile-container-link');
+
+    if (mobileNavBtn && mobilePreviewZone) {
+        // 1. Gestion du clic (Scroll)
+        mobileNavBtn.addEventListener('click', () => {
+            const target = mobileNavBtn.getAttribute('data-target');
+            
+            if (target === 'down') {
+                // Fait défiler jusqu'à la preview mobile
+                mobilePreviewZone.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                // Remonte tout en haut de la page
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        // 2. Détection du scroll pour changer l'état du bouton
+        window.addEventListener('scroll', () => {
+            // On récupère la position de la zone de preview
+            const rect = mobilePreviewZone.getBoundingClientRect();
+            
+            // Si le haut de la zone de prévisualisation est visible ou dépassé
+            if (rect.top <= window.innerHeight * 0.7) {
+                mobileNavBtn.setAttribute('data-target', 'up');
+                mobileNavBtn.querySelector('.nav-btn-icon').textContent = '↑';
+                mobileNavBtn.querySelector('.nav-btn-text').textContent = 'Retour au formulaire';
+            } else {
+                mobileNavBtn.setAttribute('data-target', 'down');
+                mobileNavBtn.querySelector('.nav-btn-icon').textContent = '↓';
+                mobileNavBtn.querySelector('.nav-btn-text').textContent = 'Voir la prévisualisation';
+            }
+        });
+    }
 
 </script>
 <%- include('./footer') %>
