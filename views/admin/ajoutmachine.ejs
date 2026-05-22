@@ -25,13 +25,21 @@
                                     <p id="preview-desc"><%= (machine.description_longue.length > 0 ? machine.description_longue : (machine.description_longue.length > 0 ? machine.description_courte : 'Description non spécifiée')) %></p>
 
                                     <div class="preview-info">
-                                        <div class="preview-info-row">
-                                            <span class="label" id="preview-stat1-name"><%= machine.statistique1_nom %></span>
-                                            <span class="value" id="preview-stat1-value"><%= machine.statistique1_donnee %></span>
+                                        <div class="preview-info-row" id="preview-stat1-row">
+                                            <span class="label" id="preview-stat1-name"></span>
+                                            <span class="value" id="preview-stat1-value"></span>
                                         </div>
-                                        <div class="preview-info-row">
-                                            <span class="label" id="preview-stat2-name"><%= machine.statistique2_nom %></span>
-                                            <span class="value" id="preview-stat2-value"><%= machine.statistique2_donnee %></span>
+                                        <div class="preview-info-row" id="preview-stat2-row" style="display:none;">
+                                            <span class="label" id="preview-stat2-name"></span>
+                                            <span class="value" id="preview-stat2-value"></span>
+                                        </div>
+                                        <div class="preview-info-row" id="preview-stat3-row" style="display:none;">
+                                            <span class="label" id="preview-stat3-name"></span>
+                                            <span class="value" id="preview-stat3-value"></span>
+                                        </div>
+                                        <div class="preview-info-row" id="preview-stat4-row" style="display:none;">
+                                            <span class="label" id="preview-stat4-name"></span>
+                                            <span class="value" id="preview-stat4-value"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -90,35 +98,6 @@
                     <input type="file" name="image_machine" id="image_machine_input" style="display:none;">
                 </div>
 
-                <div class="form-group">
-                    <label>Statistique 1 - Nom</label>
-                    <input type="text" name="statistique1_nom" value="<%= machine.statistique1_nom %>">
-                </div>
-
-                <div class="form-group">
-                    <label>Statistique 1 - Donnée</label>
-                    <input type="text" name="statistique1_donnee" value="<%= machine.statistique1_donnee %>">
-                </div>
-
-                <div class="form-group">
-                    <label>Statistique 2 - Nom</label>
-                    <input type="text" name="statistique2_nom" value="<%= machine.statistique2_nom %>">
-                </div>
-
-                <div class="form-group">
-                    <label>Statistique 2 - Donnée</label>
-                    <input type="text" name="statistique2_donnee" value="<%= machine.statistique2_donnee %>">
-                </div>
-
-                <div class="form-group">
-                    <label>Avantage - Titre</label>
-                    <input type="text" name="avantage_titre" value="<%= machine.avantage_titre %>">
-                </div>
-
-                <div class="form-group">
-                    <label>Avantage - Description</label>
-                    <textarea name="avantage_description" rows="3"><%= machine.avantage_description %></textarea>
-                </div>
             </div>
             <div class="form-right">
                 <div class="form-group" style="margin-bottom: 14px;">
@@ -183,6 +162,52 @@
 
 
 
+                    
+                        <!-- ===== STATISTIQUES DYNAMIQUES ===== -->
+                    <div id="stats-container">
+                        <% for (let i = 1; i <= 4; i++) { %>
+                            <div class="stat-group" id="stat-group-<%= i %>" style="<%= (!machine['statistique' + i + '_nom'] && i > 1) ? 'display:none;' : '' %>">
+                                <div class="stat-group-header">
+                                    <span class="stat-group-label">Statistique <%= i %></span>
+                                    <% if (i > 1) { %>
+                                        <button type="button" class="stat-remove-btn" data-index="<%= i %>">
+                                            <i class="ti ti-trash" aria-hidden="true"></i> Retirer
+                                        </button>
+                                    <% } %>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nom</label>
+                                    <input type="text" name="statistique<%= i %>_nom" 
+                                        value="<%= machine['statistique' + i + '_nom'] || '' %>"
+                                        placeholder="Ex: Puissance">
+                                </div>
+                                <div class="form-group">
+                                    <label>Donnée</label>
+                                    <input type="text" name="statistique<%= i %>_donnee" 
+                                        value="<%= machine['statistique' + i + '_donnee'] || '' %>"
+                                        placeholder="Ex: 12 000 tr/min">
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <button type="button" id="stat-add-btn" class="stat-add-btn">
+                        <i class="ti ti-plus" aria-hidden="true"></i> Ajouter une statistique
+                    </button>
+                <!-- ===== FIN STATISTIQUES ===== -->
+
+
+
+                     <div class="form-group">
+                        <label>Avantage - Titre</label>
+                        <input type="text" name="avantage_titre" value="<%= machine.avantage_titre %>">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Avantage - Description</label>
+                        <textarea name="avantage_description" rows="3"><%= machine.avantage_description %></textarea>
+                    </div>
+
                 <div class="form-group">
                     <label>Année d'entrée</label>
                     <input type="number" name="annee_entree" value="<%= machine.annee_entree %>">
@@ -198,7 +223,7 @@
 
 
         <!-- ========== PREVIEW MOBILE ========== -->
-        <div class="preview-wrapper preview-mobile">
+        <div class="preview-wrapper preview-mobile" id="preview-mobile-container-link">
             <div class="preview-container">
                 <div class="preview-header">
                     <h4>Prévisualisation</h4>
@@ -217,23 +242,22 @@
                         <p id="preview-mobile-desc" class="mobile-desc"><%= machine.description_courte || machine.description_longue || '' %></p>
 
                         <div class="mobile-stats">
-                            <% 
-                            let idx = 1;
-                            for (let cle in machine) { 
-                                if (cle.includes("_nom")) { 
-                                    const nomStat = machine[cle];
-                                    const valeurStat = machine[cle.replace("_nom", "_donnee")];
-                                    if (nomStat && nomStat.trim() !== '' && valeurStat && valeurStat.trim() !== '') { 
-                            %> 
-                                        <div class="mobile-stat">
-                                            <div class="stat-label" id="preview-mobile-stat<%= idx %>-name"><%= nomStat %></div>
-                                            <div class="stat-value" id="preview-mobile-stat<%= idx %>-value"><%= valeurStat %></div>
-                                        </div>
-                            <% 
-                                    idx++;
-                                } 
-                            }}
-                            %>
+                            <div class="mobile-stat" id="preview-mobile-stat1-row">
+                                <div class="stat-label" id="preview-mobile-stat1-name"></div>
+                                <div class="stat-value" id="preview-mobile-stat1-value"></div>
+                            </div>
+                            <div class="mobile-stat" id="preview-mobile-stat2-row" style="display:none;">
+                                <div class="stat-label" id="preview-mobile-stat2-name"></div>
+                                <div class="stat-value" id="preview-mobile-stat2-value"></div>
+                            </div>
+                            <div class="mobile-stat" id="preview-mobile-stat3-row" style="display:none;">
+                                <div class="stat-label" id="preview-mobile-stat3-name"></div>
+                                <div class="stat-value" id="preview-mobile-stat3-value"></div>
+                            </div>
+                            <div class="mobile-stat" id="preview-mobile-stat4-row" style="display:none;">
+                                <div class="stat-label" id="preview-mobile-stat4-name"></div>
+                                <div class="stat-value" id="preview-mobile-stat4-value"></div>
+                            </div>
                         </div>
 
 
@@ -284,6 +308,14 @@
     </section>
 </main>
 
+
+<!-- Bouton de navigation rapide Preview / Formulaire sur Mobile -->
+<button type="button" id="mobile-nav-toggle" class="mobile-nav-btn" data-target="down">
+    <span class="nav-btn-icon">↓</span>
+    <span class="nav-btn-text">Voir la prévisualisation</span>
+</button>
+
+
 <script>
     (function(){
         const uploadButton = document.querySelector('.upload-button');
@@ -301,13 +333,57 @@
         const previewMobileDimsFraisage = document.getElementById('preview-mobile-dims-fraisage');
         const previewMobileDimsTournage = document.getElementById('preview-mobile-dims-tournage');
 
+        // --- Gestion dynamique des statistiques ---
+        const statAddBtn = document.getElementById('stat-add-btn');
+
+        function getVisibleStatCount() {
+            let count = 0;
+            for (let i = 1; i <= 4; i++) {
+                const group = document.getElementById('stat-group-' + i);
+                if (group && group.style.display !== 'none') count++;
+            }
+            return count;
+        }
+
+        function refreshStatButtons() {
+            if (statAddBtn) statAddBtn.disabled = getVisibleStatCount() >= 4;
+        }
+
+        if (statAddBtn) {
+            statAddBtn.addEventListener('click', () => {
+                for (let i = 1; i <= 4; i++) {
+                    const group = document.getElementById('stat-group-' + i);
+                    if (group && group.style.display === 'none') {
+                        group.style.display = '';
+                        refreshStatButtons();
+                        updatePreview();
+                        break;
+                    }
+                }
+            });
+        }
+
+        document.querySelectorAll('.stat-remove-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = btn.getAttribute('data-index');
+                const group = document.getElementById('stat-group-' + idx);
+                if (!group) return;
+                group.querySelectorAll('input').forEach(input => input.value = '');
+                group.style.display = 'none';
+                refreshStatButtons();
+                updatePreview();
+            });
+        });
+
+        refreshStatButtons();
+        // --- Fin gestion stats ---
+
         function updateDimsVisibility() {
             const val = typeSelect.value;
             dimsFraisage.style.display = (val === 'fraisage' || val === 'tournage/fraisage') ? '' : 'none';
             dimsTournage.style.display = (val === 'tournage' || val === 'tournage/fraisage') ? '' : 'none';
         }
 
-        // CORRECTION 1 : gère desktop ET mobile
         function updatePreviewDimsVisibility(type) {
             if (previewDimsFraisage) previewDimsFraisage.style.display = (type === 'fraisage' || type === 'tournage/fraisage') ? '' : 'none';
             if (previewDimsTournage) previewDimsTournage.style.display = (type === 'tournage' || type === 'tournage/fraisage') ? '' : 'none';
@@ -365,24 +441,14 @@
             const diametre = (get('[name="diametre_max"]') || {}).value || '';
             const alesage  = (get('[name="alesage"]')      || {}).value || '';
 
-            // Desktop — textes
-            setIf('preview-name',        name);
-            setIf('preview-card-title',  name);
-            setIf('preview-desc',        descLong || descShort);
-            setIf('preview-shortdesc',   descShort);
-            setIf('preview-adv-title',   advTitle);
-            setIf('preview-adv-desc',    advDesc);
-            setIf('preview-year',        year);
-
-            // Desktop — stats (IDs fixes sur cette page)
-            const stat1Name = (get('[name="statistique1_nom"]')    || {}).value || '';
-            const stat1Val  = (get('[name="statistique1_donnee"]') || {}).value || '';
-            const stat2Name = (get('[name="statistique2_nom"]')    || {}).value || '';
-            const stat2Val  = (get('[name="statistique2_donnee"]') || {}).value || '';
-            setIf('preview-stat1-name',  stat1Name);
-            setIf('preview-stat1-value', stat1Val);
-            setIf('preview-stat2-name',  stat2Name);
-            setIf('preview-stat2-value', stat2Val);
+            // Desktop — textes généraux
+            setIf('preview-name',       name);
+            setIf('preview-card-title', name);
+            setIf('preview-desc',       descLong || descShort);
+            setIf('preview-shortdesc',  descShort);
+            setIf('preview-adv-title',  advTitle);
+            setIf('preview-adv-desc',   advDesc);
+            setIf('preview-year',       year);
 
             // Desktop — dimensions
             setIf('preview-dx',       dx       ? dx       + ' mm' : '');
@@ -394,44 +460,52 @@
 
             updatePreviewDimsVisibility(type);
 
-            // Mobile — textes
+            // Mobile — textes généraux
             setIf('preview-mobile-name', name);
             setIf('preview-mobile-desc', descShort || descLong);
             setIf('preview-mobile-year', year);
 
-            // Stats mobiles — reconstruire le DOM dynamiquement
-            const mobileStatsContainer = document.querySelector('.mobile-stats');
-            if (mobileStatsContainer) {
-                const formStatNoms    = document.querySelectorAll('[name^="statistique"][name$="_nom"]');
-                const formStatDonnees = document.querySelectorAll('[name^="statistique"][name$="_donnee"]');
-
-                // Vider le conteneur avant de le reconstruire
-                mobileStatsContainer.innerHTML = '';
-
-                formStatNoms.forEach((inputNom, i) => {
-                    const inputVal = formStatDonnees[i];
-                    if (!inputVal) return;
-                    const n = inputNom.value.trim();
-                    const v = inputVal.value.trim();
-                    if (n && v) {
-                        const div = document.createElement('div');
-                        div.className = 'mobile-stat';
-                        div.innerHTML = `
-                            <div class="stat-label">${n}</div>
-                            <div class="stat-value">${v}</div>
-                        `;
-                        mobileStatsContainer.appendChild(div);
-                    }
-                });
-            }
-
-            // CORRECTION 3 : dimensions mobiles
+            // Mobile — dimensions
             setIf('preview-mobile-dx',       dx       ? dx       + ' mm' : '');
             setIf('preview-mobile-dy',       dy       ? dy       + ' mm' : '');
             setIf('preview-mobile-dz',       dz       ? dz       + ' mm' : '');
             setIf('preview-mobile-longueur', longueur ? longueur + ' mm' : '');
             setIf('preview-mobile-diametre', diametre ? diametre + ' mm' : '');
             setIf('preview-mobile-alesage',  alesage  ? alesage  + ' mm' : '');
+
+            // --- Statistiques desktop + mobile ---
+            // On vide et masque tous les slots
+            for (let i = 1; i <= 4; i++) {
+                setIf('preview-stat' + i + '-name',  '');
+                setIf('preview-stat' + i + '-value', '');
+                setIf('preview-mobile-stat' + i + '-name',  '');
+                setIf('preview-mobile-stat' + i + '-value', '');
+                const desktopRow = document.getElementById('preview-stat' + i + '-row');
+                const mobileRow  = document.getElementById('preview-mobile-stat' + i + '-row');
+                if (desktopRow) desktopRow.style.display = 'none';
+                if (mobileRow)  mobileRow.style.display  = 'none';
+            }
+
+            // On remplit et affiche uniquement les slots visibles et renseignés
+            let previewStatIdx = 1;
+            for (let i = 1; i <= 4; i++) {
+                const group = document.getElementById('stat-group-' + i);
+                if (!group || group.style.display === 'none') continue;
+                const nom = (get('[name="statistique' + i + '_nom"]')    || {}).value || '';
+                const val = (get('[name="statistique' + i + '_donnee"]') || {}).value || '';
+                if (nom || val) {
+                    setIf('preview-stat' + previewStatIdx + '-name',  nom);
+                    setIf('preview-stat' + previewStatIdx + '-value', val);
+                    setIf('preview-mobile-stat' + previewStatIdx + '-name',  nom);
+                    setIf('preview-mobile-stat' + previewStatIdx + '-value', val);
+                    const desktopRow = document.getElementById('preview-stat' + previewStatIdx + '-row');
+                    const mobileRow  = document.getElementById('preview-mobile-stat' + previewStatIdx + '-row');
+                    if (desktopRow) desktopRow.style.display = '';
+                    if (mobileRow)  mobileRow.style.display  = '';
+                    previewStatIdx++;
+                }
+            }
+            // --- Fin statistiques ---
 
             const file = fileInput && fileInput.files && fileInput.files[0];
             if (file) {
@@ -448,6 +522,38 @@
 
         updatePreview();
     })();
+
+
+
+
+
+    // --- Gestion du bouton de navigation rapide Mobile ---
+    const mobileNavBtn = document.getElementById('mobile-nav-toggle');
+    const mobilePreviewZone = document.getElementById('preview-mobile-container-link');
+
+    if (mobileNavBtn && mobilePreviewZone) {
+        mobileNavBtn.addEventListener('click', () => {
+            const target = mobileNavBtn.getAttribute('data-target');
+            if (target === 'down') {
+                mobilePreviewZone.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            const rect = mobilePreviewZone.getBoundingClientRect();
+            if (rect.top <= window.innerHeight * 0.7) {
+                mobileNavBtn.setAttribute('data-target', 'up');
+                mobileNavBtn.querySelector('.nav-btn-icon').textContent = '↑';
+                mobileNavBtn.querySelector('.nav-btn-text').textContent = 'Retour au formulaire';
+            } else {
+                mobileNavBtn.setAttribute('data-target', 'down');
+                mobileNavBtn.querySelector('.nav-btn-icon').textContent = '↓';
+                mobileNavBtn.querySelector('.nav-btn-text').textContent = 'Voir la prévisualisation';
+            }
+        });
+    }
 </script>
 
 <%- include('./footer') %>

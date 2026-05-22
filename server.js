@@ -2639,6 +2639,10 @@ app.post(
         statistique1_donnee,
         statistique2_nom,
         statistique2_donnee,
+        statistique3_nom,
+        statistique3_donnee,
+        statistique4_nom,
+        statistique4_donnee,
         avantage_titre,
         avantage_description,
         d_x,
@@ -2662,11 +2666,13 @@ app.post(
           nom_machine, description_courte, description_longue,
           statistique1_nom, statistique1_donnee,
           statistique2_nom, statistique2_donnee,
+          statistique3_nom, statistique3_donnee,
+          statistique4_nom, statistique4_donnee,
           avantage_titre, avantage_description,
           d_x, d_y, d_z,
           diametre_max, longueur_max, alesage,
           type, annee_entree, image_machine
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
       const values = [
         nom_machine || null,
@@ -2676,6 +2682,10 @@ app.post(
         statistique1_donnee || null,
         statistique2_nom || null,
         statistique2_donnee || null,
+        statistique3_nom || null,
+        statistique3_donnee || null,
+        statistique4_nom || null,
+        statistique4_donnee || null,
         avantage_titre || null,
         avantage_description || null,
         d_x || null,

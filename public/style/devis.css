@@ -118,7 +118,7 @@ label {
 input, textarea {
     border: 1px solid #d7dce7;
     border-radius: 20px;
-    padding: 18px 20px;
+    padding: 18px 0px 18px 20px;
     font-size: 1rem;
     color: #172033;
     background: #f8f9fb;
@@ -574,7 +574,7 @@ tbody td:hover, .selected {
     }
 
     .devis-form-card {
-        padding: 30px 20px;
+        padding: 20px 20px 20px 0px;
         box-shadow: none;
         background: transparent;
     }
@@ -996,7 +996,7 @@ tbody td:hover, .selected {
 
 }
 
-#cancel-captcha{
+#cancel-captcha{    
     background:#e2e8f0;
     color:#1f2937;
 }
@@ -1014,8 +1014,6 @@ tbody td:hover, .selected {
 .btn-captcha-confirm:hover{
     opacity:0.88;
 }
-
-
 
 
 .matiere-modal-overlay {
@@ -1123,6 +1121,7 @@ tbody td:hover, .selected {
     transition: opacity 0.18s ease;
     z-index: 10;
 }
+
 
 /* petite flèche vers le bas */
 .tooltip-bubble::after {
