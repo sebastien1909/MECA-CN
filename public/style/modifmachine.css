@@ -698,3 +698,97 @@ main::before {
         background: #0b1724;
     }
 }
+
+
+
+
+
+
+/* ===== Statistiques dynamiques ===== */
+#stats-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.stat-group {
+    border: 0.5px solid #d0d0d0;
+    border-radius: 10px;
+    padding: 14px 16px 10px;
+    margin-bottom: 12px;
+    background: #fafafa;
+    transition: opacity 0.2s;
+}
+
+.stat-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.stat-group-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.stat-remove-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: 0.5px solid #f0a0a0;
+    border-radius: 6px;
+    color: #c0392b;
+    font-size: 12px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.stat-remove-btn:hover {
+    background: #fdecea;
+    border-color: #c0392b;
+}
+
+.stat-remove-btn .ti {
+    font-size: 14px;
+}
+
+.stat-add-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: none;
+    border: 0.5px dashed #aaa;
+    border-radius: 8px;
+    color: #555;
+    font-size: 13px;
+    padding: 9px 16px;
+    cursor: pointer;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 16px;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.stat-add-btn:hover {
+    background: #f0f4ff;
+    border-color: #4a6cf7;
+    color: #4a6cf7;
+}
+
+.stat-add-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border-color: #ccc;
+    color: #999;
+}
+
+.stat-add-btn .ti {
+    font-size: 15px;
+}
+/* ===== Fin statistiques ===== */

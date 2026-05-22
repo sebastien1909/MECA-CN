@@ -68,19 +68,32 @@
                                 <%= element.description_longue %>
                             </p>
 
-                            <div class="info1">
-                                <p> 
-                                    <%= element.statistique1_nom %>
-                                </p>
-                                <p> <%= element.statistique1_donnee %> </p>
-                            </div>
-                            <div class="info2">
-                                <p> 
-                                    <%= element.statistique2_nom %>
-                                </p>
-                                <p> <%= element.statistique2_donnee %> </p>
-                            </div>
+
+                            <% 
+                            // On boucle sur toutes les propriétés de la machine en cours
+                            for (let cle in element) { 
+                                // On cherche uniquement les clés qui contiennent "_nom" (ex: statistique1_nom)
+                                if (cle.includes("_nom")) { 
+                                    const nomStat = element[cle];
+                                    // On récupère la donnée associée en remplaçant "_nom" par "_donnee"
+                                    const cleDonnee = cle.replace("_nom", "_donnee");
+                                    const valeurStat = element[cleDonnee];
+
+                                    // On n'affiche le bloc que si le nom ET la donnée existent et ne sont pas vides
+                                    if (nomStat && nomStat.trim() !== '' && valeurStat && valeurStat.trim() !== '') { 
+                            %>
+                                        <div class="info1">
+                                            <p><%= nomStat %></p>
+                                            <p><%= valeurStat %></p>
+                                        </div>
+                            <% 
+                                    } 
+                                } 
+                            } 
+                        %>
                         </div>
+
+
 
                         <div class="bottom-part">
                             <h2>
@@ -163,19 +176,32 @@
                             <%= element.description_longue %>
                         </p>
 
-                        <div class="info1">
-                            <p> 
-                                <%= element.statistique1_nom %>
-                            </p>
-                            <p> <%= element.statistique1_donnee %> </p>
-                        </div>
-                        <div class="info2">
-                            <p> 
-                                <%= element.statistique2_nom %>
-                            </p>
-                            <p> <%= element.statistique2_donnee %> </p>
-                        </div>
+
+
+                        <% 
+                            // On boucle sur toutes les propriétés de la machine en cours
+                            for (let cle in element) { 
+                                // On cherche uniquement les clés qui contiennent "_nom" (ex: statistique1_nom)
+                                if (cle.includes("_nom")) { 
+                                    const nomStat = element[cle];
+                                    // On récupère la donnée associée en remplaçant "_nom" par "_donnee"
+                                    const cleDonnee = cle.replace("_nom", "_donnee");
+                                    const valeurStat = element[cleDonnee];
+
+                                    // On n'affiche le bloc que si le nom ET la donnée existent et ne sont pas vides
+                                    if (nomStat && nomStat.trim() !== '' && valeurStat && valeurStat.trim() !== '') { 
+                            %>
+                                        <div class="info1">
+                                            <p><%= nomStat %></p>
+                                            <p><%= valeurStat %></p>
+                                        </div>
+                            <% 
+                                    } 
+                                } 
+                            } 
+                        %>
                     </div>
+
 
                     <div class="bottom-part">
                         <h2>

@@ -30,29 +30,22 @@
                                     <p id="preview-desc"><%= machine.description_longue ? (machine.description_longue.length > 200 ? machine.description_longue.substring(0,200) + '...' : machine.description_longue) : (machine.description_courte || '') %></p>
 
                                     <div class="preview-info">
-
-                                        <% 
-                                        // On boucle sur toutes les propriétés de la machine en cours
-                                        for (let cle in machine) { 
-                                            // On cherche uniquement les clés qui contiennent "_nom" (ex: statistique1_nom)
-                                            if (cle.includes("_nom")) { 
-                                                const nomStat = machine[cle];
-                                                // On récupère la donnée associée en remplaçant "_nom" par "_donnee"
-                                                const cleDonnee = cle.replace("_nom", "_donnee");
-                                                const valeurStat = machine[cleDonnee];
-
-                                                // On n'affiche le bloc que si le nom ET la donnée existent et ne sont pas vides
-                                                if (nomStat && nomStat.trim() !== '' && valeurStat && valeurStat.trim() !== '') { 
-                                        %>
-                                                     <div class="preview-info-row">
-                                                        <span class="label" id="preview-stat1-name"><%= nomStat %></span>
-                                                        <span class="value" id="preview-stat1-value"><%= valeurStat %></span>
-                                                    </div>
-                                                    <% 
-                                                } 
-                                            } 
-                                        } 
-                                        %>
+                                        <div class="preview-info-row" id="preview-stat1-row">
+                                            <span class="label" id="preview-stat1-name"></span>
+                                            <span class="value" id="preview-stat1-value"></span>
+                                        </div>
+                                        <div class="preview-info-row" id="preview-stat2-row" style="display:none;">
+                                            <span class="label" id="preview-stat2-name"></span>
+                                            <span class="value" id="preview-stat2-value"></span>
+                                        </div>
+                                        <div class="preview-info-row" id="preview-stat3-row" style="display:none;">
+                                            <span class="label" id="preview-stat3-name"></span>
+                                            <span class="value" id="preview-stat3-value"></span>
+                                        </div>
+                                        <div class="preview-info-row" id="preview-stat4-row" style="display:none;">
+                                            <span class="label" id="preview-stat4-name"></span>
+                                            <span class="value" id="preview-stat4-value"></span>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -119,25 +112,38 @@
                     <input type="file" name="image_machine" id="image_machine_input" style="display:none;">
                 </div>
 
-                <div class="form-group">
-                    <label>Statistique 1 - Nom</label>
-                    <input type="text" name="statistique1_nom" value="<%= machine.statistique1_nom %>">
+               <!-- ===== STATISTIQUES DYNAMIQUES ===== -->
+                <div id="stats-container">
+                    <% for (let i = 1; i <= 4; i++) { %>
+                        <div class="stat-group" id="stat-group-<%= i %>" style="<%= (!machine['statistique' + i + '_nom'] && i > 1) ? 'display:none;' : '' %>">
+                            <div class="stat-group-header">
+                                <span class="stat-group-label">Statistique <%= i %></span>
+                                <% if (i > 1) { %>
+                                    <button type="button" class="stat-remove-btn" data-index="<%= i %>">
+                                        <i class="ti ti-trash" aria-hidden="true"></i> Retirer
+                                    </button>
+                                <% } %>
+                            </div>
+                            <div class="form-group">
+                                <label>Nom</label>
+                                <input type="text" name="statistique<%= i %>_nom" 
+                                    value="<%= machine['statistique' + i + '_nom'] || '' %>"
+                                    placeholder="Ex: Puissance">
+                            </div>
+                            <div class="form-group">
+                                <label>Donnée</label>
+                                <input type="text" name="statistique<%= i %>_donnee" 
+                                    value="<%= machine['statistique' + i + '_donnee'] || '' %>"
+                                    placeholder="Ex: 12 000 tr/min">
+                            </div>
+                        </div>
+                    <% } %>
                 </div>
 
-                <div class="form-group">
-                    <label>Statistique 1 - Donnée</label>
-                    <input type="text" name="statistique1_donnee" value="<%= machine.statistique1_donnee %>">
-                </div>
-
-                <div class="form-group">
-                    <label>Statistique 2 - Nom</label>
-                    <input type="text" name="statistique2_nom" value="<%= machine.statistique2_nom %>">
-                </div>
-
-                <div class="form-group">
-                    <label>Statistique 2 - Donnée</label>
-                    <input type="text" name="statistique2_donnee" value="<%= machine.statistique2_donnee %>">
-                </div>
+                <button type="button" id="stat-add-btn" class="stat-add-btn">
+                    <i class="ti ti-plus" aria-hidden="true"></i> Ajouter une statistique
+                </button>
+                <!-- ===== FIN STATISTIQUES ===== -->
 
                 <div class="form-group">
                     <label>Avantage - Titre</label>
@@ -251,25 +257,22 @@
 
 
                         <div class="mobile-stats">
-                           <% 
-                            let indexFraisage = 1;
-                            for (let cle in machine) { 
-                                if (cle.includes("_nom")) { 
-                                    const nomStat = machine[cle];
-                                    const valeurStat = machine[cle.replace("_nom", "_donnee")];
-
-                                    if (nomStat && nomStat.trim() !== '' && valeurStat && valeurStat.trim() !== '') { 
-                            %> 
-                                        <div class="mobile-stat">
-                                            <div class="stat-label" id="preview-mobile-stat<%=indexFraisage%>-name"><%= nomStat %></div>
-                                            <div class="stat-label" id="preview-mobile-stat<%=indexFraisage%>-value"><%= valeurStat %></div>
-                                        </div>
-                            <% 
-                                        indexFraisage++;
-                                    } 
-                                } 
-                            } 
-                            %>
+                            <div class="mobile-stat" id="preview-mobile-stat1-row">
+                                <div class="stat-label" id="preview-mobile-stat1-name"></div>
+                                <div class="stat-label" id="preview-mobile-stat1-value"></div>
+                            </div>
+                            <div class="mobile-stat" id="preview-mobile-stat2-row" style="display:none;">
+                                <div class="stat-label" id="preview-mobile-stat2-name"></div>
+                                <div class="stat-label" id="preview-mobile-stat2-value"></div>
+                            </div>
+                            <div class="mobile-stat" id="preview-mobile-stat3-row" style="display:none;">
+                                <div class="stat-label" id="preview-mobile-stat3-name"></div>
+                                <div class="stat-label" id="preview-mobile-stat3-value"></div>
+                            </div>
+                            <div class="mobile-stat" id="preview-mobile-stat4-row" style="display:none;">
+                                <div class="stat-label" id="preview-mobile-stat4-name"></div>
+                                <div class="stat-label" id="preview-mobile-stat4-value"></div>
+                            </div>
                         </div>
 
 
@@ -329,169 +332,224 @@
 
 <script>
     (function(){
-    // --- Éléments upload image ---
-    const uploadButton = document.querySelector('.upload-button');
-    const fileInput = document.getElementById('image_machine_input');
-    const uploadStatus = document.getElementById('upload-status');
-    const uploadText = document.getElementById('upload-text');
-    const previewImage = document.getElementById('preview-image');
-    const previewCardImage = document.getElementById('preview-image-card');
-    const previewMobileImage = document.getElementById('preview-mobile-image');
+        // --- Éléments upload image ---
+        const uploadButton = document.querySelector('.upload-button');
+        const fileInput = document.getElementById('image_machine_input');
+        const uploadStatus = document.getElementById('upload-status');
+        const uploadText = document.getElementById('upload-text');
+        const previewImage = document.getElementById('preview-image');
+        const previewCardImage = document.getElementById('preview-image-card');
+        const previewMobileImage = document.getElementById('preview-mobile-image');
 
-    const previewMobileDimsFraisage = document.getElementById('preview-mobile-dims-fraisage');
-    const previewMobileDimsTournage = document.getElementById('preview-mobile-dims-tournage');
+        const previewMobileDimsFraisage = document.getElementById('preview-mobile-dims-fraisage');
+        const previewMobileDimsTournage = document.getElementById('preview-mobile-dims-tornage');
 
-    // --- Éléments type + dimensions formulaire ---
-    const typeSelect = document.getElementById('type-select');
-    const dimsFraisage = document.getElementById('dims-fraisage');
-    const dimsTournage = document.getElementById('dims-tournage');
+        // --- Éléments type + dimensions formulaire ---
+        const typeSelect = document.getElementById('type-select');
+        const dimsFraisage = document.getElementById('dims-fraisage');
+        const dimsTournage = document.getElementById('dims-tournage');
 
-    // --- Éléments dimensions preview ---
-    const previewDimsFraisage = document.getElementById('preview-dims-fraisage');
-    const previewDimsTournage = document.getElementById('preview-dims-tournage');
+        // --- Éléments dimensions preview ---
+        const previewDimsFraisage = document.getElementById('preview-dims-fraisage');
+        const previewDimsTournage = document.getElementById('preview-dims-tournage');
 
-    // Met à jour la visibilité des blocs de dimensions dans le FORMULAIRE
-    function updateDimsVisibility() {
-        const val = typeSelect.value;
-        dimsFraisage.style.display = (val === 'fraisage' || val === 'tournage/fraisage') ? '' : 'none';
-        dimsTournage.style.display = (val === 'tournage' || val === 'tournage/fraisage') ? '' : 'none';
-    }
+        // --- Gestion dynamique des statistiques ---
+        const statAddBtn = document.getElementById('stat-add-btn');
 
-    function updatePreviewDimsVisibility(type) {
-        // Desktop
-        if (previewDimsFraisage) previewDimsFraisage.style.display = (type === 'fraisage' || type === 'tournage/fraisage') ? '' : 'none';
-        if (previewDimsTournage) previewDimsTournage.style.display = (type === 'tournage' || type === 'tournage/fraisage') ? '' : 'none';
-        // Mobile
-        if (previewMobileDimsFraisage) previewMobileDimsFraisage.style.display = (type === 'fraisage' || type === 'tournage/fraisage') ? '' : 'none';
-        if (previewMobileDimsTournage) previewMobileDimsTournage.style.display = (type === 'tournage' || type === 'tournage/fraisage') ? '' : 'none';
-    }
-    // Au changement de type : on met à jour formulaire ET preview d'un coup
-    if (typeSelect) {
-        typeSelect.addEventListener('change', () => {
-            updateDimsVisibility();
-            updatePreview();
-        });
-        updateDimsVisibility(); // init au chargement
-    }
-
-    // --- Gestion du changement d'image ---
-    if (uploadButton) uploadButton.addEventListener('click', () => fileInput && fileInput.click());
-
-    if (fileInput) {
-        fileInput.addEventListener('change', () => {
-            const file = fileInput.files[0];
-            if (!file) return;
-            if (uploadText) uploadText.innerText = 'Nouvelle image sélectionnée';
-            if (uploadStatus) {
-                uploadStatus.innerText = file.name;
-                uploadStatus.style.color = '#0f4bb7';
-                uploadStatus.style.fontWeight = 'bold';
+        function getVisibleStatCount() {
+            let count = 0;
+            for (let i = 1; i <= 4; i++) {
+                const group = document.getElementById('stat-group-' + i);
+                if (group && group.style.display !== 'none') count++;
             }
-            const url = URL.createObjectURL(file);
-            if (previewImage) previewImage.src = url;
-            if (previewCardImage) previewCardImage.src = url;
-            if (previewMobileImage) previewMobileImage.src = url;
-        });
-    }
-
-    // Utilitaire : met à jour le texte d'un élément par son id
-    function setIf(id, value) {
-        const el = document.getElementById(id);
-        if (el) el.textContent = value;
-    }
-
-    // Met à jour toute la preview (textes + dimensions + image)
-    function updatePreview() {
-        const get = s => document.querySelector(s);
-
-        // Lecture des champs du formulaire
-        const name     = (get('[name="nom_machine"]')        || {}).value || 'Nom machine';
-        const descLong = (get('[name="description_longue"]') || {}).value || '';
-        const descShort= (get('[name="description_courte"]') || {}).value || '';
-        const stat1Name= (get('[name="statistique1_nom"]')   || {}).value || '';
-        const stat1Val = (get('[name="statistique1_donnee"]')|| {}).value || '';
-        const stat2Name= (get('[name="statistique2_nom"]')   || {}).value || '';
-        const stat2Val = (get('[name="statistique2_donnee"]')|| {}).value || '';
-        const advTitle = (get('[name="avantage_titre"]')     || {}).value || '';
-        const advDesc  = (get('[name="avantage_description"]')|| {}).value || '';
-        const year     = (get('[name="annee_entree"]')       || {}).value || '';
-        const type     = typeSelect ? typeSelect.value : '';
-
-        // Dimensions fraisage
-        const dx = (get('[name="d_x"]') || {}).value || '';
-        const dy = (get('[name="d_y"]') || {}).value || '';
-        const dz = (get('[name="d_z"]') || {}).value || '';
-
-        // Dimensions tournage
-        const longueur = (get('[name="longueur_max"]')  || {}).value || '';
-        const diametre = (get('[name="diametre_max"]')  || {}).value || '';
-        const alesage  = (get('[name="alesage"]')       || {}).value || '';
-
-        // Mise à jour preview desktop
-        setIf('preview-name',      name);
-        setIf('preview-card-title',name);
-        setIf('preview-desc',      descLong || descShort);
-        setIf('preview-shortdesc', descShort);
-        setIf('preview-stat1-name',  stat1Name);
-        setIf('preview-stat1-value', stat1Val);
-        setIf('preview-stat2-name',  stat2Name);
-        setIf('preview-stat2-value', stat2Val);
-        setIf('preview-adv-title', advTitle);
-        setIf('preview-adv-desc',  advDesc);
-        setIf('preview-year',      year);
-
-        // Dimensions fraisage dans la preview
-        setIf('preview-dx', dx ? dx + ' mm' : '');
-        setIf('preview-dy', dy ? dy + ' mm' : '');
-        setIf('preview-dz', dz ? dz + ' mm' : '');
-
-        // Dimensions tournage dans la preview
-        setIf('preview-longueur', longueur ? longueur + ' mm' : '');
-        setIf('preview-diametre', diametre ? diametre + ' mm' : '');
-        setIf('preview-alesage',  alesage  ? alesage  + ' mm' : '');
-
-        // Affichage/masquage des blocs de dimensions dans la preview
-        updatePreviewDimsVisibility(type);
-
-        // Mise à jour preview mobile
-        setIf('preview-mobile-name',         name);
-        setIf('preview-mobile-desc',         descShort || descLong);
-        setIf('preview-mobile-stat1-name',   stat1Name);
-        setIf('preview-mobile-stat1-value',  stat1Val);
-        setIf('preview-mobile-stat2-name',   stat2Name);
-        setIf('preview-mobile-stat2-value',  stat2Val);
-        setIf('preview-mobile-year',         year);
-
-        // Dimensions fraisage — mobile
-        setIf('preview-mobile-dx', dx ? dx + ' mm' : '');
-        setIf('preview-mobile-dy', dy ? dy + ' mm' : '');
-        setIf('preview-mobile-dz', dz ? dz + ' mm' : '');
-
-        // Dimensions tournage — mobile
-        setIf('preview-mobile-longueur', longueur ? longueur + ' mm' : '');
-        setIf('preview-mobile-diametre', diametre ? diametre + ' mm' : '');
-        setIf('preview-mobile-alesage',  alesage  ? alesage  + ' mm' : '');
-
-        // Si une nouvelle image a été sélectionnée, on l'affiche dans la preview
-        const file = fileInput && fileInput.files && fileInput.files[0];
-        if (file) {
-            const url = URL.createObjectURL(file);
-            if (previewCardImage)  previewCardImage.src  = url;
-            if (previewMobileImage) previewMobileImage.src = url;
+            return count;
         }
-    }
 
-    // Boutons "Recharger"
-    const desktopReload = document.getElementById('reload-preview');
-    if (desktopReload) desktopReload.addEventListener('click', updatePreview);
-    const mobileReload = document.getElementById('reload-preview-mobile');
-    if (mobileReload) mobileReload.addEventListener('click', updatePreview);
+        function refreshStatButtons() {
+            if (statAddBtn) statAddBtn.disabled = getVisibleStatCount() >= 4;
+        }
 
-    // Initialisation au chargement de la page
-    updatePreview();
-})();
+        if (statAddBtn) {
+            statAddBtn.addEventListener('click', () => {
+                for (let i = 1; i <= 4; i++) {
+                    const group = document.getElementById('stat-group-' + i);
+                    if (group && group.style.display === 'none') {
+                        group.style.display = '';
+                        refreshStatButtons();
+                        updatePreview();
+                        break;
+                    }
+                }
+            });
+        }
 
+        document.querySelectorAll('.stat-remove-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = btn.getAttribute('data-index');
+                const group = document.getElementById('stat-group-' + idx);
+                if (!group) return;
+                group.querySelectorAll('input').forEach(input => input.value = '');
+                group.style.display = 'none';
+                refreshStatButtons();
+                updatePreview();
+            });
+        });
 
+        refreshStatButtons();
+        // --- Fin gestion stats ---
+
+        // Met à jour la visibilité des blocs de dimensions dans le FORMULAIRE
+        function updateDimsVisibility() {
+            const val = typeSelect.value;
+            dimsFraisage.style.display = (val === 'fraisage' || val === 'tournage/fraisage') ? '' : 'none';
+            dimsTournage.style.display = (val === 'tournage' || val === 'tournage/fraisage') ? '' : 'none';
+        }
+
+        function updatePreviewDimsVisibility(type) {
+            if (previewDimsFraisage) previewDimsFraisage.style.display = (type === 'fraisage' || type === 'tournage/fraisage') ? '' : 'none';
+            if (previewDimsTournage) previewDimsTournage.style.display = (type === 'tournage' || type === 'tournage/fraisage') ? '' : 'none';
+            if (previewMobileDimsFraisage) previewMobileDimsFraisage.style.display = (type === 'fraisage' || type === 'tournage/fraisage') ? '' : 'none';
+            if (previewMobileDimsTournage) previewMobileDimsTournage.style.display = (type === 'tournage' || type === 'tournage/fraisage') ? '' : 'none';
+        }
+
+        if (typeSelect) {
+            typeSelect.addEventListener('change', () => {
+                updateDimsVisibility();
+                updatePreview();
+            });
+            updateDimsVisibility();
+        }
+
+        // --- Gestion du changement d'image ---
+        if (uploadButton) uploadButton.addEventListener('click', () => fileInput && fileInput.click());
+
+        if (fileInput) {
+            fileInput.addEventListener('change', () => {
+                const file = fileInput.files[0];
+                if (!file) return;
+                if (uploadText) uploadText.innerText = 'Nouvelle image sélectionnée';
+                if (uploadStatus) {
+                    uploadStatus.innerText = file.name;
+                    uploadStatus.style.color = '#0f4bb7';
+                    uploadStatus.style.fontWeight = 'bold';
+                }
+                const url = URL.createObjectURL(file);
+                if (previewImage) previewImage.src = url;
+                if (previewCardImage) previewCardImage.src = url;
+                if (previewMobileImage) previewMobileImage.src = url;
+            });
+        }
+
+        // Utilitaire : met à jour le texte d'un élément par son id
+        function setIf(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        }
+
+        // Met à jour toute la preview (textes + dimensions + stats + image)
+        function updatePreview() {
+            const get = s => document.querySelector(s);
+
+            // Lecture des champs du formulaire
+            const name     = (get('[name="nom_machine"]')         || {}).value || 'Nom machine';
+            const descLong = (get('[name="description_longue"]')  || {}).value || '';
+            const descShort= (get('[name="description_courte"]')  || {}).value || '';
+            const advTitle = (get('[name="avantage_titre"]')      || {}).value || '';
+            const advDesc  = (get('[name="avantage_description"]')|| {}).value || '';
+            const year     = (get('[name="annee_entree"]')        || {}).value || '';
+            const type     = typeSelect ? typeSelect.value : '';
+
+            // Dimensions fraisage
+            const dx = (get('[name="d_x"]')  || {}).value || '';
+            const dy = (get('[name="d_y"]')  || {}).value || '';
+            const dz = (get('[name="d_z"]')  || {}).value || '';
+
+            // Dimensions tournage
+            const longueur = (get('[name="longueur_max"]') || {}).value || '';
+            const diametre = (get('[name="diametre_max"]') || {}).value || '';
+            const alesage  = (get('[name="alesage"]')      || {}).value || '';
+
+            // Mise à jour preview desktop — infos générales
+            setIf('preview-name',       name);
+            setIf('preview-card-title', name);
+            setIf('preview-desc',       descLong || descShort);
+            setIf('preview-shortdesc',  descShort);
+            setIf('preview-adv-title',  advTitle);
+            setIf('preview-adv-desc',   advDesc);
+            setIf('preview-year',       year);
+
+            // Dimensions fraisage — preview desktop
+            setIf('preview-dx', dx ? dx + ' mm' : '');
+            setIf('preview-dy', dy ? dy + ' mm' : '');
+            setIf('preview-dz', dz ? dz + ' mm' : '');
+
+            // Dimensions tournage — preview desktop
+            setIf('preview-longueur', longueur ? longueur + ' mm' : '');
+            setIf('preview-diametre', diametre ? diametre + ' mm' : '');
+            setIf('preview-alesage',  alesage  ? alesage  + ' mm' : '');
+
+            // Affichage/masquage des blocs de dimensions dans la preview
+            updatePreviewDimsVisibility(type);
+
+            // Mise à jour preview mobile — infos générales
+            setIf('preview-mobile-name', name);
+            setIf('preview-mobile-desc', descShort || descLong);
+            setIf('preview-mobile-year', year);
+
+            // Dimensions fraisage — preview mobile
+            setIf('preview-mobile-dx', dx ? dx + ' mm' : '');
+            setIf('preview-mobile-dy', dy ? dy + ' mm' : '');
+            setIf('preview-mobile-dz', dz ? dz + ' mm' : '');
+
+            // Dimensions tournage — preview mobile
+            setIf('preview-mobile-longueur', longueur ? longueur + ' mm' : '');
+            setIf('preview-mobile-diametre', diametre ? diametre + ' mm' : '');
+            setIf('preview-mobile-alesage',  alesage  ? alesage  + ' mm' : '');
+
+           // --- Mise à jour des statistiques dans la preview ---
+           // On vide et masque tous les slots d'abord
+            for (let i = 1; i <= 4; i++) {
+                setIf('preview-stat' + i + '-name',  '');
+                setIf('preview-stat' + i + '-value', '');
+                setIf('preview-mobile-stat' + i + '-name',  '');
+                setIf('preview-mobile-stat' + i + '-value', '');
+                const desktopRow = document.getElementById('preview-stat' + i + '-row');
+                const mobileRow  = document.getElementById('preview-mobile-stat' + i + '-row');
+                if (desktopRow) desktopRow.style.display = 'none';
+                if (mobileRow)  mobileRow.style.display  = 'none';
+            }
+
+            // On remplit et affiche uniquement les slots visibles et renseignés
+            let previewStatIdx = 1;
+            for (let i = 1; i <= 4; i++) {
+                const group = document.getElementById('stat-group-' + i);
+                if (!group || group.style.display === 'none') continue;
+                const nom = (get('[name="statistique' + i + '_nom"]')    || {}).value || '';
+                const val = (get('[name="statistique' + i + '_donnee"]') || {}).value || '';
+                if (nom || val) {
+                    setIf('preview-stat' + previewStatIdx + '-name',  nom);
+                    setIf('preview-stat' + previewStatIdx + '-value', val);
+                    setIf('preview-mobile-stat' + previewStatIdx + '-name',  nom);
+                    setIf('preview-mobile-stat' + previewStatIdx + '-value', val);
+                    const desktopRow = document.getElementById('preview-stat' + previewStatIdx + '-row');
+                    const mobileRow  = document.getElementById('preview-mobile-stat' + previewStatIdx + '-row');
+                    if (desktopRow) desktopRow.style.display = '';
+                    if (mobileRow)  mobileRow.style.display  = '';
+                    previewStatIdx++;
+                }
+            }
+            // --- Fin stats ---
+        }
+
+        // Boutons "Recharger"
+        const desktopReload = document.getElementById('reload-preview');
+        if (desktopReload) desktopReload.addEventListener('click', updatePreview);
+        const mobileReload = document.getElementById('reload-preview-mobile');
+        if (mobileReload) mobileReload.addEventListener('click', updatePreview);
+
+        // Initialisation au chargement de la page
+        updatePreview();
+    })();
 
 
     // --- Gestion du bouton de navigation rapide Mobile ---
@@ -499,25 +557,17 @@
     const mobilePreviewZone = document.getElementById('preview-mobile-container-link');
 
     if (mobileNavBtn && mobilePreviewZone) {
-        // 1. Gestion du clic (Scroll)
         mobileNavBtn.addEventListener('click', () => {
             const target = mobileNavBtn.getAttribute('data-target');
-            
             if (target === 'down') {
-                // Fait défiler jusqu'à la preview mobile
                 mobilePreviewZone.scrollIntoView({ behavior: 'smooth' });
             } else {
-                // Remonte tout en haut de la page
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         });
 
-        // 2. Détection du scroll pour changer l'état du bouton
         window.addEventListener('scroll', () => {
-            // On récupère la position de la zone de preview
             const rect = mobilePreviewZone.getBoundingClientRect();
-            
-            // Si le haut de la zone de prévisualisation est visible ou dépassé
             if (rect.top <= window.innerHeight * 0.7) {
                 mobileNavBtn.setAttribute('data-target', 'up');
                 mobileNavBtn.querySelector('.nav-btn-icon').textContent = '↑';
@@ -529,6 +579,5 @@
             }
         });
     }
-
 </script>
 <%- include('./footer') %>
