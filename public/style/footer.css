@@ -49,6 +49,7 @@ body {
     font-size: 1.35rem;
     font-weight: 900;
     letter-spacing: 0.02em;
+    color:white !important
 }
 
 .footer-brand-tag {
@@ -196,4 +197,10 @@ body {
     footer{
         padding-bottom:70px;
     }
+}
+
+
+.footer-link:hover{
+    color:rgb(158, 206, 248);
+    transform : scale(1.01)
 }

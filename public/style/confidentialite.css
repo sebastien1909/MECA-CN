@@ -1,0 +1,193 @@
+/* Politique de Confidentialité - CSS */
+
+/* ===== PAGE TITLE SECTION ===== */
+.legal-page {
+  width: 100%;
+}
+
+.top-title {
+  background: linear-gradient(135deg, #2c4563 0%, #34556b 100%);
+  padding: 30px 20px;
+  text-align: left;
+  margin-bottom: 50px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.top-title h1 {
+  color: #ffffff;
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* ===== MAIN CONTENT ===== */
+.legal-page {
+  max-width: 80%;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+  line-height: 1.8;
+  color: #333333;
+  font-size: 1rem;
+}
+
+/* ===== HEADINGS ===== */
+.legal-page h2 {
+  color: #2c4563;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-top: 40px;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 3px solid #2c4563;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.legal-page h2.title2 {
+  color: #2c4563;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-top: 40px;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 3px solid #2c4563;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ===== PARAGRAPHS & TEXT ===== */
+.legal-page p {
+  margin: 15px 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #555555;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    Cantarell, sans-serif;
+}
+
+.legal-page p strong {
+  color: #2c4563;
+  font-weight: 600;
+}
+
+/* ===== LISTS ===== */
+.legal-page ul {
+  margin: 20px 0;
+  padding-left: 30px;
+}
+
+.legal-page ul li {
+  margin: 10px 0;
+  color: #555555;
+  line-height: 1.7;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    Cantarell, sans-serif;
+}
+
+.legal-page ul li strong {
+  color: #2c4563;
+}
+
+/* ===== LINKS ===== */
+.legal-page a {
+  color: #2c4563;
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.legal-page a:hover {
+  color: #1a2d3f;
+  border-bottom: 1px solid #2c4563;
+}
+
+/* ===== EMPHASIS ===== */
+.legal-page em {
+  font-style: italic;
+  color: #777777;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .top-title {
+    padding: 20px 15px;
+  }
+
+  .top-title h1 {
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+  }
+
+  .legal-page {
+    padding: 0 15px 40px;
+  }
+
+  .legal-page h2 {
+    font-size: 1.4rem;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+  }
+
+  .legal-page p {
+    font-size: 0.95rem;
+  }
+
+  .legal-page ul {
+    padding-left: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-title {
+    padding: 30px 10px;
+    margin-bottom: 30px;
+  }
+
+  .top-title h1 {
+    font-size: 1.5rem;
+    letter-spacing: 0;
+  }
+
+  .legal-page {
+    padding: 0 10px 30px;
+  }
+
+  .legal-page h2 {
+    font-size: 1.2rem;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .legal-page p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .legal-page ul {
+    padding-left: 20px;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .top-title {
+    background: none;
+    border-top: 3px solid #2c4563;
+    border-bottom: 3px solid #2c4563;
+    padding: 20px 0;
+  }
+
+  .legal-page a {
+    text-decoration: underline;
+  }
+
+  .legal-page em {
+    font-style: normal;
+  }
+}

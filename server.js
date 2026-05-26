@@ -810,11 +810,13 @@ app.get("/modif_realisations/:id", isAdmin, async function (req, res) {
       produitId,
     ]);
     const categorieId = produit[0].categorie;
+    console.log(categorieId)
     const [categories] = await pool.query(
       "SELECT nom FROM categories WHERE id_cat = ?",
       [categorieId],
     );
     const listeCategories = await pool.query("SELECT * FROM categories");
+    console.log(categories[0])
     res.render("admin/modifrealisation", {
       page_css1: "headeradmin.css",
       page_css2: "modif_realisations.css",
@@ -1213,9 +1215,23 @@ app.get("/desabonnement", async function (req, res) {
   }
 });
 
+/**
+ * Route GET
+ * Renvoie la page de politique de confidentialité.
+ * Cette page est accessible à tous les utilisateurs (pas besoin d'être connecté) et contient les informations sur la gestion des données personnelles par l'entreprise, les droits des utilisateus, ...
+ */
 
-
-
+app.get("/politique-de-confidentialite", async function (req,res){
+  try{
+    res.render("confidentialite", {
+      page_css1:"headerclient.css",
+      page_css2:"confidentialite.css"
+    })
+  } catch(err){
+    console.error(err);
+    res.status(500).send("Erreur serveur");
+  }
+})
 
 
 
