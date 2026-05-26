@@ -1233,7 +1233,17 @@ app.get("/politique-de-confidentialite", async function (req,res){
   }
 })
 
-
+app.get("/usinage", async function(req,res){
+  try{
+    res.render("informations-complementaires/usinage", {
+      page_css1:"headerclient.css",
+      page_css2:"usinage.css"
+    })
+  } catch(err){
+    console.log(err)
+    res.status(500).send("Erreur serveur");
+  }
+})
 
 
 

@@ -178,9 +178,9 @@
 @media print {
   .top-title {
     background: none;
-    border-top: 3px solid #2c4563;
     border-bottom: 3px solid #2c4563;
     padding: 20px 0;
+    margin:12px 5px 14px;
   }
 
   .legal-page a {

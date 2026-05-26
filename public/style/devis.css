@@ -996,6 +996,12 @@ tbody td:hover, .selected {
 
 }
 
+.usinage-savoir-plus{
+    font-size:0.75rem;
+    font-weight:700;
+    color:rgb(162, 163, 171)
+}
+
 #cancel-captcha{    
     background:#e2e8f0;
     color:#1f2937;

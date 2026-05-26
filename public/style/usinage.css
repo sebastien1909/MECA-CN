@@ -1,0 +1,266 @@
+/* Usinage - CSS */
+
+/* ===== STICKY NAVIGATION ===== */
+.usinage-nav-sticky {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(135deg, #2c4563 0%, #34556b 100%);
+  padding: 15px 20px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}
+
+.usinage-nav-btn {
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    Cantarell, sans-serif;
+}
+
+.usinage-nav-btn:hover {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.usinage-nav-btn.active {
+  background: #ffffff;
+  color: #2c4563;
+  border-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== HIDDEN SECTION ===== */
+.tournage-cont.hidden,
+.fraisage-cont.hidden {
+  display: none;
+}
+
+/* ===== MAIN CONTENT ===== */
+.tournage-cont,
+.fraisage-cont {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 50px 20px;
+  line-height: 1.8;
+  color: #333333;
+  font-size: 1rem;
+}
+
+/* ===== HEADINGS ===== */
+.tournage-cont h1.title1,
+.fraisage-cont h1.title1 {
+  color: #2c4563;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 30px 0;
+  padding-bottom: 20px;
+  border-bottom: 3px solid #2c4563;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.tournage-cont h2.title2,
+.fraisage-cont h2.title2 {
+  color: #2c4563;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-top: 40px;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 3px solid #2c4563;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ===== PARAGRAPHS & TEXT ===== */
+.tournage-cont p,
+.fraisage-cont p {
+  margin: 15px 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #555555;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    Cantarell, sans-serif;
+}
+
+.tournage-cont p strong,
+.fraisage-cont p strong {
+  color: #2c4563;
+  font-weight: 600;
+}
+
+/* ===== LISTS ===== */
+.tournage-cont ul,
+.fraisage-cont ul {
+  margin: 20px 0;
+  padding-left: 30px;
+}
+
+.tournage-cont ul li,
+.fraisage-cont ul li {
+  margin: 10px 0;
+  color: #555555;
+  line-height: 1.7;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    Cantarell, sans-serif;
+}
+
+/* ===== COMPARISON SECTIONS ===== */
+.comparaison-cont {
+  background: #f8f9fa;
+  padding: 30px;
+  margin-top: 40px;
+  border-left: 5px solid #2c4563;
+  border-radius: 5px;
+}
+
+.comparaison-cont h2 {
+  margin-top: 0;
+}
+
+/* ===== LINKS ===== */
+.tournage-cont a,
+.fraisage-cont a {
+  color: #2c4563;
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.tournage-cont a:hover,
+.fraisage-cont a:hover {
+  color: #1a2d3f;
+  border-bottom: 1px solid #2c4563;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .usinage-nav-sticky {
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 15px;
+  }
+
+  .usinage-nav-btn {
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+
+  .tournage-cont,
+  .fraisage-cont {
+    padding: 30px 15px;
+  }
+
+  .tournage-cont h1.title1,
+  .fraisage-cont h1.title1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+
+  .tournage-cont h2.title2,
+  .fraisage-cont h2.title2 {
+    font-size: 1.4rem;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+  }
+
+  .tournage-cont p,
+  .fraisage-cont p {
+    font-size: 0.95rem;
+  }
+
+  .comparaison-cont {
+    padding: 20px;
+    margin-top: 30px;
+  }
+
+  .tournage-cont ul,
+  .fraisage-cont ul {
+    padding-left: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .usinage-nav-sticky {
+    padding: 10px 10px;
+  }
+
+  .usinage-nav-btn {
+    padding: 8px 15px;
+    font-size: 0.8rem;
+    letter-spacing: 0;
+  }
+
+  .tournage-cont,
+  .fraisage-cont {
+    padding: 20px 10px;
+  }
+
+  .tournage-cont h1.title1,
+  .fraisage-cont h1.title1 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+  }
+
+  .tournage-cont h2.title2,
+  .fraisage-cont h2.title2 {
+    font-size: 1.1rem;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .tournage-cont p,
+  .fraisage-cont p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .comparaison-cont {
+    padding: 15px;
+    border-left-width: 3px;
+  }
+
+  .tournage-cont ul,
+  .fraisage-cont ul {
+    padding-left: 15px;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .usinage-nav-sticky {
+    display: none;
+  }
+
+  .tournage-cont a,
+  .fraisage-cont a {
+    text-decoration: underline;
+  }
+
+  .comparaison-cont {
+    background: none;
+    border-left: none;
+    border-top: 2px solid #2c4563;
+    border-bottom: 2px solid #2c4563;
+  }
+}
