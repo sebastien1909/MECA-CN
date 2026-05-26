@@ -483,11 +483,27 @@
 
 .title-holder{
     display:flex;
+    flex-direction:column;
     gap:15px;
-    align-items:center;
+    justify-content:center;
     justify-content:left;
     margin-bottom:75px;
     margin-top:100px !important;
+}
+
+.title-holder p{
+    color:#b6b6b6;
+    font-size:1rem;
+    margin-left:125px;
+    width:60%;
+}
+
+.title-top-part{
+    display:flex;
+    gap:15px;
+    align-items:center;
+    justify-content:left;
+    margin-top:50px !important
 }
 
 .separateur{

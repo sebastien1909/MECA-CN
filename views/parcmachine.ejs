@@ -35,7 +35,7 @@
 
     <!-- ================= GROUP TOURNAGE ================= -->
     <div class="filter-group tournage-group ">
-        <div class="title-holder">
+        <div class="title-top-part">
             <h4 class="section-title tournage-title">Tournage</h4>
             <div class="separateur"></div>
         </div>
@@ -86,15 +86,15 @@
                     <div class="stats-holder">
                         <div class="first-stat">
                             <h5>Diamètre max</h5>
-                            <span><%= element.diametre_max %></span>
+                            <span><%= element.diametre_max %>mm</span>
                         </div>
                         <div class="second-stat">
                             <h5>longueur max</h5>
-                            <span><%= element.longueur_max %></span>
+                            <span><%= element.longueur_max %>mm</span>
                         </div>
                         <div class="third-stat">
                             <h5>alesage</h5>
-                            <span><%= element.alesage %></span>
+                            <span><%= element.alesage %>mm</span>
                         </div>
                     </div>
                 </div>
@@ -105,7 +105,7 @@
 
     <!-- ================= GROUP FRAISAGE ================= -->
     <div class="filter-group fraisage-group">
-        <div class="title-holder">
+        <div class="title-top-part">
             <h4 class="section-title fraisage-title">Fraisage</h4>
             <div class="separateur"></div>
         </div>
@@ -160,15 +160,15 @@
                     <div class="stats-holder">
                         <div class="first-stat">
                             <h5>dimension X</h5>
-                            <span><%= element.d_x %></span>
+                            <span><%= element.d_x %>mm</span>
                         </div>
                         <div class="second-stat">
                             <h5>dimension Y</h5>
-                            <span><%= element.d_y %></span>
+                            <span><%= element.d_y %>mm</span>
                         </div>
                         <div class="third-stat">
                             <h5>dimension Z</h5>
-                            <span><%= element.d_z %></span>
+                            <span><%= element.d_z %>mm</span>
                         </div>
                     </div>
                 </div>
@@ -184,8 +184,13 @@
 
         <div class="filter-group tournage-group ">
             <div class="title-holder">
-                <h4 class="section-title tournage-title">Machines de tournage et fraisage</h4>
-                <div class="separateur" style="width:50%;"></div>
+                <div class="title-top-part">
+                    <h4 class="section-title tournage-title">Tournage et fraisage</h4>
+                    <div class="separateur" style="width:50%;"></div>
+                </div>
+                <p>
+                    Certaines de nos machines sont polyvalentes et peuvent être utilisées à la fois pour le tournage et le fraisage, offrant ainsi une flexibilité maximale pour répondre à tous vos besoins de production.
+                </p>
             </div>
             
             <% if (typeof machineglobale == 'undefined' || machineglobale.length === 0) { %>

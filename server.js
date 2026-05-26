@@ -236,7 +236,6 @@ app.get("/presentation", async function (req, res) {
   }
 });
 
-
 // Route publique pour lister les machines
 /**
 GET /machines
@@ -2024,7 +2023,7 @@ app.post("/confirmer_modif/:id", async (req, res) => {
     tout les console.log s'effectuent lorsque je modifies une seule section de l'offre.
     Seul problème : j'ai modifié plein de trucs en même temps, donc je ne sais pas si les if ont aidé ou non
 
-    Si vous voyez ce message, ca ve ut surement dire que je n'ai pas eu le temps ou le courage de confirmer l'utilité 
+    Si vous voyez ce message, ca veut surement dire que je n'ai pas eu le temps ou le courage de confirmer l'utilité 
     des "if" utilisés ci-dessous
     */
 
@@ -2045,7 +2044,7 @@ app.post("/confirmer_modif/:id", async (req, res) => {
         [missions, id],
       );
       // console.log("Les missions ont été modifiées")
-    }
+    };
 
     // competences
 
@@ -2062,7 +2061,7 @@ app.post("/confirmer_modif/:id", async (req, res) => {
         [competences, id],
       );
       //console.log("Les compétences ont été modifiées");
-    }
+    };
 
     // avantages
 
@@ -2079,7 +2078,7 @@ app.post("/confirmer_modif/:id", async (req, res) => {
         [avantages, id],
       );
       //console.log("Les avantages ont été modifiés");
-    }
+    };
 
     // recrutements
 
@@ -2096,7 +2095,7 @@ app.post("/confirmer_modif/:id", async (req, res) => {
         [recrutement, id],
       );
       // console.log("Le process de recrutement a été modifié")
-    }
+    };
 
     // informations complémentaires
 
@@ -2113,7 +2112,7 @@ app.post("/confirmer_modif/:id", async (req, res) => {
         [infos_complementaires, id],
       );
       //console.log("Les informations complémentaires ont bien été modifiées");
-    }
+    };
 
     //  presentation
 
@@ -2128,7 +2127,7 @@ app.post("/confirmer_modif/:id", async (req, res) => {
                               presentation = ?`,
         [presentation],
       );
-    }
+    };
 
     // intitule
 
@@ -2144,7 +2143,7 @@ app.post("/confirmer_modif/:id", async (req, res) => {
                               WHERE offre_id = ?`,
         [intitule, id],
       );
-    }
+    };
 
     // Type
 
@@ -2160,7 +2159,7 @@ app.post("/confirmer_modif/:id", async (req, res) => {
                               WHERE offre_id = ?`,
         [type, id],
       );
-    }
+    };
 
     /*
     
@@ -2199,7 +2198,7 @@ app.post("/confirmer_modif/:id", async (req, res) => {
   } catch (err) {
     console.error("Erreur modif offre :", err);
     res.status(500).send("Erreur serveur");
-  }
+  };
 });
 
 
@@ -2238,7 +2237,7 @@ app.post("/admin/consulter_offre", async function (req, res) {
   } catch (err) {
     console.error("Erreur SQL ou serveur : ", err);
     res.status(500).send("Erreur lors de la consultation de l'offre");
-  }
+  };
 });
 
 
@@ -2268,7 +2267,7 @@ app.post("/modifier_offre_access", async function (req, res) {
       .send(
         "Erreur lors de la tentative de rejoindre la page de modification de l'offre",
       );
-  }
+  };
 });
 
 
@@ -2287,7 +2286,7 @@ app.post("/supprimer_offre", async function (req, res) {
   } catch (err) {
     console.error("Erreur SQL ou serveur : ", err);
     res.status(500).send("Erreur lors de la suppression de l'offre");
-  }
+  };
 });
 
 
@@ -2307,7 +2306,7 @@ app.post("/modifier-id", isAdmin, async function (req, res) {
     // Récupérer l'ancien identifiant depuis la BDD serait encore plus propre
     if (!nouvel_identifiant) {
       return res.redirect("/admin/profil");
-    }
+    };
 
     await pool.query("UPDATE utilisateurs SET identifiant = ? WHERE id = ?", [
       nouvel_identifiant,
@@ -2318,7 +2317,7 @@ app.post("/modifier-id", isAdmin, async function (req, res) {
   } catch (err) {
     console.error("Erreur SQL ou serveur : ", err);
     res.status(500).send("Erreur lors de la modification de l'identifiant.");
-  }
+  };
 });
 
 
@@ -2333,7 +2332,7 @@ app.post("/modifier-email", isAdmin, async function (req, res) {
     const nouveau_email = req.body.email;
     if (nouveau_email == ancien_email) {
       res.redirect("/admin/profil");
-    }
+    };
     await pool.query("UPDATE utilisateurs SET mail = ? WHERE id = ?", [
       nouveau_email,
       userId,
@@ -2346,7 +2345,7 @@ app.post("/modifier-email", isAdmin, async function (req, res) {
   } catch (err) {
     console.error("Erreur SQL ou Serveur :", err);
     res.status(500).send("Erreur lors de la modification de l'email");
-  }
+  };
 });
 
 
@@ -2363,7 +2362,7 @@ app.post("/modifier-telephone", isAdmin, async function (req, res) {
 
     if (nouveau_telephone == ancien_telephone) {
       res.redirect("/admin/profil");
-    }
+    };
 
     await pool.query("UPDATE utilisateurs SET telephone = ? WHERE id = ?", [
       nouveau_telephone,
@@ -2379,7 +2378,7 @@ app.post("/modifier-telephone", isAdmin, async function (req, res) {
     res
       .status(500)
       .send("Erreur lors de la modification du numéro de téléphone");
-  }
+  };
 });
 
 

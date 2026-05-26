@@ -85,7 +85,10 @@ body{
     transform: translateY(-3px);
     box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
-
+.btn-404.secondary:hover{
+    background:white;
+    color:#0056b3;
+}
 
 @media screen and (min-width: 600px) {
     .erreur-404-titre {
