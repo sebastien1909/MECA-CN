@@ -19,6 +19,7 @@
 
     <!-- Champ caché pour tracer l'offre concernée -->
     <input type="hidden" name="offre_id" value="<%= offre.offre_id %>" />
+    <input type="hidden" name="type" value="<%=offre.type%>" />
 
     <div class="mail-holder">
       <label for="mail">Adresse email</label>
@@ -62,6 +63,8 @@
     <button type="submit" class="submit-btn">Envoyer</button>
   </form>
 </div>
+
+<%- include("footer") %>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {

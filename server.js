@@ -9,7 +9,7 @@ Lors du renvoi des différentes pages, deux pages css sont aussi renvoyées afin
 */
 import express from "express";
 import session from "express-session";
-import crypto from "crypto";
+import crypto, { sign } from "crypto";
 import bodyParser from "body-parser";
 import pool from "./db.js";
 import multer from "multer";
@@ -22,7 +22,6 @@ import { findSourceMap } from "module";
 import { generateHTML } from "@tiptap/html";
 import StarterKit from "@tiptap/starter-kit";
 import { fileURLToPath } from "url";
-
 
 
 
@@ -1259,10 +1258,7 @@ app.get("/usinage", async function(req,res){
  * Gère aussi la validation basique du formulaire (présence du nom et de l'email) et le nettoyage des fichiers orphelins en cas d'erreur de validation.
  * Les fichiers sont stockés temporairement sur le serveur grâce à la configuration Multer (ligne 87) et sont joints à l'email envoyé à l'entreprise.
  */
-app.post(
-  "/envoyer_cv",
-  uploadCV.array("fichiers", 5),
-  async function (req, res) {
+app.post("/envoyer_cv", uploadCV.array("fichiers", 5), async function (req, res) {
     try {
       const { mail, name, message } = req.body;
 
@@ -1305,6 +1301,7 @@ app.post(
       // L'offre_id peut être passée en champ caché dans le formulaire :
       // <input type="hidden" name="offre_id" value="<%= offre.offre_id %>" />
       const offreId = req.body.offre_id || "Non précisé";
+      const offretype = req.body.type || "Non précisé";
       const [list_offre_name] = await pool.query(
         "SELECT intitule FROM offres WHERE offre_id = ?",
         [offreId],
@@ -1353,7 +1350,7 @@ app.post(
                     </tr>
                     <tr style="border-top: 1px solid #e2e8f0;">
                       <td style="padding: 12px 0; color: #64748b;">Offre concernée</td>
-                      <td style="padding: 12px 0; font-weight: 700;">${offreIntitule}</td>
+                      <td style="padding: 12px 0; font-weight: 700;">${offreIntitule} - ${offretype}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -1369,28 +1366,71 @@ app.post(
           
                 <div style="margin-bottom: 24px;">
                   <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f4bb7;">Fichiers joints</h2>
-        ${
-          req.files.length
-            ? `<ul style="margin: 0; padding-left: 20px; color: #475569;">
-                ${req.files
-                  .map(
-                    (file) =>
-                      `<li style="margin-bottom: 8px;">${file.originalname} (${Math.round(file.size / 1024)} Ko)</li>`,
-                  )
-                  .join("")}
-               </ul>`
-            : '<p style="margin: 0; color: #475569;">Aucun fichier joint.</p>'
-        }
-      </div>
- 
-      <p style="margin: 0; color: #94a3b8; font-size: 13px;">
-        Cette candidature a été générée depuis le formulaire du site MECA-CN.
-      </p>
-    </div>
-  </div>
-</div>
+                  ${
+                    req.files.length
+                      ? `<ul style="margin: 0; padding-left: 20px; color: #475569;">
+                          ${req.files
+                            .map(
+                              (file) =>
+                                `<li style="margin-bottom: 8px;">${file.originalname} (${Math.round(file.size / 1024)} Ko)</li>`,
+                            )
+                            .join("")}
+                        </ul>`
+                      : '<p style="margin: 0; color: #475569;">Aucun fichier joint.</p>'
+                  }
+                </div>
+          
+                <p style="margin: 0; color: #94a3b8; font-size: 13px;">
+                  Cette candidature a été générée depuis le formulaire du site MECA-CN.
+                </p>
+              </div>
+            </div>
+          </div>
         `,
         attachments,
+      });
+
+      // ── Envoi du mail de confirmation au candidat ──
+      await transporter.sendMail({
+        from: `"MECA-CN" <${process.env.EMAIL_USER}>`,
+        to: mail,
+        subject: `Candidature reçue — ${offreIntitule}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; color: #1f2937; background: #f4f6fb; padding: 20px;">
+            <div style="max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0;">
+
+              <div style="background: #0f4bb7; color: #ffffff; padding: 28px 30px; text-align: center;">
+                <h1 style="margin: 0; font-size: 24px; letter-spacing: 0.5px;">Candidature reçue ✓</h1>
+                <p style="margin: 8px 0 0; color: rgba(255,255,255,0.85);">Merci pour votre intérêt pour MECA-CN.</p>
+              </div>
+
+              <div style="padding: 30px;">
+                <p style="font-size: 16px; margin: 0 0 16px;">Bonjour <strong>${name}</strong>,</p>
+                <p style="color: #475569; margin: 0 0 16px;">
+                  Nous avons bien reçu votre candidature pour le poste de
+                  <strong>${offreIntitule} - ${offretype}</strong>.
+                </p>
+                <p style="color: #475569; margin: 0 0 16px;">
+                  Notre équipe va analyser votre dossier dans les meilleurs délais et reviendra
+                  vers vous si votre profil correspond à nos attentes.
+                </p>
+                <p style="color: #475569; margin: 0 0 24px;">
+                  En attendant, n'hésitez pas à consulter nos autres offres sur notre site.
+                </p>
+
+                <p style="color: #475569; margin: 0;">Cordialement,</p>
+                <p style="color: #475569; margin: 4px 0 0;"><strong>L'équipe MECA-CN</strong></p>
+              </div>
+
+              <div style="padding: 16px 30px; background: #f8fafc; border-top: 1px solid #e2e8f0;">
+                <p style="margin: 0; color: #94a3b8; font-size: 12px; text-align: center;">
+                  Cet email de confirmation a été envoyé automatiquement, merci de ne pas y répondre.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        `,
       });
 
       // ── Suppression des fichiers temporaires ──
@@ -2861,10 +2901,7 @@ Traite le formulaire de demande de devis, envoie un email avec les pièces joint
 Style du mail géré par le serveur
 // Limitation Multer à 10 fichiers (uploadProduits.array("fichiers", 10)) pour éviter les abus / le spam
  */
-app.post(
-  "/envoyer-devis",
-  uploadProduits.array("fichiers", 10),
-  async (req, res) => {
+app.post("/envoyer-devis", uploadProduits.array("fichiers", 10), async (req, res) => {
     try {
       // Captcha
       const userAnswer = parseInt(req.body.captcha_answer, 10);
@@ -2917,6 +2954,7 @@ app.post(
             ? "Fournie par MECA-CN"
             : "Non précisé";
 
+      const email = req.body.email
       // Construction des dimensions selon le procédé (tournage, fraisage, les deux ou non précisé)
       const procede = req.body.type_usinage || "";
       const usesTournage =
@@ -3041,6 +3079,51 @@ app.post(
         attachments: attachments,
       });
 
+
+
+
+      // ── Envoi du mail de confirmation d'envoi de devis ──
+      await transporter.sendMail({
+        from: `"MECA-CN" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: `Demande de devis reçue - ${req.body.produit}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; color: #1f2937; background: #f4f6fb; padding: 20px;">
+            <div style="max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0;">
+
+              <div style="background: #0f4bb7; color: #ffffff; padding: 28px 30px; text-align: center;">
+                <h1 style="margin: 0; font-size: 24px; letter-spacing: 0.5px;">Demande de devis reçue ✓</h1>
+                <p style="margin: 8px 0 0; color: rgba(255,255,255,0.85);">Merci pour votre demande de devis chez MECA-CN</p>
+              </div>
+
+              <div style="padding: 30px;">
+                <p style="font-size: 16px; margin: 0 0 16px;">Bonjour <strong>${req.body.nom}</strong>,</p>
+                <p style="color: #475569; margin: 0 0 16px;">
+                  Nous avons bien reçu votre demande de devis pour
+                  <strong>${req.body.produit}</strong>.
+                </p>
+                <p style="color: #475569; margin: 0 0 16px;">
+                  Notre équipe va analyser votre demande et reviendra vers vous dans les plus brefs délais avec une proposition adaptée à vos besoins.
+                </p>
+                <p style="color: #475569; margin: 0 0 24px;">
+                  En attendant, n'hésitez pas à consulter notre site pour découvrir nos réalisations et nos services.
+                </p>
+
+                <p style="color: #475569; margin: 0;">Cordialement,</p>
+                <p style="color: #475569; margin: 4px 0 0;"><strong>L'équipe MECA-CN</strong></p>
+              </div>
+
+              <div style="padding: 16px 30px; background: #f8fafc; border-top: 1px solid #e2e8f0;">
+                <p style="margin: 0; color: #94a3b8; font-size: 12px; text-align: center;">
+                  Cet email de confirmation a été envoyé automatiquement, merci de ne pas y répondre.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        `,
+      });
+
       req.files.forEach((file) => {
         fs.unlink(file.path, (err) => {
           if (err) console.error("Erreur suppression fichier temporaire:", err);
@@ -3147,7 +3230,6 @@ app.post("/envoyer-contact", async function (req, res) {
     const userAnswer = parseInt(req.body.captcha_answer, 10);
     const expectedAnswer = req.session.contactCaptchaAnswer;
 
-    req.session.contactCaptchaAnswer = null;
 
     if (!expectedAnswer || isNaN(userAnswer) || userAnswer !== expectedAnswer) {
       // Régénérer un captcha pour le réaffichage du formulaire
@@ -3176,6 +3258,8 @@ app.post("/envoyer-contact", async function (req, res) {
       });
     }
 
+    req.session.contactCaptchaAnswer = null;
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -3188,7 +3272,7 @@ app.post("/envoyer-contact", async function (req, res) {
       from: `"${nom}" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_DEST || "meca.cn@wanadoo.fr",
       replyTo: email,
-      subject: `[CONTACT SITE] ${objet}`,
+      subject: `[CONTACT SITE] - ${objet}`,
       text: `Message de ${nom} (Entreprise: ${entreprise})\nTel: ${telephone}\n\n${message}`,
       html: `
                 <h3>Nouveau message de contact</h3>
@@ -3196,12 +3280,51 @@ app.post("/envoyer-contact", async function (req, res) {
                 <p><strong>Entreprise:</strong> ${entreprise}</p>
                 <p><strong>Email:</strong> ${email}</p>
                 <p><strong>Téléphone:</strong> ${telephone}</p>
-                <p><strong>Objet:</strong> ${objet}</p>
                 <p><strong>Message:</strong></p>
                 <p>${message.replace(/\n/g, "<br>")}</p>
             `,
     });
 
+    // ── Envoi du mail de confirmation de prise de contact ──
+      await transporter.sendMail({
+        from: `"MECA-CN" <${process.env.EMAIL_USER}>`,
+        to: email, // ← l'email du visiteur
+        subject: `Confirmation de votre prise de contact`,
+        html: `
+          <div style="font-family: Arial, sans-serif; color: #1f2937; background: #f4f6fb; padding: 20px;">
+            <div style="max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0;">
+
+              <div style="background: #0f4bb7; color: #ffffff; padding: 28px 30px; text-align: center;">
+                <h1 style="margin: 0; font-size: 24px; letter-spacing: 0.5px;">Message reçu ✓</h1>
+                <p style="margin: 8px 0 0; color: rgba(255,255,255,0.85);">Merci de nous avoir contactés.</p>
+              </div>
+
+              <div style="padding: 30px;">
+                <p style="font-size: 16px; margin: 0 0 16px;">Bonjour <strong>${nom}</strong>,</p>
+                <p style="color: #475569; margin: 0 0 16px;">
+                  Nous avons bien reçu votre message concernant : <strong>${objet}</strong>.
+                </p>
+                <p style="color: #475569; margin: 0 0 16px;">
+                  Notre équipe va étudier votre demande et reviendra vers vous dans les plus brefs délais.
+                </p>
+                <p style="color: #475569; margin: 0 0 24px;">
+                  En attendant, n'hésitez pas à consulter notre site pour découvrir nos réalisations et nos services.
+                </p>
+
+                <p style="color: #475569; margin: 0;">Cordialement,</p>
+                <p style="color: #475569; margin: 4px 0 0;"><strong>L'équipe MECA-CN</strong></p>
+              </div>
+
+              <div style="padding: 16px 30px; background: #f8fafc; border-top: 1px solid #e2e8f0;">
+                <p style="margin: 0; color: #94a3b8; font-size: 12px; text-align: center;">
+                  Cet email a été envoyé automatiquement, merci de ne pas y répondre.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        `,
+      });
     // Générer un nouveau captcha pour le prochain envoi éventuel
     const a = Math.floor(Math.random() * 10) + 1;
     const b = Math.floor(Math.random() * 10) + 1;
