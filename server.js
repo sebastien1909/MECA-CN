@@ -114,7 +114,7 @@ const globalStorage = multer({storage: storageGlobal})
 
 
 
-// Setting d'express
+// Settings d'express
 // ==> sert à rendre les views
 const app = express();
 app.set("view engine", "ejs");
@@ -147,7 +147,6 @@ app.use((req, res, next) => {
 
 
 //MIDDLEWARES MAISON
-
 /**
 Middleware "authenticate"
 Vérifie que l'utilisateur est authentifié (présence de "session.userID").
@@ -189,6 +188,9 @@ function isAdmin(req, res, next) {
 
 
 // ROUTES
+
+
+
 
 // app.get
 
@@ -1020,7 +1022,6 @@ app.get("/admin/offres", isAdmin, async function (req, res) {
     const categorieChoisie = req.query.categorie;
 
     let offresResultat;
-
     if (categorieChoisie && categorieChoisie !== "all") {
       const [rows] = await pool.query(
         "SELECT * FROM offres WHERE categorie = ? ORDER BY offre_id ASC",
@@ -1125,7 +1126,6 @@ app.get("/articles/:id", (req, res) => {
   const article = JSON.parse(file);
 
   const html = generateHTML(article.content, [StarterKit]);
-
   res.render("actualite", {
     article: article,
     content: html,
@@ -2083,7 +2083,7 @@ app.post("/confirmer_modif/:id", async (req, res) => {
     // console.log("nouvelle missions : ",missions)
 
     /*
-    Afin de n'actualiser que la section concernée, on test si chacun est différentde ce qui est stocké dans la bdd
+    Afin de n'actualiser que la section concernée, on test si chacun est différent de ce qui est stocké dans la bdd
 
     Je vais être honnête, les conditions (if) n'apportent apparemment rien étant donné que 
     tout les console.log s'effectuent lorsque je modifies une seule section de l'offre.
@@ -2105,8 +2105,8 @@ app.post("/confirmer_modif/:id", async (req, res) => {
     if (ancienne_missions !== missions) {
       await pool.query(
         `UPDATE offres SET 
-                              missions = ? 
-                              WHERE offre_id = ?`,
+          missions = ? 
+          WHERE offre_id = ?`,
         [missions, id],
       );
       // console.log("Les missions ont été modifiées")
@@ -2122,8 +2122,8 @@ app.post("/confirmer_modif/:id", async (req, res) => {
     if (ancienne_competences !== competences) {
       await pool.query(
         `UPDATE offres SET 
-                              competences = ? 
-                              WHERE offre_id = ?`,
+          competences = ? 
+          WHERE offre_id = ?`,
         [competences, id],
       );
       //console.log("Les compétences ont été modifiées");
@@ -2139,8 +2139,8 @@ app.post("/confirmer_modif/:id", async (req, res) => {
     if (ancien_avantage !== avantages) {
       await pool.query(
         `UPDATE offres SET 
-                              avantages = ? 
-                              WHERE offre_id = ?`,
+          avantages = ? 
+          WHERE offre_id = ?`,
         [avantages, id],
       );
       //console.log("Les avantages ont été modifiés");
@@ -2156,8 +2156,8 @@ app.post("/confirmer_modif/:id", async (req, res) => {
     if (ancien_recrutement !== recrutement) {
       await pool.query(
         `UPDATE offres SET 
-                              recrutement = ? 
-                              WHERE offre_id = ?`,
+          recrutement = ? 
+          WHERE offre_id = ?`,
         [recrutement, id],
       );
       // console.log("Le process de recrutement a été modifié")
@@ -2173,8 +2173,8 @@ app.post("/confirmer_modif/:id", async (req, res) => {
     if (ancienne_infos !== infos_complementaires) {
       await pool.query(
         `UPDATE offres SET 
-                              infos_complementaires = ? 
-                              WHERE offre_id = ?`,
+          infos_complementaires = ? 
+          WHERE offre_id = ?`,
         [infos_complementaires, id],
       );
       //console.log("Les informations complémentaires ont bien été modifiées");
@@ -2190,7 +2190,7 @@ app.post("/confirmer_modif/:id", async (req, res) => {
     if (ancienne_presentation !== presentation) {
       await pool.query(
         `UPDATE offres SET
-                              presentation = ?`,
+          presentation = ?`,
         [presentation],
       );
     };
@@ -2205,8 +2205,8 @@ app.post("/confirmer_modif/:id", async (req, res) => {
     if (ancien_intitule !== intitule) {
       await pool.query(
         `UPDATE offres SET
-                              intitule = ?
-                              WHERE offre_id = ?`,
+          intitule = ?
+          WHERE offre_id = ?`,
         [intitule, id],
       );
     };
@@ -2221,8 +2221,8 @@ app.post("/confirmer_modif/:id", async (req, res) => {
     if (ancien_type !== type) {
       await pool.query(
         `UPDATE offres SET
-                              type = ?
-                              WHERE offre_id = ?`,
+          type = ?
+          WHERE offre_id = ?`,
         [type, id],
       );
     };
@@ -3599,16 +3599,11 @@ app.post("/recup_mdp/nouveau_mdp", async (req, res) => {
 
     // 3. Mettre à jour le mot de passe dans la table admins
     // Adaptez le nom de la colonne à votre schéma
-    await pool.query("UPDATE utilisateurs SET password = ? WHERE mail = ?", [
-      hash,
-      mail,
-    ]);
+    await pool.query("UPDATE utilisateurs SET password = ? WHERE mail = ?", [hash,mail]);
 
     // 4. Invalider le token (et tous les autres tokens de ce mail)
     await pool.query(
-      "UPDATE password_reset_tokens SET used = 1 WHERE mail = ?",
-      [mail],
-    );
+      "UPDATE password_reset_tokens SET used = 1 WHERE mail = ?",[mail]);
 
     // 5. Rediriger vers la connexion avec un message de succès
     res.redirect("/connexion?mdp_reset=1");
@@ -3627,100 +3622,100 @@ app.post("/recup_mdp/nouveau_mdp", async (req, res) => {
 
 function buildResetEmail(code) {
   return `
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Réinitialisation de mot de passe — MECA-CN</title>
-</head>
-<body style="margin:0;padding:0;background:#f0f4fa;font-family:'Segoe UI',Arial,sans-serif;">
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Réinitialisation de mot de passe — MECA-CN</title>
+    </head>
+    <body style="margin:0;padding:0;background:#f0f4fa;font-family:'Segoe UI',Arial,sans-serif;">
 
-  <!-- Wrapper -->
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4fa;padding:40px 0;">
-    <tr>
-      <td align="center">
+      <!-- Wrapper -->
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4fa;padding:40px 0;">
+        <tr>
+          <td align="center">
 
-        <!-- Carte principale -->
-        <table width="560" cellpadding="0" cellspacing="0"
-               style="background:#ffffff;border-radius:24px;
-                      box-shadow:0 8px 40px rgba(15,23,42,0.10);
-                      overflow:hidden;max-width:90vw;">
+            <!-- Carte principale -->
+            <table width="560" cellpadding="0" cellspacing="0"
+                  style="background:#ffffff;border-radius:24px;
+                          box-shadow:0 8px 40px rgba(15,23,42,0.10);
+                          overflow:hidden;max-width:90vw;">
 
-          <!-- En-tête bleu -->
-          <tr>
-            <td style="background:#0f4bb7;padding:36px 40px;text-align:center;">
-              <p style="margin:0 0 6px;color:rgba(255,255,255,0.75);
-                        font-size:12px;letter-spacing:0.18em;
-                        text-transform:uppercase;font-weight:700;">
-                MECA-CN · Usinage de précision
-              </p>
-              <h1 style="margin:0;color:#ffffff;font-size:26px;font-weight:800;
-                         letter-spacing:-0.02em;">
-                Réinitialisation<br>de mot de passe
-              </h1>
-            </td>
-          </tr>
+              <!-- En-tête bleu -->
+              <tr>
+                <td style="background:#0f4bb7;padding:36px 40px;text-align:center;">
+                  <p style="margin:0 0 6px;color:rgba(255,255,255,0.75);
+                            font-size:12px;letter-spacing:0.18em;
+                            text-transform:uppercase;font-weight:700;">
+                    MECA-CN · Usinage de précision
+                  </p>
+                  <h1 style="margin:0;color:#ffffff;font-size:26px;font-weight:800;
+                            letter-spacing:-0.02em;">
+                    Réinitialisation<br>de mot de passe
+                  </h1>
+                </td>
+              </tr>
 
-          <!-- Corps -->
-          <tr>
-            <td style="padding:36px 40px 28px;">
+              <!-- Corps -->
+              <tr>
+                <td style="padding:36px 40px 28px;">
 
-              <p style="margin:0 0 20px;color:#334155;font-size:15px;line-height:1.7;">
-                Nous avons reçu une demande de réinitialisation du mot de passe
-                pour votre compte administrateur MECA-CN.
-                Utilisez le code ci-dessous pour continuer.
-              </p>
+                  <p style="margin:0 0 20px;color:#334155;font-size:15px;line-height:1.7;">
+                    Nous avons reçu une demande de réinitialisation du mot de passe
+                    pour votre compte administrateur MECA-CN.
+                    Utilisez le code ci-dessous pour continuer.
+                  </p>
 
-              <!-- Bloc code -->
-              <table width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td align="center" style="padding:20px 0 28px;">
-                    <div style="display:inline-block;background:#eef3fb;
-                                border-radius:16px;padding:24px 40px;">
-                      <p style="margin:0 0 6px;color:#64748b;font-size:12px;
-                                letter-spacing:0.15em;text-transform:uppercase;
-                                font-weight:700;">
-                        Votre code
-                      </p>
-                      <p style="margin:0;color:#0f4bb7;font-size:42px;
-                                font-weight:900;letter-spacing:0.25em;
-                                font-family:'Courier New',monospace;">
-                        ${code}
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              </table>
+                  <!-- Bloc code -->
+                  <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td align="center" style="padding:20px 0 28px;">
+                        <div style="display:inline-block;background:#eef3fb;
+                                    border-radius:16px;padding:24px 40px;">
+                          <p style="margin:0 0 6px;color:#64748b;font-size:12px;
+                                    letter-spacing:0.15em;text-transform:uppercase;
+                                    font-weight:700;">
+                            Votre code
+                          </p>
+                          <p style="margin:0;color:#0f4bb7;font-size:42px;
+                                    font-weight:900;letter-spacing:0.25em;
+                                    font-family:'Courier New',monospace;">
+                            ${code}
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
 
-              <p style="margin:0 0 12px;color:#334155;font-size:14px;line-height:1.7;">
-                Ce code est valable <strong>15 minutes</strong>.
-                Si vous n'êtes pas à l'origine de cette demande, ignorez simplement cet e-mail —
-                votre mot de passe restera inchangé.
-              </p>
+                  <p style="margin:0 0 12px;color:#334155;font-size:14px;line-height:1.7;">
+                    Ce code est valable <strong>15 minutes</strong>.
+                    Si vous n'êtes pas à l'origine de cette demande, ignorez simplement cet e-mail —
+                    votre mot de passe restera inchangé.
+                  </p>
 
-              <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;">
+                  <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;">
 
-              <p style="margin:0;color:#94a3b8;font-size:12px;text-align:center;
-                        line-height:1.6;">
-                MECA-CN · Usinage de précision<br>
-                Route de Camiers, 62630 Widehem — France
-              </p>
+                  <p style="margin:0;color:#94a3b8;font-size:12px;text-align:center;
+                            line-height:1.6;">
+                    MECA-CN · Usinage de précision<br>
+                    Route de Camiers, 62630 Widehem — France
+                  </p>
 
-            </td>
-          </tr>
+                </td>
+              </tr>
 
-        </table>
-        <!-- /Carte -->
+            </table>
+            <!-- /Carte -->
 
-      </td>
-    </tr>
-  </table>
+          </td>
+        </tr>
+      </table>
 
-</body>
-</html>
-  `;
-}
+    </body>
+    </html>
+      `;
+    }
 
 
 
